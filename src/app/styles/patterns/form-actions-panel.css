@@ -1,0 +1,6 @@
+﻿.app-form-actions-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}

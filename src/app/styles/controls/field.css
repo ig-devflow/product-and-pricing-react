@@ -1,0 +1,18 @@
+﻿.app-field {
+  display: grid;
+  gap: 6px;
+}
+
+.app-field__label {
+  font-weight: 600;
+}
+
+.app-field__hint {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.app-field__error {
+  color: var(--color-danger);
+  font-size: 14px;
+}

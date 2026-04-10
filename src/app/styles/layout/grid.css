@@ -1,0 +1,37 @@
+﻿.division-form__section-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .division-form__section-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.division-details-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.division-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+}
+
+.division-details-grid dt {
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.division-details-grid dd {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .division-details-grid {
+    grid-template-columns: 1fr;
+  }
+}

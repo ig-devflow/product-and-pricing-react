@@ -1,0 +1,39 @@
+﻿.app-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.app-switch__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-switch__track {
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--color-border);
+  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.app-switch__thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: translateX(0);
+  transition: transform 0.2s ease;
+}
+
+.app-switch__input:checked + .app-switch__track {
+  background: var(--color-primary);
+}
+
+.app-switch__input:checked + .app-switch__track .app-switch__thumb {
+  transform: translateX(20px);
+}
