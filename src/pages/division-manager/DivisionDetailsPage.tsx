@@ -7,19 +7,19 @@ const DivisionDetailsPage = () => {
   const page = useDivisionDetailsPage();
 
   if (page.isLoading) {
-    return <p className="division-page">Loading division...</p>;
+    return <p className="app-page">Loading division...</p>;
   }
 
   if (page.isError || page.division === null) {
     return (
-      <div className="division-page">
+      <div className="app-page">
         <p role="alert">{page.errorMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="division-page division-details-page">
+    <section className="app-page division-details-page">
       <AppPageHeader
         title={page.division.name}
         description="Review details for this division."
@@ -64,7 +64,7 @@ const DivisionDetailsPage = () => {
           </dl>
         </AppSectionCard>
       </div>
-    </div>
+    </section>
   );
 };
 

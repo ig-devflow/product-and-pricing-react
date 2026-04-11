@@ -1,3 +1,6 @@
+export { AppBrandMark } from './AppBrandMark';
+export type { AppBrandMarkProps } from './AppBrandMark';
+
 export { AppPageHeader } from './AppPageHeader';
 export type { AppPageHeaderProps } from './AppPageHeader';
 

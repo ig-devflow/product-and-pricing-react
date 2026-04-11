@@ -1,30 +1,58 @@
 import { cn } from '@/shared/lib/cn';
+import { AppSurface } from '@/shared/ui/primitives';
+import { AppSummaryRows } from '@/shared/ui/AppSummaryRows';
+import type { ReactNode } from 'react';
 
 export interface AppSidebarSummaryItem {
   label: string;
-  value: string;
+  value: string | number;
 }
 
 export interface AppSidebarSummaryProps {
-  title: string;
-  items: AppSidebarSummaryItem[];
+  title?: string;
+  subtitle?: string;
+  sticky?: boolean;
+  items?: AppSidebarSummaryItem[];
+  children?: ReactNode;
   className?: string;
 }
 
 export const AppSidebarSummary = ({
-  title,
-  items,
+  title = '',
+  subtitle = '',
+  sticky = true,
+  items = [],
+  children,
   className,
 }: AppSidebarSummaryProps) => (
-  <aside className={cn('app-sidebar-summary', className)}>
-    <h2>{title}</h2>
-    <dl>
-      {items.map((item) => (
-        <div key={item.label} className="app-sidebar-summary__item">
-          <dt>{item.label}</dt>
-          <dd>{item.value}</dd>
-        </div>
-      ))}
-    </dl>
-  </aside>
+  <AppSurface
+    as="aside"
+    padding="lg"
+    className={cn(
+      'app-summary-card',
+      'app-sidebar-summary',
+      {
+        'app-sidebar-summary--sticky': sticky,
+      },
+      className,
+    )}
+  >
+    {title || subtitle ? (
+      <div className="app-summary-card__header">
+        {title ? <h2 className="app-summary-card__title">{title}</h2> : null}
+        {subtitle ? <p className="app-summary-card__subtitle">{subtitle}</p> : null}
+      </div>
+    ) : null}
+    {items.length ? (
+      <AppSummaryRows
+        items={items.map((item) => ({
+          key: item.label,
+          label: item.label,
+          value: item.value,
+        }))}
+      />
+    ) : (
+      children
+    )}
+  </AppSurface>
 );

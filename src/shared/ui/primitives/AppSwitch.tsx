@@ -1,4 +1,4 @@
-import { forwardRef, type InputHTMLAttributes } from 'react';
+import { forwardRef, useId, type InputHTMLAttributes } from 'react';
 import { cn } from '@/shared/lib/cn';
 
 export interface AppSwitchProps
@@ -7,21 +7,30 @@ export interface AppSwitchProps
 }
 
 export const AppSwitch = forwardRef<HTMLInputElement, AppSwitchProps>(
-  ({ className, label, id, ...rest }, ref) => {
-    const switchId = id ?? rest.name;
+  ({ className, label = '', id, disabled = false, ...rest }, ref) => {
+    const fallbackId = useId();
+    const switchId = id ?? rest.name ?? fallbackId;
 
     return (
-      <label className={cn('app-switch', className)} htmlFor={switchId}>
+      <label
+        className={cn(
+          'app-switch',
+          {
+            'app-switch--disabled': disabled,
+          },
+          className,
+        )}
+        htmlFor={switchId}
+      >
         <input
           ref={ref}
           id={switchId}
           className="app-switch__input"
           type="checkbox"
+          disabled={disabled}
           {...rest}
         />
-        <span className="app-switch__track" aria-hidden="true">
-          <span className="app-switch__thumb" />
-        </span>
+        <span className="app-switch__track" aria-hidden="true" />
         {label ? <span className="app-switch__label">{label}</span> : null}
       </label>
     );

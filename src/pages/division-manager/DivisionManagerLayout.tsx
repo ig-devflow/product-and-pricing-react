@@ -8,7 +8,7 @@ const DivisionManagerLayout = () => {
   return (
     <div className="app-shell">
       <AppShellHeader showAllDivisionsLink={pageHeader.showAllDivisionsLink} />
-      <main className="app-shell__content">
+      <main className="app-shell__main">
         <Outlet />
       </main>
       <AppShellFooter />

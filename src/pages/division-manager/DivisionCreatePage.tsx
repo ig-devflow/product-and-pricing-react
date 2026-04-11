@@ -6,7 +6,7 @@ const DivisionCreatePage = () => {
   const page = useDivisionCreatePage();
 
   return (
-    <div className="division-page division-create-page">
+    <section className="app-page division-create-page">
       <AppPageHeader title={page.title} />
       <DivisionForm
         defaultValues={page.defaultValues}
@@ -16,7 +16,7 @@ const DivisionCreatePage = () => {
         onSubmit={page.onSubmit}
         onCancel={page.onCancel}
       />
-    </div>
+    </section>
   );
 };
 

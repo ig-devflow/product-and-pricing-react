@@ -1,4 +1,4 @@
-﻿@import './foundation/tokens.css';
+@import './foundation/tokens.css';
 @import './foundation/semantic-tokens.css';
 @import './foundation/base.css';
 
@@ -17,3 +17,4 @@
 @import './patterns/summary.css';
 @import './patterns/state.css';
 @import './patterns/pill.css';
+@import './shared-ui.css';

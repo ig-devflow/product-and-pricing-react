@@ -12,7 +12,8 @@ html {
 
 html,
 body,
-#app {
+#app,
+#root {
   min-height: 100%;
 }
 

@@ -1,5 +1,12 @@
-import * as Select from '@radix-ui/react-select';
-import type { KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from 'react';
+import { cn } from '@/shared/lib/cn';
 
 export interface AppSelectOption {
   label: string;
@@ -14,6 +21,9 @@ export interface AppSelectProps {
   options: AppSelectOption[];
   name?: string;
   disabled?: boolean;
+  invalid?: boolean;
+  describedBy?: string;
+  labelledBy?: string;
   onValueChange?: (value: string) => void;
 }
 
@@ -24,74 +34,247 @@ export const AppSelect = ({
   placeholder = 'Select value',
   options,
   name,
-  disabled,
+  disabled = false,
+  invalid = false,
+  describedBy,
+  labelledBy,
   onValueChange,
 }: AppSelectProps) => {
-  const currentValue = value ?? defaultValue ?? options[0]?.value;
+  const fallbackId = useId();
+  const selectId = id ?? fallbackId;
+  const listboxId = `${selectId}-listbox`;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [internalValue, setInternalValue] = useState(defaultValue ?? '');
+  const currentValue = value ?? internalValue;
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (!onValueChange || options.length === 0) {
+  const selectedOption = useMemo(
+    () => options.find((option) => option.value === currentValue) ?? null,
+    [currentValue, options],
+  );
+
+  const selectedIndex = useMemo(
+    () => options.findIndex((option) => option.value === currentValue),
+    [currentValue, options],
+  );
+
+  const activeDescendantId =
+    isOpen && highlightedIndex >= 0
+      ? `${selectId}-option-${highlightedIndex}`
+      : undefined;
+
+  const getOptionId = (index: number) => `${selectId}-option-${index}`;
+
+  const open = () => {
+    if (disabled) {
       return;
     }
 
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      event.stopPropagation();
+    setIsOpen(true);
+    setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : options.length ? 0 : -1);
+  };
+
+  const close = () => {
+    setIsOpen(false);
+    setHighlightedIndex(-1);
+  };
+
+  const toggle = () => {
+    if (isOpen) {
+      close();
       return;
     }
 
-    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
+    open();
+  };
+
+  const selectOption = (nextValue: string) => {
+    if (value === undefined) {
+      setInternalValue(nextValue);
+    }
+
+    onValueChange?.(nextValue);
+    close();
+  };
+
+  const moveHighlight = (step: 1 | -1) => {
+    if (!options.length) {
       return;
     }
 
-    event.preventDefault();
-    event.stopPropagation();
+    if (!isOpen) {
+      open();
+      return;
+    }
 
-    const currentIndex = options.findIndex((option) => option.value === currentValue);
-    const safeIndex = currentIndex >= 0 ? currentIndex : 0;
-    const nextIndex =
-      event.key === 'ArrowDown'
-        ? Math.min(options.length - 1, safeIndex + 1)
-        : Math.max(0, safeIndex - 1);
+    setHighlightedIndex((currentIndex) =>
+      currentIndex < 0 ? 0 : (currentIndex + step + options.length) % options.length,
+    );
+  };
 
-    onValueChange(options[nextIndex]!.value);
+  const getHighlightedOption = () => options[highlightedIndex] ?? null;
+
+  useEffect(() => {
+    const handleDocumentPointerDown = (event: MouseEvent) => {
+      const target = event.target;
+
+      if (!rootRef.current || !(target instanceof Node)) {
+        return;
+      }
+
+      if (!rootRef.current.contains(target)) {
+        setIsOpen(false);
+        setHighlightedIndex(-1);
+      }
+    };
+
+    const handleDocumentKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        setHighlightedIndex(-1);
+      }
+    };
+
+    document.addEventListener('mousedown', handleDocumentPointerDown);
+    document.addEventListener('keydown', handleDocumentKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentPointerDown);
+      document.removeEventListener('keydown', handleDocumentKeyDown);
+    };
+  }, []);
+
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
+    if (disabled) {
+      return;
+    }
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        moveHighlight(1);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        moveHighlight(-1);
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        if (!isOpen) {
+          open();
+        } else {
+          const option = getHighlightedOption();
+
+          if (option) {
+            selectOption(option.value);
+          }
+        }
+        break;
+      case 'Tab':
+        close();
+        break;
+      case 'Escape':
+        close();
+        break;
+      default:
+        break;
+    }
   };
 
   return (
-    <Select.Root
-      value={value}
-      defaultValue={defaultValue}
-      onValueChange={onValueChange}
-      name={name}
-      disabled={disabled}
+    <div
+      ref={rootRef}
+      className={cn('app-select-shell', {
+        'app-select-shell--disabled': disabled,
+      })}
     >
-      <Select.Trigger
-        id={id}
-        className="app-select-trigger"
-        aria-label={name}
+      {name ? <input type="hidden" name={name} value={currentValue} /> : null}
+
+      <button
+        id={selectId}
+        type="button"
+        className={cn('app-select', 'app-select__trigger', {
+          'app-select--invalid': invalid,
+          'app-select--open': isOpen,
+        })}
+        disabled={disabled}
+        role="combobox"
+        aria-expanded={isOpen ? 'true' : 'false'}
+        aria-controls={listboxId}
+        aria-activedescendant={activeDescendantId}
+        aria-describedby={describedBy}
+        aria-labelledby={labelledBy}
+        aria-invalid={invalid ? 'true' : undefined}
+        aria-haspopup="listbox"
+        onClick={toggle}
         onKeyDown={handleKeyDown}
       >
-        <Select.Value placeholder={placeholder} />
-        <Select.Icon className="app-select-trigger__icon" aria-hidden="true">
-          v
-        </Select.Icon>
-      </Select.Trigger>
+        <span
+          className={cn('app-select__value', {
+            'app-select__value--placeholder': !selectedOption,
+          })}
+        >
+          {selectedOption?.label ?? placeholder}
+        </span>
 
-      <Select.Portal>
-        <Select.Content className="app-select-content" position="popper" sideOffset={6}>
-          <Select.Viewport className="app-select-viewport">
-            {options.map((option) => (
-              <Select.Item
+        <span
+          className={cn('app-select__chevron', {
+            'app-select__chevron--open': isOpen,
+          })}
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path
+              d="M5.25 7.5L10 12.25L14.75 7.5"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.8"
+            />
+          </svg>
+        </span>
+      </button>
+
+      {isOpen ? (
+        <div className="app-select__dropdown">
+          <ul id={listboxId} className="app-select__list" role="listbox">
+            {options.map((option, index) => (
+              <li
+                id={getOptionId(index)}
                 key={option.value}
-                className="app-select-item"
-                value={option.value}
+                className={cn('app-select__option', {
+                  'app-select__option--selected': option.value === currentValue,
+                  'app-select__option--highlighted': index === highlightedIndex,
+                })}
+                role="option"
+                aria-selected={option.value === currentValue}
+                onMouseEnter={() => setHighlightedIndex(index)}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => selectOption(option.value)}
               >
-                <Select.ItemText>{option.label}</Select.ItemText>
-              </Select.Item>
+                <span>{option.label}</span>
+
+                {option.value === currentValue ? (
+                  <span className="app-select__check" aria-hidden="true">
+                    <svg viewBox="0 0 20 20">
+                      <path
+                        d="M5 10.5L8.5 14L15 7.5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1.8"
+                      />
+                    </svg>
+                  </span>
+                ) : null}
+              </li>
             ))}
-          </Select.Viewport>
-        </Select.Content>
-      </Select.Portal>
-    </Select.Root>
+          </ul>
+        </div>
+      ) : null}
+    </div>
   );
 };

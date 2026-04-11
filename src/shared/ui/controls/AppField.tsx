@@ -1,43 +1,99 @@
-import type { ReactNode } from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  useId,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import { cn } from '@/shared/lib/cn';
 
+export interface AppFieldRenderProps {
+  controlId: string;
+  ariaDescribedby?: string;
+  ariaLabelledby: string;
+  describedBy?: string;
+  labelId: string;
+  hintId: string;
+  errorId: string;
+}
+
 export interface AppFieldProps {
-  id: string;
-  label: string;
+  id?: string;
+  forId?: string;
+  label?: string;
   required?: boolean;
   hint?: string;
   error?: string;
-  children: ReactNode;
+  children: ReactNode | ((props: AppFieldRenderProps) => ReactNode);
   className?: string;
 }
 
 export const AppField = ({
   id,
-  label,
+  forId,
+  label = '',
   required = false,
   hint,
   error,
   children,
   className,
 }: AppFieldProps) => {
-  const hintId = hint ? `${id}-hint` : undefined;
-  const errorId = error ? `${id}-error` : undefined;
+  const fallbackId = useId();
+  const fieldId = forId ?? id ?? fallbackId;
+  const labelId = `${fieldId}-label`;
+  const hintId = `${fieldId}-hint`;
+  const errorId = `${fieldId}-error`;
+  const describedBy = error ? errorId : hint ? hintId : undefined;
+
+  const renderProps: AppFieldRenderProps = {
+    controlId: fieldId,
+    ariaDescribedby: describedBy,
+    ariaLabelledby: labelId,
+    describedBy,
+    labelId,
+    hintId,
+    errorId,
+  };
+
+  let content: ReactNode;
+
+  if (typeof children === 'function') {
+    content = children(renderProps);
+  } else if (isValidElement(children)) {
+    const child = children as ReactElement<Record<string, unknown>>;
+    const childProps = child.props;
+
+    content = cloneElement(child, {
+      id: (childProps.id as string | undefined) ?? fieldId,
+      'aria-describedby':
+        (childProps['aria-describedby'] as string | undefined) ?? describedBy,
+      'aria-labelledby':
+        (childProps['aria-labelledby'] as string | undefined) ?? labelId,
+    });
+  } else {
+    content = children;
+  }
 
   return (
-    <div className={cn('app-field', className)}>
-      <label className="app-field__label" htmlFor={id}>
-        {label}
-        {required ? <span aria-hidden="true"> *</span> : null}
-      </label>
-      <div className="app-field__control">{children}</div>
-      {hint ? (
+    <div className={cn('app-field', { 'app-field--invalid': Boolean(error) }, className)}>
+      {label ? (
+        <label id={labelId} className="app-label" htmlFor={fieldId}>
+          <span>{label}</span>
+          {required ? (
+            <span className="app-label__required" aria-hidden="true">
+              *
+            </span>
+          ) : null}
+        </label>
+      ) : null}
+      <div className="app-field__control">{content}</div>
+      {error ? (
+        <p className="app-field__error" id={errorId}>
+          {error}
+        </p>
+      ) : hint ? (
         <p className="app-field__hint" id={hintId}>
           {hint}
-        </p>
-      ) : null}
-      {error ? (
-        <p className="app-field__error" id={errorId} role="alert">
-          {error}
         </p>
       ) : null}
     </div>

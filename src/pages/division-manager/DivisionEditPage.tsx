@@ -6,19 +6,19 @@ const DivisionEditPage = () => {
   const page = useDivisionEditPage();
 
   if (page.isLoading) {
-    return <p className="division-page">Loading division...</p>;
+    return <p className="app-page">Loading division...</p>;
   }
 
   if (page.isError || page.division === null) {
     return (
-      <div className="division-page">
+      <div className="app-page">
         <p role="alert">{page.errorMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="division-page division-edit-page">
+    <section className="app-page division-edit-page">
       <AppPageHeader title={page.title} description={`Editing ${page.division.name}`} />
       <DivisionForm
         defaultValues={page.defaultValues}
@@ -29,7 +29,7 @@ const DivisionEditPage = () => {
         onSubmit={page.onSubmit}
         onCancel={page.onCancel}
       />
-    </div>
+    </section>
   );
 };
 

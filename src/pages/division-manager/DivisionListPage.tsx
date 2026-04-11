@@ -7,8 +7,9 @@ const DivisionListPage = () => {
   const page = useDivisionListPage();
 
   return (
-    <div className="division-page division-list-page">
+    <section className="app-page division-list-page">
       <AppPageHeader
+        eyebrow="Admin"
         title="Division Manager"
         description="Browse and manage division data used by products and pricing workflows."
         actions={
@@ -51,7 +52,7 @@ const DivisionListPage = () => {
           </table>
         ) : null}
       </AppSectionCard>
-    </div>
+    </section>
   );
 };
 
