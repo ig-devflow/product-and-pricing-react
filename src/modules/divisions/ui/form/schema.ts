@@ -11,20 +11,21 @@ export const divisionFormSchema = z.object({
   headOfficeTelephoneNo: z.string().trim().min(1, requiredMessage),
   address: z.object({
     id: z.number().nullable(),
-    line1: z.string().trim().min(1, requiredMessage),
+    line1: z.string().trim(),
     line2: z.string().trim(),
     line3: z.string().trim(),
     line4: z.string().trim(),
     countryIsoCode: z
       .string()
       .trim()
-      .min(2, 'Use a 2-letter ISO code')
-      .max(2, 'Use a 2-letter ISO code'),
+      .refine((value) => !value || value.length === 2, {
+        message: 'Use a 2-letter ISO code',
+      }),
   }),
   visaLetterNoteFormat: z.nativeEnum(ContentFormat),
   visaLetterNote: z.string().trim(),
-  termsAndConditions: z.string().trim().min(1, requiredMessage),
-  groupsPaymentTerms: z.string().trim().min(1, requiredMessage),
+  termsAndConditions: z.string().trim(),
+  groupsPaymentTerms: z.string().trim(),
   accreditationBanner: z
     .object({
       imageBase64: z.string(),

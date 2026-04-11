@@ -13,6 +13,7 @@ const DivisionCreatePage = () => {
         subtitle={page.pageHeader.subtitle}
       />
       <DivisionForm
+        mode="create"
         defaultValues={page.initialValues}
         submitLabel={page.submitLabel}
         isSubmitting={page.isSaving}

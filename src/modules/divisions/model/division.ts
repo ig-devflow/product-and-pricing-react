@@ -32,6 +32,6 @@ export const divisionVisaLetterNoteFormatOptions: Array<{
   value: DivisionVisaLetterNoteFormat;
   label: string;
 }> = [
-  { value: DivisionVisaLetterNoteFormat.RichText, label: 'Rich text' },
+  { value: DivisionVisaLetterNoteFormat.RichText, label: 'HTML' },
   { value: DivisionVisaLetterNoteFormat.PlainText, label: 'Plain text' },
 ];
