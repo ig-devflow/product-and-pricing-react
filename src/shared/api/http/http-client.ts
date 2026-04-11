@@ -1,4 +1,4 @@
-import { APP_CONFIG } from '@/shared/config/env';
+import { env } from '@/shared/config/env';
 import {
   ApiError,
   type ApiQueryPrimitive,
@@ -8,7 +8,7 @@ import {
 } from './types';
 
 function buildUrl(path: string, query?: ApiRequestOptions['query']): string {
-  const normalizedBase = APP_CONFIG.apiBaseUrl.replace(/\/+$/, '');
+  const normalizedBase = env.apiBaseUrl.replace(/\/+$/, '');
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
 
   const url = new URL(
