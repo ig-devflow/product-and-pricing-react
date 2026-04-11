@@ -1,0 +1,43 @@
+.app-state {
+  display: grid;
+  place-items: center;
+  gap: var(--space-3);
+  min-height: 260px;
+  padding: var(--space-8);
+  text-align: center;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+}
+
+.app-state__title {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+.app-state__text {
+  margin: 0;
+  max-width: 560px;
+  color: var(--color-text-tertiary);
+  line-height: var(--line-height-relaxed);
+  white-space: pre-line;
+}
+
+.app-skeleton {
+  border-radius: var(--radius-xs);
+  background: linear-gradient(90deg, #ebe8e1 20%, #f7f5ef 37%, #ebe8e1 63%);
+  background-size: 400% 100%;
+  animation: app-shimmer 1.4s ease infinite;
+}
+
+@keyframes app-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}

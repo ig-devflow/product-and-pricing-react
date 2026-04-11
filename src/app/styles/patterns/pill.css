@@ -1,0 +1,31 @@
+.app-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding-inline: 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.app-pill--neutral {
+  background: var(--color-badge-neutral-bg);
+  color: var(--color-badge-neutral-text);
+}
+
+.app-pill--info {
+  background: var(--color-bg-surface-muted);
+  color: var(--color-link-default);
+}
+
+.app-pill--success {
+  background: var(--color-status-success-bg);
+  color: var(--color-status-success-text);
+}
+
+.app-pill--warning {
+  background: var(--color-status-warning-bg);
+  color: var(--color-status-warning-text);
+}

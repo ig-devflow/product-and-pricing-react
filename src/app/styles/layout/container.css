@@ -1,0 +1,10 @@
+.app-container {
+  width: min(var(--page-max-width), calc(100% - (var(--page-padding-inline) * 2)));
+  margin-inline: auto;
+}
+
+@media (max-width: 720px) {
+  .app-container {
+    width: min(var(--page-max-width), calc(100% - 32px));
+  }
+}

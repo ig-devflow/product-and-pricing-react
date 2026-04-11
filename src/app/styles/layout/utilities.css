@@ -1,0 +1,64 @@
+.app-stack {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.app-stack--sm {
+  gap: var(--space-3);
+}
+
+.app-stack--lg {
+  gap: var(--space-6);
+}
+
+.app-cluster {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.app-cluster--between {
+  justify-content: space-between;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-6);
+}
+
+.app-grid--dense {
+  gap: var(--space-4);
+}
+
+.app-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: var(--space-7);
+  align-items: start;
+}
+
+.app-divider {
+  height: 1px;
+  border: 0;
+  background: var(--color-divider);
+}
+
+.app-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 0;
+  clip: rect(0 0 0 0);
+}
+
+@media (max-width: 960px) {
+  .app-split {
+    grid-template-columns: 1fr;
+  }
+}
