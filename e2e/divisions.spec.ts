@@ -1,4 +1,4 @@
-import { expect, test, type Page, type Route } from '@playwright/test'
+import { expect, test, type Locator, type Page, type Route } from '@playwright/test'
 
 const sampleBannerBase64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9pQxWb8AAAAASUVORK5CYII='
@@ -9,6 +9,11 @@ function jsonResponse(route: Route, payload: unknown, status = 200) {
     contentType: 'application/json',
     body: JSON.stringify(payload),
   })
+}
+
+async function activate(locator: Locator) {
+  await locator.focus()
+  await locator.press('Enter')
 }
 
 function createDivisionSummary(id: number, name: string) {
@@ -172,18 +177,28 @@ test('opens division details and saves edit changes', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Division Manager' })).toBeVisible()
   await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
 
-  await page.getByRole('link', { name: 'Open' }).click()
-  await expect(page).toHaveURL(/\/division-manager\/7$/)
+  const openLink = page.getByRole('link', { name: 'Open' })
+  await Promise.all([
+    page.waitForURL(/\/division-manager\/7$/),
+    activate(openLink),
+  ])
   await expect(header.getByRole('link', { name: 'All divisions' })).toBeVisible()
-  await page.getByRole('button', { name: 'Edit division' }).click()
+
+  const editDivisionButton = page.getByRole('button', { name: 'Edit division' })
+  await Promise.all([
+    page.waitForURL(/\/division-manager\/7\/edit$/),
+    activate(editDivisionButton),
+  ])
 
   await page.getByLabel('Division name').fill('EC Malta Updated')
   await page
     .getByRole('textbox', { name: 'Visa letter note' })
     .fill('Updated visa note for testing')
-  await page.getByRole('button', { name: 'Save changes' }).click()
-
-  await expect(page).toHaveURL(/\/division-manager\/7$/)
+  const saveChangesButton = page.getByRole('button', { name: 'Save changes' })
+  await Promise.all([
+    page.waitForURL(/\/division-manager\/7$/),
+    activate(saveChangesButton),
+  ])
   expect(updatePayloads).toHaveLength(1)
   expect(updatePayloads[0]?.name).toBe('EC Malta Updated')
   expect(updatePayloads[0]?.visaLetterNote).toBe('Updated visa note for testing')
@@ -215,7 +230,9 @@ test('creates a division and returns to the list', async ({ page }) => {
   await page.getByLabel('Terms and conditions').fill('Division terms')
   await page.getByLabel('Groups payment terms').fill('Groups terms')
 
-  await page.getByRole('button', { name: 'Create division' }).click()
+  const createDivisionButton = page.getByRole('button', { name: 'Create division' })
+
+  await activate(createDivisionButton)
 
   await expect(page).toHaveURL(/\/division-manager$/)
   await expect(page.getByText('EC Dublin')).toBeVisible()
@@ -225,7 +242,10 @@ test('creates a division and returns to the list', async ({ page }) => {
   expect(createPayloads[0]?.headOfficeEmailAddress).toBe('dublin@ecenglish.com')
 })
 
-test('renders legacy products and pricing tabs on desktop and mobile', async ({ page }) => {
+test('renders legacy products and pricing tabs on desktop and mobile', async ({
+  browser,
+  page,
+}) => {
   await mockDivisionsApi(page)
 
   await page.goto('/division-manager')
@@ -241,15 +261,24 @@ test('renders legacy products and pricing tabs on desktop and mobile', async ({ 
   await expect(header.getByRole('link', { name: 'Create division' })).toHaveCount(0)
   await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
 
-  await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto('/division-manager')
+  const mobileContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+  })
 
-  const mobileHeader = page.getByRole('banner')
-  const mobileTabsNav = mobileHeader.getByLabel('Products and Pricing sections')
+  try {
+    const mobilePage = await mobileContext.newPage()
+    await mockDivisionsApi(mobilePage)
+    await mobilePage.goto('/division-manager')
 
-  await expect(mobileHeader.getByRole('button', { name: 'Menu' })).toHaveCount(0)
-  await expect(mobileTabsNav).toContainText('Pricelist')
-  await expect(mobileTabsNav).toContainText('Pricing Reference Data')
+    const mobileHeader = mobilePage.getByRole('banner')
+    const mobileTabsNav = mobileHeader.getByLabel('Products and Pricing sections')
+
+    await expect(mobileHeader.getByRole('button', { name: 'Menu' })).toHaveCount(0)
+    await expect(mobileTabsNav).toContainText('Pricelist')
+    await expect(mobileTabsNav).toContainText('Pricing Reference Data')
+  } finally {
+    await mobileContext.close()
+  }
 })
 
 test('uses all divisions as a contextual return link', async ({ page }) => {
@@ -261,9 +290,10 @@ test('uses all divisions as a contextual return link', async ({ page }) => {
   const allDivisionsLink = header.getByRole('link', { name: 'All divisions' })
 
   await expect(allDivisionsLink).toBeVisible()
-  await allDivisionsLink.click()
-
-  await expect(page).toHaveURL(/\/division-manager$/)
+  await Promise.all([
+    page.waitForURL(/\/division-manager$/),
+    activate(allDivisionsLink),
+  ])
   await expect(page.getByRole('heading', { name: 'Division Manager' })).toBeVisible()
   await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
 })
