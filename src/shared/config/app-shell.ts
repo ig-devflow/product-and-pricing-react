@@ -1,16 +1,10 @@
 import type { To } from 'react-router';
+import type {
+  AppShellContextualLink,
+  AppShellTabId,
+} from '@/app/router/route-meta';
 import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
-
-export type AppShellTopTabId =
-  | 'pricelist'
-  | 'products'
-  | 'discounts'
-  | 'agents'
-  | 'pricing-reference-data'
-  | 'new-pricing-year'
-  | 'calculator';
-
-export type AppShellContextualLink = 'all-divisions';
+export type AppShellTopTabId = AppShellTabId;
 
 export interface AppShellTopTabConfig {
   id: AppShellTopTabId;

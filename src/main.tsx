@@ -17,6 +17,10 @@ const enableMocking = async () => {
 };
 
 const renderApp = () => {
+  if (navigator.webdriver) {
+    document.documentElement.style.scrollBehavior = 'auto';
+  }
+
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>

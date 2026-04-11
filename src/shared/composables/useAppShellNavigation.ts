@@ -1,10 +1,15 @@
 import { useMemo } from 'react';
-import { matchPath, useLocation, type To } from 'react-router';
+import { matchRoutes, useLocation, type To } from 'react-router';
+import { appRouteMetaManifest } from '@/app/router/route-manifest';
+import type {
+  AppRouteHandle,
+  AppShellContextualLink,
+  AppShellSection,
+  AppShellTabId,
+} from '@/app/router/route-meta';
 import {
   appShellContextualTargets,
   appShellTopTabs,
-  type AppShellContextualLink,
-  type AppShellTopTabId,
 } from '@/shared/config/app-shell';
 import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
 
@@ -24,8 +29,8 @@ interface AppShellTopTabItem {
 }
 
 export interface AppShellNavigationState {
-  activeSection: 'division-manager';
-  activeTab: AppShellTopTabId | null;
+  activeSection: AppShellSection | null;
+  activeTab: AppShellTabId | null;
   topTabs: AppShellTopTabItem[];
   showAllDivisionsLink: boolean;
   allDivisionsTarget: To | null;
@@ -36,27 +41,19 @@ export const useAppShellNavigation = (): AppShellNavigationState => {
   const location = useLocation();
 
   return useMemo(() => {
-    const path = location.pathname;
-    const onListPage = path === DIVISION_MANAGER_ROUTES.list;
-    const onCreatePage = path === DIVISION_MANAGER_ROUTES.create;
-    const onDetailsPage = Boolean(
-      matchPath({ path: '/division-manager/:divisionId' }, path),
-    );
-    const onEditPage = Boolean(
-      matchPath({ path: '/division-manager/:divisionId/edit' }, path),
-    );
-
+    const matches = matchRoutes(appRouteMetaManifest, location) ?? [];
+    const shellMeta =
+      [...matches]
+        .reverse()
+        .map((match) => (match.route.handle as AppRouteHandle | undefined)?.shell)
+        .find(Boolean) ?? null;
+    const activeSection = shellMeta?.shellSection ?? null;
+    const activeTab = shellMeta?.shellTab ?? null;
     const contextualLink: AppShellContextualLink | null =
-      !onListPage && (onCreatePage || onDetailsPage || onEditPage)
-        ? 'all-divisions'
-        : null;
-    const activeTab: AppShellTopTabId | null =
-      path.startsWith(DIVISION_MANAGER_ROUTES.list)
-        ? 'pricing-reference-data'
-        : null;
+      shellMeta?.shellContextualLink ?? null;
 
     return {
-      activeSection: 'division-manager',
+      activeSection,
       activeTab,
       topTabs: appShellTopTabs.map((tab) => ({
         id: tab.id,
@@ -73,8 +70,8 @@ export const useAppShellNavigation = (): AppShellNavigationState => {
         id: 'division-manager',
         label: 'Division Manager',
         to: DIVISION_MANAGER_ROUTES.list,
-        isActive: true,
+        isActive: activeSection === 'division-manager',
       },
     };
-  }, [location.pathname]);
+  }, [location]);
 };

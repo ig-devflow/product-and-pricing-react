@@ -20,4 +20,31 @@ describe('useAppShellNavigation', () => {
       'Calculator',
     ]);
   });
+
+  it('derives active tab and contextual link from route metadata', () => {
+    const { Wrapper } = withAppProviders({
+      initialEntries: ['/division-manager/create'],
+    });
+    const { result } = renderHook(() => useAppShellNavigation(), {
+      wrapper: Wrapper,
+    });
+
+    expect(result.current.activeSection).toBe('division-manager');
+    expect(result.current.activeTab).toBe('pricing-reference-data');
+    expect(result.current.showAllDivisionsLink).toBe(true);
+    expect(result.current.allDivisionsTarget).toBe('/division-manager');
+  });
+
+  it('does not expose shell metadata for unknown routes', () => {
+    const { Wrapper } = withAppProviders({
+      initialEntries: ['/missing-route'],
+    });
+    const { result } = renderHook(() => useAppShellNavigation(), {
+      wrapper: Wrapper,
+    });
+
+    expect(result.current.activeSection).toBeNull();
+    expect(result.current.activeTab).toBeNull();
+    expect(result.current.showAllDivisionsLink).toBe(false);
+  });
 });

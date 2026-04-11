@@ -33,4 +33,16 @@ describe('AppShellHeader', () => {
 
     expect(screen.getByRole('link', { name: 'All divisions' })).toBeInTheDocument();
   });
+
+  it('shows contextual all divisions link from route metadata', () => {
+    const { Wrapper } = withAppProviders({
+      initialEntries: ['/division-manager/create'],
+    });
+
+    render(React.createElement(AppShellHeader), {
+      wrapper: Wrapper,
+    });
+
+    expect(screen.getByRole('link', { name: 'All divisions' })).toBeInTheDocument();
+  });
 });
