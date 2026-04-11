@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { divisionsApi } from '@/modules/divisions/api/divisions.api';
-import type { DivisionUpsertPayload } from '@/modules/divisions/model/division';
-import { divisionQueryKeys } from './division-query-keys';
+import { updateDivision } from '@/modules/divisions/api/divisions.api';
+import type { UpdateDivisionRequestDto } from '@/modules/divisions/api/dto';
+import { divisionQueryKeys } from '@/modules/divisions/model/query-keys';
 
 interface UpdateDivisionMutationVariables {
   divisionId: number;
-  payload: DivisionUpsertPayload;
+  payload: UpdateDivisionRequestDto;
 }
 
 export const useUpdateDivisionMutation = () => {
@@ -13,13 +13,15 @@ export const useUpdateDivisionMutation = () => {
 
   return useMutation({
     mutationFn: async ({ divisionId, payload }: UpdateDivisionMutationVariables) => {
-      await divisionsApi.update(divisionId, payload);
+      await updateDivision(divisionId, payload);
       return { divisionId, payload };
     },
     onSuccess: async ({ divisionId }) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: divisionQueryKeys.list() }),
-        queryClient.invalidateQueries({ queryKey: divisionQueryKeys.details(divisionId) }),
+        queryClient.invalidateQueries({ queryKey: divisionQueryKeys.lists() }),
+        queryClient.invalidateQueries({
+          queryKey: divisionQueryKeys.detail(divisionId),
+        }),
       ]);
     },
   });

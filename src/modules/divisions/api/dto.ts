@@ -1,5 +1,13 @@
-export interface DivisionAddressDto {
-  id?: number;
+export const ContentFormatDto = {
+  PlainText: 0,
+  Html: 1,
+} as const;
+
+export type ContentFormatDto =
+  (typeof ContentFormatDto)[keyof typeof ContentFormatDto];
+
+export interface ContactAddressDto {
+  id?: number | null;
   line1: string;
   line2: string;
   line3: string;
@@ -7,19 +15,19 @@ export interface DivisionAddressDto {
   countryISOCode: string;
 }
 
-export interface DivisionBannerDto {
-  image: string;
+export interface ImageFileDto {
+  image?: string | null;
   contentType: string;
-  fileName: string;
+  fileName?: string | null;
 }
 
 export interface DivisionReportTextDto {
   id: number;
   reportTextId: number;
-  divisionId: number;
-  centreId: number | null;
+  divisionId?: number | null;
+  centreId?: number | null;
   content: string;
-  format: number;
+  format: ContentFormatDto;
   createdOn: string;
   createdBy: string;
   lastModifiedOn: string;
@@ -30,35 +38,66 @@ export interface DivisionReportTextDto {
 export interface DivisionSummaryDto {
   id: number;
   name: string;
-  termsAndConditions: string;
-  groupsPaymentTerms: string;
+  termsAndConditions?: string | null;
+  groupsPaymentTerms?: string | null;
   isActive: boolean;
   websiteUrl: string;
-  address: DivisionAddressDto;
-  accreditationBanner: DivisionBannerDto | null;
-  visaLetterNote: string;
-  visaLetterNoteFormat: number;
+  address?: ContactAddressDto | null;
+  accreditationBanner?: ImageFileDto | null;
+  visaLetterNote?: string | null;
+  visaLetterNoteFormat: ContentFormatDto;
   createdBy: string;
   lastModifiedBy: string;
 }
 
-export interface DivisionDetailsDto extends DivisionSummaryDto {
+export interface DivisionDetailsDto {
+  id: number;
+  name: string;
+  termsAndConditions?: string | null;
+  groupsPaymentTerms?: string | null;
+  isActive: boolean;
+  websiteUrl: string;
+  address: ContactAddressDto;
+  accreditationBanner: ImageFileDto;
+  visaLetterNote?: string | null;
+  visaLetterNoteFormat: ContentFormatDto;
   createdOn: string;
+  createdBy: string;
   lastModifiedOn: string;
+  lastModifiedBy: string;
   years: number[];
   headOfficeEmailAddress: string;
   headOfficeTelephoneNo: string;
   divisionReportTexts: DivisionReportTextDto[];
 }
 
-export interface DivisionUpsertDto {
+export interface CreateDivisionRequestDto {
+  id?: number;
   name: string;
+  termsAndConditions?: string | null;
+  groupsPaymentTerms?: string | null;
+  isActive: boolean;
   websiteUrl: string;
+  visaLetterNote?: string | null;
+  visaLetterNoteFormat: ContentFormatDto;
+  address?: ContactAddressDto | null;
+  accreditationBanner?: ImageFileDto | null;
   headOfficeEmailAddress: string;
   headOfficeTelephoneNo: string;
-  address: DivisionAddressDto;
-  visaLetterNoteFormat: number;
-  visaLetterNote: string;
-  termsAndConditions: string;
-  groupsPaymentTerms: string;
+  divisionReportTexts: DivisionReportTextDto[];
+}
+
+export interface UpdateDivisionRequestDto {
+  name: string;
+  termsAndConditions?: string | null;
+  groupsPaymentTerms?: string | null;
+  isActive?: boolean | null;
+  websiteUrl: string;
+  visaLetterNote?: string | null;
+  visaLetterNoteFormat?: ContentFormatDto | null;
+  address?: ContactAddressDto | null;
+  accreditationBanner?: ImageFileDto | null;
+  headOfficeEmailAddress: string;
+  headOfficeTelephoneNo: string;
+  divisionReportTexts: DivisionReportTextDto[];
 }

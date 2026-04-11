@@ -1,23 +1,34 @@
 import { useNavigate } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
+import { useResourcePageState } from '@/shared/composables/useResourcePageState';
 import { useDivisionRouteId } from './useDivisionRouteId';
 import { useDivisionDetailsQuery } from '@/modules/divisions/queries/useDivisionDetailsQuery';
+import { useDivisionPageHeader } from './useDivisionPageHeader';
 
 export const useDivisionDetailsPage = () => {
   const navigate = useNavigate();
+  const pageHeader = useDivisionPageHeader('details');
   const divisionId = useDivisionRouteId();
   const divisionQuery = useDivisionDetailsQuery(divisionId);
+  const pageState = useResourcePageState({
+    data: divisionQuery.data,
+    isLoading: divisionQuery.isLoading,
+    error: divisionQuery.error,
+    fallbackErrorMessage: 'Failed to load division.',
+  });
 
   return {
+    pageHeader,
+    detailsQuery: divisionQuery,
     divisionId,
-    division: divisionQuery.data ?? null,
-    isLoading: divisionQuery.isLoading,
-    isError: divisionQuery.isError,
-    errorMessage: divisionQuery.error instanceof Error ? divisionQuery.error.message : 'Failed to load division',
+    details: pageState.data,
+    isLoading: pageState.isLoading,
+    errorMessage: pageState.errorMessage,
     openEditPage: () => {
       if (divisionId !== null) {
         navigate(DIVISION_MANAGER_ROUTES.edit(divisionId));
       }
     },
+    handleBack: () => navigate(DIVISION_MANAGER_ROUTES.list),
   };
 };

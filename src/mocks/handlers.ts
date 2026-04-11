@@ -1,5 +1,8 @@
 import { http, HttpResponse } from 'msw';
-import type { DivisionUpsertDto } from '@/modules/divisions/api/dto';
+import type {
+  CreateDivisionRequestDto,
+  UpdateDivisionRequestDto,
+} from '@/modules/divisions/api/dto';
 import { divisionFixtures } from './data/divisions';
 
 export const handlers = [
@@ -17,14 +20,14 @@ export const handlers = [
   }),
 
   http.put('/api/divisions/create', async ({ request }) => {
-    const payload = (await request.json()) as DivisionUpsertDto;
+    const payload = (await request.json()) as CreateDivisionRequestDto;
     divisionFixtures.create(payload);
     return HttpResponse.json({});
   }),
 
   http.put('/api/divisions/:divisionId', async ({ params, request }) => {
     const divisionId = Number(params.divisionId);
-    const payload = (await request.json()) as DivisionUpsertDto;
+    const payload = (await request.json()) as UpdateDivisionRequestDto;
     const updated = divisionFixtures.update(divisionId, payload);
 
     if (!updated) {

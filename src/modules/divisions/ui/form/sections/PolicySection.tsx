@@ -38,7 +38,7 @@ export const PolicySection = () => {
                 name="Visa letter note format"
                 value={String(field.value)}
                 onValueChange={(value) =>
-                  field.onChange(Number(value) as DivisionVisaLetterNoteFormat)
+                  field.onChange(value as DivisionVisaLetterNoteFormat)
                 }
                 options={selectOptions}
               />

@@ -50,16 +50,20 @@ export const useAppShellNavigation = (): AppShellNavigationState => {
       !onListPage && (onCreatePage || onDetailsPage || onEditPage)
         ? 'all-divisions'
         : null;
+    const activeTab: AppShellTopTabId | null =
+      path.startsWith(DIVISION_MANAGER_ROUTES.list)
+        ? 'pricing-reference-data'
+        : null;
 
     return {
       activeSection: 'division-manager',
-      activeTab: null,
+      activeTab,
       topTabs: appShellTopTabs.map((tab) => ({
         id: tab.id,
         label: tab.label,
         to: tab.to ?? null,
         inert: tab.inert ?? !tab.to,
-        isActive: false,
+        isActive: tab.id === activeTab,
       })),
       showAllDivisionsLink: contextualLink === 'all-divisions',
       allDivisionsTarget: contextualLink

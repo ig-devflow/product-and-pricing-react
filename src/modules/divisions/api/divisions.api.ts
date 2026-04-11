@@ -1,20 +1,47 @@
 import { httpClient } from '@/shared/api/http/http-client';
-import type { DivisionDetailsDto, DivisionSummaryDto, DivisionUpsertDto } from './dto';
+import type {
+  CreateDivisionRequestDto,
+  DivisionDetailsDto,
+  DivisionSummaryDto,
+  UpdateDivisionRequestDto,
+} from './dto';
 
-const DIVISIONS_BASE = '/api/divisions';
+const DIVISIONS_BASE_PATH = '/api/divisions';
+
+export async function getDivisions(): Promise<DivisionSummaryDto[]> {
+  return httpClient.get<DivisionSummaryDto[]>(DIVISIONS_BASE_PATH);
+}
+
+export async function getDivisionById(
+  divisionId: number,
+): Promise<DivisionDetailsDto> {
+  return httpClient.get<DivisionDetailsDto>(
+    `${DIVISIONS_BASE_PATH}/${divisionId}`,
+  );
+}
+
+export async function createDivision(
+  payload: CreateDivisionRequestDto,
+): Promise<void> {
+  await httpClient.put<unknown, CreateDivisionRequestDto>(
+    `${DIVISIONS_BASE_PATH}/create`,
+    payload,
+  );
+}
+
+export async function updateDivision(
+  divisionId: number,
+  payload: UpdateDivisionRequestDto,
+): Promise<void> {
+  await httpClient.put<unknown, UpdateDivisionRequestDto>(
+    `${DIVISIONS_BASE_PATH}/${divisionId}`,
+    payload,
+  );
+}
 
 export const divisionsApi = {
-  getList: () => httpClient.get<DivisionSummaryDto[]>(DIVISIONS_BASE),
-
-  getById: (divisionId: number) =>
-    httpClient.get<DivisionDetailsDto>(`${DIVISIONS_BASE}/${divisionId}`),
-
-  create: (payload: DivisionUpsertDto) =>
-    httpClient.put<DivisionUpsertDto, Record<string, never>>(`${DIVISIONS_BASE}/create`, payload),
-
-  update: (divisionId: number, payload: DivisionUpsertDto) =>
-    httpClient.put<DivisionUpsertDto, Record<string, never>>(
-      `${DIVISIONS_BASE}/${divisionId}`,
-      payload,
-    ),
+  getList: getDivisions,
+  getById: getDivisionById,
+  create: createDivision,
+  update: updateDivision,
 };

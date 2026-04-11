@@ -1,60 +1,32 @@
+import type {
+  CreateDivisionRequestDto,
+  UpdateDivisionRequestDto,
+} from '../api/dto';
+import { ContentFormat } from './types';
+
+export { ContentFormat };
+export type {
+  DivisionAddress,
+  DivisionBanner,
+  DivisionDetails,
+  DivisionFormValues,
+  DivisionListItem,
+  DivisionReportText,
+} from './types';
+
 export const DivisionVisaLetterNoteFormat = {
-  PlainText: 0,
-  RichText: 1,
+  PlainText: ContentFormat.PlainText,
+  RichText: ContentFormat.Html,
 } as const;
 
 export type DivisionVisaLetterNoteFormat =
   (typeof DivisionVisaLetterNoteFormat)[keyof typeof DivisionVisaLetterNoteFormat];
 
-export interface DivisionAddress {
-  id?: number;
-  line1: string;
-  line2: string;
-  line3: string;
-  line4: string;
-  countryISOCode: string;
-}
+export type DivisionSummary = import('./types').DivisionListItem;
 
-export interface DivisionBanner {
-  image: string;
-  contentType: string;
-  fileName: string;
-}
-
-export interface DivisionSummary {
-  id: number;
-  name: string;
-  termsAndConditions: string;
-  groupsPaymentTerms: string;
-  isActive: boolean;
-  websiteUrl: string;
-  address: DivisionAddress;
-  accreditationBanner: DivisionBanner | null;
-  visaLetterNote: string;
-  visaLetterNoteFormat: DivisionVisaLetterNoteFormat;
-  createdBy: string;
-  lastModifiedBy: string;
-}
-
-export interface DivisionDetails extends DivisionSummary {
-  createdOn: string;
-  lastModifiedOn: string;
-  years: number[];
-  headOfficeEmailAddress: string;
-  headOfficeTelephoneNo: string;
-}
-
-export interface DivisionUpsertPayload {
-  name: string;
-  websiteUrl: string;
-  headOfficeEmailAddress: string;
-  headOfficeTelephoneNo: string;
-  address: DivisionAddress;
-  visaLetterNoteFormat: DivisionVisaLetterNoteFormat;
-  visaLetterNote: string;
-  termsAndConditions: string;
-  groupsPaymentTerms: string;
-}
+export type DivisionUpsertPayload =
+  | CreateDivisionRequestDto
+  | UpdateDivisionRequestDto;
 
 export const divisionVisaLetterNoteFormatOptions: Array<{
   value: DivisionVisaLetterNoteFormat;

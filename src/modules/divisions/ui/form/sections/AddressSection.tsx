@@ -16,34 +16,34 @@ export const AddressSection = () => {
         <AppField
           id="division-address-line-1"
           label="Address line 1"
-          error={errors.addressLine1?.message}
+          error={errors.address?.line1?.message}
           required
         >
-          <AppInput id="division-address-line-1" {...register('addressLine1')} />
+          <AppInput id="division-address-line-1" {...register('address.line1')} />
         </AppField>
 
-        <AppField id="division-address-line-2" label="Address line 2" error={errors.addressLine2?.message}>
-          <AppInput id="division-address-line-2" {...register('addressLine2')} />
+        <AppField id="division-address-line-2" label="Address line 2" error={errors.address?.line2?.message}>
+          <AppInput id="division-address-line-2" {...register('address.line2')} />
         </AppField>
 
-        <AppField id="division-address-line-3" label="Address line 3" error={errors.addressLine3?.message}>
-          <AppInput id="division-address-line-3" {...register('addressLine3')} />
+        <AppField id="division-address-line-3" label="Address line 3" error={errors.address?.line3?.message}>
+          <AppInput id="division-address-line-3" {...register('address.line3')} />
         </AppField>
 
-        <AppField id="division-address-line-4" label="Address line 4" error={errors.addressLine4?.message}>
-          <AppInput id="division-address-line-4" {...register('addressLine4')} />
+        <AppField id="division-address-line-4" label="Address line 4" error={errors.address?.line4?.message}>
+          <AppInput id="division-address-line-4" {...register('address.line4')} />
         </AppField>
 
         <AppField
           id="division-country-iso-code"
           label="Country ISO code"
-          error={errors.countryISOCode?.message}
+          error={errors.address?.countryIsoCode?.message}
           required
         >
           <AppInput
             id="division-country-iso-code"
             maxLength={2}
-            {...register('countryISOCode')}
+            {...register('address.countryIsoCode')}
           />
         </AppField>
       </div>

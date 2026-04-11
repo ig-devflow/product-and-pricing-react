@@ -7,14 +7,18 @@ const DivisionCreatePage = () => {
 
   return (
     <section className="app-page division-create-page">
-      <AppPageHeader title={page.title} />
+      <AppPageHeader
+        eyebrow={page.pageHeader.eyebrow}
+        title={page.pageHeader.title}
+        subtitle={page.pageHeader.subtitle}
+      />
       <DivisionForm
-        defaultValues={page.defaultValues}
+        defaultValues={page.initialValues}
         submitLabel={page.submitLabel}
-        isSubmitting={page.isSubmitting}
-        errorMessage={page.errorMessage}
-        onSubmit={page.onSubmit}
-        onCancel={page.onCancel}
+        isSubmitting={page.isSaving}
+        errorMessage={page.saveErrorMessage}
+        onSubmit={page.handleSubmit}
+        onCancel={page.handleCancel}
       />
     </section>
   );

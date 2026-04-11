@@ -9,23 +9,27 @@ const DivisionEditPage = () => {
     return <p className="app-page">Loading division...</p>;
   }
 
-  if (page.isError || page.division === null) {
+  if (page.loadErrorMessage || page.details === null) {
     return (
       <div className="app-page">
-        <p role="alert">{page.errorMessage}</p>
+        <p role="alert">{page.loadErrorMessage}</p>
       </div>
     );
   }
 
   return (
     <section className="app-page division-edit-page">
-      <AppPageHeader title={page.title} description={`Editing ${page.division.name}`} />
+      <AppPageHeader
+        eyebrow={page.pageHeader.eyebrow}
+        title={page.pageHeader.title}
+        subtitle={page.pageHeader.subtitle}
+      />
       <DivisionForm
-        defaultValues={page.defaultValues}
+        defaultValues={page.initialValues}
         submitLabel={page.submitLabel}
-        isSubmitting={page.isSubmitting}
-        errorMessage={page.errorMessage}
-        division={page.division}
+        isSubmitting={page.isSaving}
+        errorMessage={page.saveErrorMessage}
+        division={page.details}
         onSubmit={page.onSubmit}
         onCancel={page.onCancel}
       />

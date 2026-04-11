@@ -1,18 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { divisionsApi } from '@/modules/divisions/api/divisions.api';
-import type { DivisionUpsertPayload } from '@/modules/divisions/model/division';
-import { divisionQueryKeys } from './division-query-keys';
+import { createDivision } from '@/modules/divisions/api/divisions.api';
+import type { CreateDivisionRequestDto } from '@/modules/divisions/api/dto';
+import { divisionQueryKeys } from '@/modules/divisions/model/query-keys';
 
 export const useCreateDivisionMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: DivisionUpsertPayload) => {
-      await divisionsApi.create(payload);
+    mutationFn: async (payload: CreateDivisionRequestDto) => {
+      await createDivision(payload);
       return payload;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: divisionQueryKeys.list() });
+      await queryClient.invalidateQueries({ queryKey: divisionQueryKeys.lists() });
     },
   });
 };

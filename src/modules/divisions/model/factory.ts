@@ -1,27 +1,15 @@
-import {
-  DivisionVisaLetterNoteFormat,
-  type DivisionDetails,
-} from './division';
-import type { DivisionFormValues } from './division-form';
+import type { DivisionDetails } from './types';
+import { createEmptyDivisionFormValues } from './factories';
 
-export const createDivisionFormDefaults = (): DivisionFormValues => ({
-  name: '',
-  websiteUrl: '',
-  headOfficeEmailAddress: '',
-  headOfficeTelephoneNo: '',
-  addressLine1: '',
-  addressLine2: '',
-  addressLine3: '',
-  addressLine4: '',
-  countryISOCode: '',
-  visaLetterNoteFormat: DivisionVisaLetterNoteFormat.RichText,
-  visaLetterNote: '',
-  termsAndConditions: '',
-  groupsPaymentTerms: '',
-});
+export * from './factories';
+
+export const createDivisionFormDefaults = createEmptyDivisionFormValues;
 
 export const createDivisionSummaryItems = (
-  division: Pick<DivisionDetails, 'id' | 'createdOn' | 'lastModifiedOn' | 'createdBy' | 'lastModifiedBy'>,
+  division: Pick<
+    DivisionDetails,
+    'id' | 'createdOn' | 'lastModifiedOn' | 'createdBy' | 'lastModifiedBy'
+  >,
 ): Array<{ label: string; value: string }> => [
   { label: 'Division ID', value: String(division.id) },
   { label: 'Created by', value: division.createdBy },

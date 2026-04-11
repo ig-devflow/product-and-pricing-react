@@ -1,4 +1,10 @@
-import type { DivisionDetailsDto, DivisionSummaryDto, DivisionUpsertDto } from '@/modules/divisions/api/dto';
+import {
+  ContentFormatDto,
+  type CreateDivisionRequestDto,
+  type DivisionDetailsDto,
+  type DivisionSummaryDto,
+  type UpdateDivisionRequestDto,
+} from '@/modules/divisions/api/dto';
 
 const baseBanner = {
   image:
@@ -24,13 +30,22 @@ const createSummary = (id: number, name: string): DivisionSummaryDto => ({
   },
   accreditationBanner: baseBanner,
   visaLetterNote: 'Visa note',
-  visaLetterNoteFormat: 1,
+  visaLetterNoteFormat: ContentFormatDto.Html,
   createdBy: 'lydiavella@gmail.com',
   lastModifiedBy: 'lydiavella@gmail.com',
 });
 
 const createDetails = (id: number, name: string): DivisionDetailsDto => ({
   ...createSummary(id, name),
+  address: {
+    id: 100 + id,
+    line1: `${id} Main Street`,
+    line2: 'Central',
+    line3: 'Valletta',
+    line4: 'VLT 1000',
+    countryISOCode: 'MT',
+  },
+  accreditationBanner: baseBanner,
   createdOn: '2026-04-01T08:00:00Z',
   lastModifiedOn: '2026-04-02T09:30:00Z',
   years: [2026],
@@ -47,6 +62,22 @@ const initialDetails = new Map<number, DivisionDetailsDto>([
 let list = structuredClone(initialList);
 let details = new Map(initialDetails);
 
+function resolveAddress(
+  address: CreateDivisionRequestDto['address'] | UpdateDivisionRequestDto['address'],
+  fallback: NonNullable<DivisionDetailsDto['address']>,
+) {
+  return address ?? fallback;
+}
+
+function resolveBanner(
+  banner:
+    | CreateDivisionRequestDto['accreditationBanner']
+    | UpdateDivisionRequestDto['accreditationBanner'],
+  fallback: NonNullable<DivisionDetailsDto['accreditationBanner']>,
+) {
+  return banner ?? fallback;
+}
+
 export const divisionFixtures = {
   getList: () => list,
   getById: (id: number) => details.get(id) ?? null,
@@ -54,7 +85,7 @@ export const divisionFixtures = {
     list = structuredClone(initialList);
     details = new Map(initialDetails);
   },
-  create: (payload: DivisionUpsertDto) => {
+  create: (payload: CreateDivisionRequestDto) => {
     const nextId = Math.max(0, ...list.map((item) => item.id)) + 1;
     const summary = createSummary(nextId, payload.name);
     const detail = createDetails(nextId, payload.name);
@@ -62,8 +93,10 @@ export const divisionFixtures = {
     const mergedSummary: DivisionSummaryDto = {
       ...summary,
       name: payload.name,
+      isActive: payload.isActive,
       websiteUrl: payload.websiteUrl,
-      address: payload.address,
+      address: payload.address ?? summary.address,
+      accreditationBanner: payload.accreditationBanner ?? summary.accreditationBanner,
       termsAndConditions: payload.termsAndConditions,
       groupsPaymentTerms: payload.groupsPaymentTerms,
       visaLetterNote: payload.visaLetterNote,
@@ -73,8 +106,14 @@ export const divisionFixtures = {
     const mergedDetail: DivisionDetailsDto = {
       ...detail,
       ...mergedSummary,
+      address: resolveAddress(payload.address, detail.address),
+      accreditationBanner: resolveBanner(
+        payload.accreditationBanner,
+        detail.accreditationBanner,
+      ),
       headOfficeEmailAddress: payload.headOfficeEmailAddress,
       headOfficeTelephoneNo: payload.headOfficeTelephoneNo,
+      divisionReportTexts: payload.divisionReportTexts,
     };
 
     list = [mergedSummary, ...list];
@@ -82,7 +121,7 @@ export const divisionFixtures = {
 
     return mergedDetail;
   },
-  update: (id: number, payload: DivisionUpsertDto) => {
+  update: (id: number, payload: UpdateDivisionRequestDto) => {
     const existing = details.get(id);
     if (!existing) {
       return null;
@@ -91,19 +130,32 @@ export const divisionFixtures = {
     const updated: DivisionDetailsDto = {
       ...existing,
       name: payload.name,
+      isActive: payload.isActive ?? existing.isActive,
       websiteUrl: payload.websiteUrl,
-      termsAndConditions: payload.termsAndConditions,
-      groupsPaymentTerms: payload.groupsPaymentTerms,
-      visaLetterNoteFormat: payload.visaLetterNoteFormat,
-      visaLetterNote: payload.visaLetterNote,
-      address: payload.address,
+      termsAndConditions: payload.termsAndConditions ?? '',
+      groupsPaymentTerms: payload.groupsPaymentTerms ?? '',
+      visaLetterNoteFormat: payload.visaLetterNoteFormat ?? existing.visaLetterNoteFormat,
+      visaLetterNote: payload.visaLetterNote ?? '',
+      address: resolveAddress(payload.address, existing.address),
+      accreditationBanner: resolveBanner(
+        payload.accreditationBanner,
+        existing.accreditationBanner,
+      ),
       headOfficeEmailAddress: payload.headOfficeEmailAddress,
       headOfficeTelephoneNo: payload.headOfficeTelephoneNo,
+      divisionReportTexts: payload.divisionReportTexts,
       lastModifiedOn: new Date().toISOString(),
     };
 
     details.set(id, updated);
-    list = list.map((item) => (item.id === id ? { ...item, ...updated } : item));
+    list = list.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            ...updated,
+          }
+        : item,
+    );
 
     return updated;
   },

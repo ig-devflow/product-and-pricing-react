@@ -1,28 +1,17 @@
-import { useMemo } from 'react';
-import { useLocation, matchPath } from 'react-router';
-import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
+import { useEntityPageHeader, type EntityPageMode } from '@/shared/composables/useEntityPageHeader';
 
-export interface DivisionPageHeaderState {
-  showAllDivisionsLink: boolean;
+export type DivisionPageMode = EntityPageMode;
+
+export function useDivisionPageHeader(mode: DivisionPageMode) {
+  return useEntityPageHeader(mode, {
+    eyebrow: 'Division Manager',
+    entityLabel: 'division',
+    subtitles: {
+      create:
+        'Create a division record with contact details, content blocks, and banner settings.',
+      edit: 'Update division details, content, and banner settings.',
+      details:
+        'Review division details, contact information, and content before making changes.',
+    },
+  });
 }
-
-export const useDivisionPageHeader = (): DivisionPageHeaderState => {
-  const location = useLocation();
-
-  return useMemo(() => {
-    const path = location.pathname;
-
-    const onListPage = path === DIVISION_MANAGER_ROUTES.list;
-    const onCreatePage = path === DIVISION_MANAGER_ROUTES.create;
-    const onDetailsPage = Boolean(
-      matchPath({ path: '/division-manager/:divisionId' }, path),
-    );
-    const onEditPage = Boolean(
-      matchPath({ path: '/division-manager/:divisionId/edit' }, path),
-    );
-
-    return {
-      showAllDivisionsLink: !onListPage && (onCreatePage || onDetailsPage || onEditPage),
-    };
-  }, [location.pathname]);
-};

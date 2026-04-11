@@ -2,6 +2,7 @@ import { AppButton } from '@/shared/ui/primitives';
 import { AppPageHeader, AppSectionCard } from '@/shared/ui/patterns';
 import { useDivisionDetailsPage } from '@/modules/divisions/composables/useDivisionDetailsPage';
 import { formatUtcDateTime } from '@/shared/lib/date';
+import { ContentFormat } from '@/modules/divisions/model/division';
 
 const DivisionDetailsPage = () => {
   const page = useDivisionDetailsPage();
@@ -10,7 +11,7 @@ const DivisionDetailsPage = () => {
     return <p className="app-page">Loading division...</p>;
   }
 
-  if (page.isError || page.division === null) {
+  if (page.errorMessage || page.details === null) {
     return (
       <div className="app-page">
         <p role="alert">{page.errorMessage}</p>
@@ -21,8 +22,9 @@ const DivisionDetailsPage = () => {
   return (
     <section className="app-page division-details-page">
       <AppPageHeader
-        title={page.division.name}
-        description="Review details for this division."
+        eyebrow={page.pageHeader.eyebrow}
+        title={page.pageHeader.title}
+        subtitle={page.pageHeader.subtitle}
         actions={
           <AppButton type="button" onClick={page.openEditPage}>
             Edit division
@@ -35,31 +37,35 @@ const DivisionDetailsPage = () => {
           <dl className="division-details-grid">
             <div>
               <dt>Website</dt>
-              <dd>{page.division.websiteUrl}</dd>
+              <dd>{page.details.websiteUrl}</dd>
             </div>
             <div>
               <dt>Head office email</dt>
-              <dd>{page.division.headOfficeEmailAddress}</dd>
+              <dd>{page.details.headOfficeEmailAddress}</dd>
             </div>
             <div>
               <dt>Head office phone</dt>
-              <dd>{page.division.headOfficeTelephoneNo}</dd>
+              <dd>{page.details.headOfficeTelephoneNo}</dd>
             </div>
             <div>
               <dt>Visa note format</dt>
-              <dd>{page.division.visaLetterNoteFormat === 0 ? 'Plain text' : 'Rich text'}</dd>
+              <dd>
+                {page.details.visaLetterNoteFormat === ContentFormat.PlainText
+                  ? 'Plain text'
+                  : 'Rich text'}
+              </dd>
             </div>
             <div>
               <dt>Terms and conditions</dt>
-              <dd>{page.division.termsAndConditions}</dd>
+              <dd>{page.details.termsAndConditions}</dd>
             </div>
             <div>
               <dt>Groups payment terms</dt>
-              <dd>{page.division.groupsPaymentTerms}</dd>
+              <dd>{page.details.groupsPaymentTerms}</dd>
             </div>
             <div>
               <dt>Last modified</dt>
-              <dd>{formatUtcDateTime(page.division.lastModifiedOn)}</dd>
+              <dd>{formatUtcDateTime(page.details.lastModifiedOn)}</dd>
             </div>
           </dl>
         </AppSectionCard>
