@@ -1,4 +1,4 @@
-﻿import {
+import {
   DivisionVisaLetterNoteFormat,
   type DivisionDetails,
 } from './division';

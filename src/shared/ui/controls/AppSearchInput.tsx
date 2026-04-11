@@ -1,9 +1,11 @@
-﻿import { forwardRef, type InputHTMLAttributes } from 'react';
+import { forwardRef, type InputHTMLAttributes } from 'react';
 import { AppInput } from '@/shared/ui/primitives';
 import { cn } from '@/shared/lib/cn';
 
-export interface AppSearchInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {}
+export type AppSearchInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type'
+>;
 
 export const AppSearchInput = forwardRef<HTMLInputElement, AppSearchInputProps>(
   ({ className, ...rest }, ref) => (

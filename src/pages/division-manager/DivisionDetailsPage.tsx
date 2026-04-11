@@ -1,4 +1,4 @@
-﻿import { AppButton } from '@/shared/ui/primitives';
+import { AppButton } from '@/shared/ui/primitives';
 import { AppPageHeader, AppSectionCard } from '@/shared/ui/patterns';
 import { useDivisionDetailsPage } from '@/modules/divisions/composables/useDivisionDetailsPage';
 import { formatUtcDateTime } from '@/shared/lib/date';

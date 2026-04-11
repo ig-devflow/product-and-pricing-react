@@ -1,4 +1,4 @@
-﻿import { AppButton } from '@/shared/ui/primitives';
+import { AppButton } from '@/shared/ui/primitives';
 
 export interface AppFormActionsPanelProps {
   submitLabel: string;

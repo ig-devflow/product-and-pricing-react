@@ -1,9 +1,9 @@
-﻿{
+{
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "target": "es2023",
+    "target": "ES2023",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "module": "esnext",
+    "module": "ESNext",
     "types": ["vite/client"],
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -15,13 +15,15 @@
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "env.d.ts"],
+  "include": ["env.d.ts", "src/**/*"],
   "exclude": ["src/**/__tests__/**"]
 }

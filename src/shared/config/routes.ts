@@ -1,4 +1,4 @@
-﻿export const APP_ROUTES = {
+export const APP_ROUTES = {
   root: '/',
   divisionManager: '/division-manager',
 } as const;

@@ -1,4 +1,4 @@
-﻿import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import {
   DivisionVisaLetterNoteFormat,
   divisionVisaLetterNoteFormatOptions,

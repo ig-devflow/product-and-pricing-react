@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { LEGACY_PRODUCTS_PRICING_TABS } from '@/shared/config/routes';
 
 export interface AppShellNavigationState {

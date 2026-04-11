@@ -1,4 +1,4 @@
-﻿import { AppButton, AppNavLink } from '@/shared/ui/primitives';
+import { AppButton, AppNavLink } from '@/shared/ui/primitives';
 import { AppPageHeader, AppSectionCard } from '@/shared/ui/patterns';
 import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
 import { useDivisionListPage } from '@/modules/divisions/composables/useDivisionListPage';

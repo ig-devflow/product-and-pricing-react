@@ -1,4 +1,4 @@
-﻿import { renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { DivisionDetails } from '@/modules/divisions/model/division';
 import type { DivisionFormValues } from '@/modules/divisions/model/division-form';

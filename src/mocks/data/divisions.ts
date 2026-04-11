@@ -1,4 +1,4 @@
-﻿import type { DivisionDetailsDto, DivisionSummaryDto, DivisionUpsertDto } from '@/modules/divisions/api/dto';
+import type { DivisionDetailsDto, DivisionSummaryDto, DivisionUpsertDto } from '@/modules/divisions/api/dto';
 
 const baseBanner = {
   image:

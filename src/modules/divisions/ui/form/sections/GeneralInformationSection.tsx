@@ -1,4 +1,4 @@
-﻿import { useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import type { DivisionFormValues } from '@/modules/divisions/model/division-form';
 import { AppField } from '@/shared/ui/controls';
 import { AppInput } from '@/shared/ui/primitives';

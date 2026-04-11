@@ -1,4 +1,4 @@
-﻿import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
+import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
 import { useAppShellNavigation } from '@/shared/composables/useAppShellNavigation';
 import { AppNavLink } from '@/shared/ui/primitives';
 

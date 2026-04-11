@@ -1,4 +1,4 @@
-﻿import { AppPageHeader } from '@/shared/ui/patterns';
+import { AppPageHeader } from '@/shared/ui/patterns';
 import { DivisionForm } from '@/modules/divisions/ui/form';
 import { useDivisionEditPage } from '@/modules/divisions/composables/useDivisionEditPage';
 

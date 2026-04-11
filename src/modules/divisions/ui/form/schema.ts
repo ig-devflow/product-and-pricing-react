@@ -1,4 +1,4 @@
-﻿import { z } from 'zod';
+import { z } from 'zod';
 import { DivisionVisaLetterNoteFormat } from '@/modules/divisions/model/division';
 
 const requiredMessage = 'This field is required';

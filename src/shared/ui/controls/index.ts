@@ -1,4 +1,4 @@
-﻿export { AppField } from './AppField';
+export { AppField } from './AppField';
 export type { AppFieldProps } from './AppField';
 
 export { AppSearchInput } from './AppSearchInput';

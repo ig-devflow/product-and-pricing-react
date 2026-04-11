@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { AppSurface } from '@/shared/ui/primitives';
 import { cn } from '@/shared/lib/cn';
 

@@ -1,4 +1,4 @@
-﻿import { httpClient } from '@/shared/api/http/http-client';
+import { httpClient } from '@/shared/api/http/http-client';
 import type { DivisionDetailsDto, DivisionSummaryDto, DivisionUpsertDto } from './dto';
 
 const DIVISIONS_BASE = '/api/divisions';

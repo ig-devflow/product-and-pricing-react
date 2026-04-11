@@ -1,4 +1,4 @@
-﻿import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { DivisionFormValues } from '@/modules/divisions/model/division-form';
 import {

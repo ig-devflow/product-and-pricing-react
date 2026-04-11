@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useLocation, matchPath } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
 

@@ -1,6 +1,16 @@
-﻿{
+{
   "extends": "./tsconfig.app.json",
-  "include": ["src/**/*", "tests/**/*", "env.d.ts"],
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx",
+    "src/**/__tests__/**/*.ts",
+    "src/**/__tests__/**/*.tsx",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "env.d.ts"
+  ],
   "exclude": ["e2e/**/*"],
   "compilerOptions": {
     "lib": ["ES2023", "DOM", "DOM.Iterable"],

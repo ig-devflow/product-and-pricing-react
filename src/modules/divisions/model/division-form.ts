@@ -1,4 +1,4 @@
-﻿import type { DivisionUpsertPayload, DivisionVisaLetterNoteFormat } from './division';
+import type { DivisionUpsertPayload, DivisionVisaLetterNoteFormat } from './division';
 
 export interface DivisionFormValues {
   name: string;

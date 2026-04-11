@@ -1,4 +1,4 @@
-﻿import { Outlet } from 'react-router';
+import { Outlet } from 'react-router';
 import { useDivisionPageHeader } from '@/modules/divisions/composables/useDivisionPageHeader';
 import { AppShellFooter, AppShellHeader } from '@/shared/ui/patterns';
 

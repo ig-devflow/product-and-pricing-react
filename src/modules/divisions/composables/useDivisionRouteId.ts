@@ -1,4 +1,4 @@
-﻿import { useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 export const useDivisionRouteId = (): number | null => {
   const { divisionId } = useParams<{ divisionId: string }>();

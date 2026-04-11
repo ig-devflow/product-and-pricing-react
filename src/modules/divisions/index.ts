@@ -1,4 +1,4 @@
-﻿export * from './api/divisions.api';
+export * from './api/divisions.api';
 export * from './model/division';
 export * from './model/division-form';
 export * from './queries/division-query-keys';

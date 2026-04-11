@@ -1,4 +1,4 @@
-﻿import { APP_CONFIG } from '@/shared/config/env';
+import { APP_CONFIG } from '@/shared/config/env';
 import { HttpError } from './http-error';
 
 export interface HttpClient {
@@ -34,7 +34,7 @@ const request = async <TResponse>(path: string, init: RequestInit): Promise<TRes
     headers: {
       Accept: 'application/json',
       ...(init.body ? { 'Content-Type': 'application/json' } : {}),
-      ...(init.headers ?? {}),
+      ...init.headers,
     },
   });
 

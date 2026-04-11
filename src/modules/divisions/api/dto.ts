@@ -1,4 +1,4 @@
-﻿export interface DivisionAddressDto {
+export interface DivisionAddressDto {
   id?: number;
   line1: string;
   line2: string;

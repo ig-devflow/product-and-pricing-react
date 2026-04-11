@@ -1,4 +1,4 @@
-﻿import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import type { DivisionUpsertDto } from '@/modules/divisions/api/dto';
 import { divisionFixtures } from './data/divisions';
 

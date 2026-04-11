@@ -1,4 +1,4 @@
-﻿import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { divisionsApi } from '@/modules/divisions/api/divisions.api';
 import type { DivisionUpsertPayload } from '@/modules/divisions/model/division';
 import { divisionQueryKeys } from './division-query-keys';

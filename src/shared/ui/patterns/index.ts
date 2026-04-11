@@ -1,4 +1,4 @@
-﻿export { AppPageHeader } from './AppPageHeader';
+export { AppPageHeader } from './AppPageHeader';
 export type { AppPageHeaderProps } from './AppPageHeader';
 
 export { AppSectionCard } from './AppSectionCard';

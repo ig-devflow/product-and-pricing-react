@@ -1,4 +1,4 @@
-﻿export const DivisionVisaLetterNoteFormat = {
+export const DivisionVisaLetterNoteFormat = {
   PlainText: 0,
   RichText: 1,
 } as const;

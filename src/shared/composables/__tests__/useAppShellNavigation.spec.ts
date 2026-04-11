@@ -1,4 +1,4 @@
-﻿import { renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { useAppShellNavigation } from '@/shared/composables/useAppShellNavigation';
 

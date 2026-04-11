@@ -1,4 +1,4 @@
-﻿import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { divisionsApi } from '@/modules/divisions/api/divisions.api';
 import { mapDivisionSummaryDto } from '@/modules/divisions/model/mappers';
 import { divisionQueryKeys } from './division-query-keys';

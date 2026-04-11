@@ -1,4 +1,4 @@
-﻿import * as Select from '@radix-ui/react-select';
+import * as Select from '@radix-ui/react-select';
 import type { KeyboardEvent } from 'react';
 
 export interface AppSelectOption {
