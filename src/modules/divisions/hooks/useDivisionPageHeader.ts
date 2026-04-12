@@ -1,4 +1,4 @@
-import { useEntityPageHeader, type EntityPageMode } from '@/shared/composables/useEntityPageHeader';
+import { useEntityPageHeader, type EntityPageMode } from '@/shared/hooks/useEntityPageHeader';
 
 export type DivisionPageMode = EntityPageMode;
 

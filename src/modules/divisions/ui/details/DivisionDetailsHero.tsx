@@ -1,7 +1,7 @@
 import { AppPill } from '@/shared/ui/AppPill';
 import { AppButton, AppSurface } from '@/shared/ui/primitives';
 import { getDivisionBannerSrc } from '@/modules/divisions/lib/banner';
-import type { DivisionDetails } from '@/modules/divisions/model/division';
+import type { DivisionDetails } from '@/modules/divisions/model/types';
 
 export interface DivisionDetailsHeroProps {
   division: DivisionDetails;

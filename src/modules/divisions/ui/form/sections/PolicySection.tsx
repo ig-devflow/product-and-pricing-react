@@ -2,8 +2,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 import {
   type DivisionVisaLetterNoteFormat,
   divisionVisaLetterNoteFormatOptions,
-} from '@/modules/divisions/model/division';
-import type { DivisionFormValues } from '@/modules/divisions/model/division-form';
+} from '@/modules/divisions/model/types';
+import type { DivisionFormValues } from '@/modules/divisions/model/types';
 import { AppField, AppSelect } from '@/shared/ui/controls';
 import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns';
 import { AppTextarea } from '@/shared/ui/primitives';

@@ -1,9 +1,11 @@
 import { AppPill } from '@/shared/ui/AppPill';
 import { AppSummaryRows } from '@/shared/ui/AppSummaryRows';
 import { AppSidebarSummary } from '@/shared/ui/patterns';
-import type { DivisionDetails, DivisionFormValues } from '@/modules/divisions/model/division';
-import { removeProtocol } from '@/modules/divisions/model/mappers';
-import { formatDivisionAddressPreview } from '@/modules/divisions/model/validation';
+import type { DivisionDetails, DivisionFormValues } from '@/modules/divisions/model/types';
+import {
+  buildDivisionAddressText,
+  removeProtocol,
+} from '@/modules/divisions/model/formatters';
 
 export interface DivisionFormAsideSummaryProps {
   mode: 'create' | 'edit';
@@ -16,7 +18,7 @@ export const DivisionFormAsideSummary = ({
   values,
   details = null,
 }: DivisionFormAsideSummaryProps) => {
-  const addressPreview = formatDivisionAddressPreview(values.address);
+  const addressPreview = buildDivisionAddressText(values.address);
   const websitePreview = removeProtocol(values.websiteUrl);
 
   return (

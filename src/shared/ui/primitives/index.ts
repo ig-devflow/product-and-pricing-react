@@ -1,6 +1,9 @@
 export { AppButton } from './AppButton';
 export type { AppButtonProps } from './AppButton';
 
+export { AppButtonLink } from './AppButtonLink';
+export type { AppButtonLinkProps } from './AppButtonLink';
+
 export { AppInput } from './AppInput';
 export type { AppInputProps } from './AppInput';
 

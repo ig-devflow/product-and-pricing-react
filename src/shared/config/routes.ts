@@ -9,10 +9,3 @@ export const DIVISION_MANAGER_ROUTES = {
   details: (divisionId: string | number) => `/division-manager/${divisionId}`,
   edit: (divisionId: string | number) => `/division-manager/${divisionId}/edit`,
 } as const;
-
-export const LEGACY_PRODUCTS_PRICING_TABS = [
-  { label: 'Pricelist', href: '#' },
-  { label: 'Products', href: '#' },
-  { label: 'Pricing Reference Data', href: '#' },
-  { label: 'Calculator', href: '#' },
-] as const;

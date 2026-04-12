@@ -1,11 +1,11 @@
 import { AppKeyValueList } from '@/shared/ui/AppKeyValueList';
 import { AppPill } from '@/shared/ui/AppPill';
 import { AppSectionCard } from '@/shared/ui/patterns';
-import type { DivisionDetails } from '@/modules/divisions/model/division';
+import type { DivisionDetails } from '@/modules/divisions/model/types';
 import {
-  formatDivisionAddressPreview,
-} from '@/modules/divisions/model/validation';
-import { removeProtocol } from '@/modules/divisions/model/mappers';
+  buildDivisionAddressText,
+  removeProtocol,
+} from '@/modules/divisions/model/formatters';
 
 export interface DivisionDetailsSectionsProps {
   division: DivisionDetails;
@@ -15,7 +15,7 @@ export const DivisionDetailsSections = ({
   division,
 }: DivisionDetailsSectionsProps) => {
   const websiteDisplayUrl = removeProtocol(division.websiteUrl);
-  const addressText = formatDivisionAddressPreview(division.address);
+  const addressText = buildDivisionAddressText(division.address);
 
   return (
     <div className="app-stack app-stack--lg">

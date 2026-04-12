@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { createEmptyDivisionFormValues } from '../factories';
 import { ContentFormat } from '../types';
-import { mapFormValuesToCreateDto, mapFormValuesToUpdateDto } from '../serializers';
+import {
+  createEmptyDivisionFormValues,
+  mapFormValuesToCreateDto,
+  mapFormValuesToUpdateDto,
+} from '../mappers';
 
 describe('division serializers', () => {
   it('builds create payload with trimmed values and an empty report-text collection', () => {

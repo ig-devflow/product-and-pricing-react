@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
-import { useApiErrorMessage } from '@/shared/composables/useApiErrorMessage';
-import { useResourcePageState } from '@/shared/composables/useResourcePageState';
-import type { DivisionFormValues } from '@/modules/divisions/model/division-form';
+import { useApiErrorMessage } from '@/shared/hooks/useApiErrorMessage';
+import { useResourcePageState } from '@/shared/hooks/useResourcePageState';
+import type { DivisionFormValues } from '@/modules/divisions/model/types';
 import {
   createEmptyDivisionFormValues,
   mapDivisionDetailsToFormValues,
+  mapFormValuesToUpdateDto,
 } from '@/modules/divisions/model/mappers';
 import { useDivisionRouteId } from './useDivisionRouteId';
 import { useDivisionDetailsQuery } from '@/modules/divisions/queries/useDivisionDetailsQuery';
-import { useSaveDivisionMutation } from '@/modules/divisions/queries/useSaveDivisionMutation';
+import { useUpdateDivisionMutation } from '@/modules/divisions/queries/useUpdateDivisionMutation';
 import { useDivisionPageHeader } from './useDivisionPageHeader';
 
 export const useDivisionEditPage = () => {
@@ -18,7 +19,7 @@ export const useDivisionEditPage = () => {
   const pageHeader = useDivisionPageHeader('edit');
   const divisionId = useDivisionRouteId();
   const divisionQuery = useDivisionDetailsQuery(divisionId);
-  const saveMutation = useSaveDivisionMutation();
+  const updateMutation = useUpdateDivisionMutation();
   const pageState = useResourcePageState({
     data: divisionQuery.data,
     isLoading: divisionQuery.isLoading,
@@ -26,7 +27,7 @@ export const useDivisionEditPage = () => {
     fallbackErrorMessage: 'Failed to load division.',
   });
   const saveErrorMessage = useApiErrorMessage(
-    saveMutation.error,
+    updateMutation.error,
     'Failed to save division.',
   );
 
@@ -43,11 +44,12 @@ export const useDivisionEditPage = () => {
       return;
     }
 
-    await saveMutation.mutateAsync({
-      mode: 'edit',
+    await updateMutation.mutateAsync({
       divisionId,
-      values,
-      existingReportTexts: pageState.data?.reportTexts ?? [],
+      payload: mapFormValuesToUpdateDto(
+        values,
+        pageState.data?.reportTexts ?? [],
+      ),
     });
     navigate(DIVISION_MANAGER_ROUTES.details(divisionId));
   };
@@ -60,7 +62,7 @@ export const useDivisionEditPage = () => {
     detailsQuery: divisionQuery,
     isLoading: pageState.isLoading,
     loadErrorMessage: pageState.errorMessage,
-    isSaving: saveMutation.isPending,
+    isSaving: updateMutation.isPending,
     saveErrorMessage,
     initialValues: defaultValues,
     onSubmit,

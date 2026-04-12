@@ -1,4 +1,5 @@
-import { AppField, AppFileInput } from '@/shared/ui/controls';
+import { AppField } from './AppField';
+import { AppFileInput } from './AppFileInput';
 import { AppButton } from '@/shared/ui/primitives';
 
 export interface AppImageUploadFieldProps {

@@ -1,17 +1,20 @@
 import { useNavigate } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
-import { useApiErrorMessage } from '@/shared/composables/useApiErrorMessage';
-import type { DivisionFormValues } from '@/modules/divisions/model/division-form';
-import { createEmptyDivisionFormValues } from '@/modules/divisions/model/mappers';
-import { useSaveDivisionMutation } from '@/modules/divisions/queries/useSaveDivisionMutation';
+import { useApiErrorMessage } from '@/shared/hooks/useApiErrorMessage';
+import type { DivisionFormValues } from '@/modules/divisions/model/types';
+import {
+  createEmptyDivisionFormValues,
+  mapFormValuesToCreateDto,
+} from '@/modules/divisions/model/mappers';
+import { useCreateDivisionMutation } from '@/modules/divisions/queries/useCreateDivisionMutation';
 import { useDivisionPageHeader } from './useDivisionPageHeader';
 
 export const useDivisionCreatePage = () => {
   const navigate = useNavigate();
   const pageHeader = useDivisionPageHeader('create');
-  const saveMutation = useSaveDivisionMutation();
+  const createMutation = useCreateDivisionMutation();
   const saveErrorMessage = useApiErrorMessage(
-    saveMutation.error,
+    createMutation.error,
     'Failed to save division.',
   );
 
@@ -19,13 +22,10 @@ export const useDivisionCreatePage = () => {
     pageHeader,
     initialValues: createEmptyDivisionFormValues(),
     submitLabel: 'Create division',
-    isSaving: saveMutation.isPending,
+    isSaving: createMutation.isPending,
     saveErrorMessage,
     handleSubmit: async (values: DivisionFormValues) => {
-      await saveMutation.mutateAsync({
-        mode: 'create',
-        values,
-      });
+      await createMutation.mutateAsync(mapFormValuesToCreateDto(values));
       navigate(DIVISION_MANAGER_ROUTES.list);
     },
     handleCancel: () => navigate(DIVISION_MANAGER_ROUTES.list),

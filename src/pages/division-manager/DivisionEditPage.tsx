@@ -2,7 +2,7 @@ import { AppAsyncState } from '@/shared/ui/AppAsyncState';
 import { AppPageHeader } from '@/shared/ui/patterns';
 import { AppSurface } from '@/shared/ui/primitives';
 import { DivisionForm } from '@/modules/divisions/ui/form';
-import { useDivisionEditPage } from '@/modules/divisions/composables/useDivisionEditPage';
+import { useDivisionEditPage } from '@/modules/divisions/hooks/useDivisionEditPage';
 
 const DivisionEditPage = () => {
   const page = useDivisionEditPage();

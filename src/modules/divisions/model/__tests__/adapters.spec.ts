@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ContentFormatDto } from '../../api/dto';
-import { mapDivisionDetailsDto, mapDivisionSummaryDto } from '../adapters';
+import { mapDivisionDetailsDto, mapDivisionSummaryDto } from '../mappers';
 
 describe('division adapters', () => {
   it('maps division summary dto to list item display fields', () => {

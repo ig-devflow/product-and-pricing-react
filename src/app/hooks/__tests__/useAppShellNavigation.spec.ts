@@ -1,10 +1,10 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { useAppShellNavigation } from '@/shared/composables/useAppShellNavigation';
+import { useAppShellNavigation } from '@/app/hooks/useAppShellNavigation';
 import { withAppProviders } from '@/tests/renderWithProviders';
 
 describe('useAppShellNavigation', () => {
-  it('returns legacy tabs in stable order', () => {
+  it('returns tabs in stable order', () => {
     const { Wrapper } = withAppProviders();
     const { result } = renderHook(() => useAppShellNavigation(), {
       wrapper: Wrapper,
@@ -29,13 +29,15 @@ describe('useAppShellNavigation', () => {
       wrapper: Wrapper,
     });
 
-    expect(result.current.activeSection).toBe('division-manager');
-    expect(result.current.activeTab).toBe('pricing-reference-data');
+    expect(
+      result.current.topTabs.find((tab) => tab.id === 'pricing-reference-data')
+        ?.isActive,
+    ).toBe(true);
     expect(result.current.showAllDivisionsLink).toBe(true);
     expect(result.current.allDivisionsTarget).toBe('/division-manager');
   });
 
-  it('does not expose shell metadata for unknown routes', () => {
+  it('does not expose contextual links for unknown routes', () => {
     const { Wrapper } = withAppProviders({
       initialEntries: ['/missing-route'],
     });
@@ -43,8 +45,7 @@ describe('useAppShellNavigation', () => {
       wrapper: Wrapper,
     });
 
-    expect(result.current.activeSection).toBeNull();
-    expect(result.current.activeTab).toBeNull();
+    expect(result.current.topTabs.some((tab) => tab.isActive)).toBe(false);
     expect(result.current.showAllDivisionsLink).toBe(false);
   });
 });

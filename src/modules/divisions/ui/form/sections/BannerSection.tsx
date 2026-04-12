@@ -6,7 +6,7 @@ import {
   fileToDivisionBanner,
   getDivisionBannerSrc,
 } from '@/modules/divisions/lib/banner';
-import type { DivisionFormValues } from '@/modules/divisions/model/division-form';
+import type { DivisionFormValues } from '@/modules/divisions/model/types';
 
 const maxBannerSizeBytes = 5 * 1024 * 1024;
 const allowedBannerTypes = new Set([

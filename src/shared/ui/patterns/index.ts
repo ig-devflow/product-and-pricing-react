@@ -20,3 +20,4 @@ export { AppShellHeader } from './AppShellHeader';
 export type { AppShellHeaderProps } from './AppShellHeader';
 
 export { AppShellFooter } from './AppShellFooter';
+export type { AppShellFooterProps, AppShellFooterLink } from './AppShellFooter';
