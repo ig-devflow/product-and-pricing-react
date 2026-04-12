@@ -208,10 +208,15 @@
   display: none;
 }
 
+.app-file-input {
+  min-width: 0;
+}
+
 .app-file-input__box {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-width: 0;
   min-height: var(--control-height-md);
   padding: 10px 14px;
   border: 1px solid var(--color-border-strong);
@@ -220,7 +225,9 @@
 }
 
 .app-file-input__name {
+  flex: 1 1 auto;
   min-width: 0;
+  max-width: 100%;
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
   white-space: nowrap;
@@ -265,13 +272,22 @@
 .app-image-upload-field__side {
   display: grid;
   gap: var(--space-4);
+  min-width: 0;
 }
 
 .app-image-upload-field__meta {
   display: grid;
   gap: var(--space-2);
+  min-width: 0;
   font-size: var(--font-size-sm);
   color: var(--color-text-tertiary);
+}
+
+.app-image-upload-field__meta span {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .app-search-input {
@@ -518,7 +534,7 @@
 
 .app-sidebar-summary--sticky {
   position: sticky;
-  top: 24px;
+  top: calc(var(--app-shell-summary-sticky-top, 24px) + var(--space-2));
 }
 
 .app-async-state {

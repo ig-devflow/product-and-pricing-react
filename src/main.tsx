@@ -7,8 +7,25 @@ import { router } from '@/app/providers/router';
 import { APP_CONFIG } from '@/shared/config/env';
 import '@/app/styles/index.css';
 
+const unregisterMockServiceWorker = async () => {
+  if (!('serviceWorker' in navigator)) {
+    return;
+  }
+
+  const registrations = await navigator.serviceWorker.getRegistrations();
+
+  await Promise.all(
+    registrations
+      .filter((registration) =>
+        registration.active?.scriptURL.includes('mockServiceWorker.js'),
+      )
+      .map((registration) => registration.unregister()),
+  );
+};
+
 const enableMocking = async () => {
   if (!APP_CONFIG.useMswInBrowser) {
+    await unregisterMockServiceWorker();
     return;
   }
 
