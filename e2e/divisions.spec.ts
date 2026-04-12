@@ -79,21 +79,20 @@ async function mockDivisionsApi(page: Page) {
   ])
   const createPayloads: Record<string, unknown>[] = []
   const updatePayloads: Record<string, unknown>[] = []
+  const divisionByIdPath = /^\/api\/divisions\/(\d+)$/
 
   await page.route(/\/api\/divisions(?:\/.*)?$/, async (route) => {
     const request = route.request()
-    const pathname = request
-      .url()
-      .replace(/^https?:\/\/[^/]+/, '')
-      .split('?')[0]
+    const pathname = new URL(request.url()).pathname
     const method = request.method()
+    const divisionByIdMatch = divisionByIdPath.exec(pathname)
 
     if (method === 'GET' && pathname === '/api/divisions') {
       return jsonResponse(route, list)
     }
 
-    if (method === 'GET' && /^\/api\/divisions\/\d+$/.test(pathname)) {
-      const id = Number(pathname.split('/').pop())
+    if (method === 'GET' && divisionByIdMatch) {
+      const id = Number(divisionByIdMatch[1])
       return jsonResponse(
         route,
         details.get(id) ?? { message: 'Not found' },
@@ -121,8 +120,8 @@ async function mockDivisionsApi(page: Page) {
       return jsonResponse(route, {})
     }
 
-    if (method === 'PUT' && /^\/api\/divisions\/\d+$/.test(pathname)) {
-      const id = Number(pathname.split('/').pop())
+    if (method === 'PUT' && divisionByIdMatch) {
+      const id = Number(divisionByIdMatch[1])
       const payload = request.postDataJSON() as Record<string, unknown>
       updatePayloads.push(payload)
       const current = details.get(id)
@@ -147,15 +146,17 @@ async function mockDivisionsApi(page: Page) {
         lastModifiedOn: '2026-04-07T10:00:00Z',
       })
 
-      list.splice(
-        list.findIndex((item) => item.id === id),
-        1,
-        {
-          ...list.find((item) => item.id === id)!,
-          name: String(payload.name ?? current.name),
-          websiteUrl: String(payload.websiteUrl ?? current.websiteUrl),
-        },
-      )
+      const existingIndex = list.findIndex((item) => item.id === id)
+      if (existingIndex >= 0) {
+        const existing = list[existingIndex]
+        if (existing) {
+          list.splice(existingIndex, 1, {
+            ...existing,
+            name: String(payload.name ?? current.name),
+            websiteUrl: String(payload.websiteUrl ?? current.websiteUrl),
+          })
+        }
+      }
 
       return jsonResponse(route, {})
     }
