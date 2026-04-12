@@ -1,13 +1,31 @@
 import type { To } from 'react-router';
-import type {
-  AppShellContextualLink,
-  AppShellTabId,
-} from '@/app/router/route-meta';
 import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
-export type AppShellTopTabId = AppShellTabId;
+
+export type AppShellSection = 'division-manager';
+
+export type AppShellTabId =
+  | 'pricelist'
+  | 'products'
+  | 'discounts'
+  | 'agents'
+  | 'pricing-reference-data'
+  | 'new-pricing-year'
+  | 'calculator';
+
+export type AppShellContextualLink = 'all-divisions';
+
+export interface AppShellRouteMeta {
+  shellSection?: AppShellSection;
+  shellTab?: AppShellTabId;
+  shellContextualLink?: AppShellContextualLink;
+}
+
+export interface AppRouteHandle {
+  shell?: AppShellRouteMeta;
+}
 
 export interface AppShellTopTabConfig {
-  id: AppShellTopTabId;
+  id: AppShellTabId;
   label: string;
   to?: To | null;
   inert?: boolean;
@@ -18,6 +36,16 @@ export interface AppShellFooterLinkConfig {
   label: string;
   to: To;
 }
+
+export const divisionManagerRouteMeta: AppShellRouteMeta = {
+  shellSection: 'division-manager',
+  shellTab: 'pricing-reference-data',
+};
+
+export const divisionManagerContextualRouteMeta: AppShellRouteMeta = {
+  ...divisionManagerRouteMeta,
+  shellContextualLink: 'all-divisions',
+};
 
 export const appShellTopTabs: AppShellTopTabConfig[] = [
   {

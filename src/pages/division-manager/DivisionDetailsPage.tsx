@@ -1,6 +1,6 @@
 import { AppAsyncState } from '@/shared/ui/AppAsyncState';
 import { AppPageHeader } from '@/shared/ui/patterns';
-import { useDivisionDetailsPage } from '@/modules/divisions/composables/useDivisionDetailsPage';
+import { useDivisionDetailsPage } from '@/modules/divisions/hooks/useDivisionDetailsPage';
 import {
   DivisionDetailsHero,
   DivisionDetailsSections,

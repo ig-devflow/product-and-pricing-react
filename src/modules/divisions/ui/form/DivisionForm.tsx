@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { DivisionFormValues } from '@/modules/divisions/model/division-form';
+import type { DivisionFormValues } from '@/modules/divisions/model/types';
 import { AppSurface } from '@/shared/ui/primitives';
-import type { DivisionDetails } from '@/modules/divisions/model/division';
+import type { DivisionDetails } from '@/modules/divisions/model/types';
 import { divisionFormSchema } from './schema';
 import {
   AddressSection,
@@ -28,6 +28,7 @@ export interface DivisionFormProps {
 export const DivisionForm = ({
   mode = 'create',
   defaultValues,
+  submitLabel,
   isSubmitting = false,
   errorMessage,
   division = null,
@@ -49,30 +50,60 @@ export const DivisionForm = ({
     methods.reset(defaultValues);
   }, [defaultValues, methods, resetKey]);
 
-  const watchedValues = useWatch({
+  const watchedName = useWatch({
     control: methods.control,
-  })
-  const values = useMemo<DivisionFormValues>(
+    name: 'name',
+  });
+  const watchedIsActive = useWatch({
+    control: methods.control,
+    name: 'isActive',
+  });
+  const watchedWebsiteUrl = useWatch({
+    control: methods.control,
+    name: 'websiteUrl',
+  });
+  const watchedAddress = useWatch({
+    control: methods.control,
+    name: 'address',
+  });
+  const watchedEmail = useWatch({
+    control: methods.control,
+    name: 'headOfficeEmailAddress',
+  });
+  const watchedPhone = useWatch({
+    control: methods.control,
+    name: 'headOfficeTelephoneNo',
+  });
+  const watchedBanner = useWatch({
+    control: methods.control,
+    name: 'accreditationBanner',
+  });
+
+  const summaryValues = useMemo<DivisionFormValues>(
     () => ({
       ...defaultValues,
-      ...watchedValues,
-      address: {
-        ...defaultValues.address,
-        ...watchedValues?.address,
-      },
-      accreditationBanner: watchedValues?.accreditationBanner
-        ? {
-            ...(defaultValues.accreditationBanner ?? {
-              imageBase64: '',
-              contentType: '',
-              fileName: '',
-            }),
-            ...watchedValues.accreditationBanner,
-          }
-        : defaultValues.accreditationBanner,
+      name: watchedName ?? defaultValues.name,
+      isActive: watchedIsActive ?? defaultValues.isActive,
+      websiteUrl: watchedWebsiteUrl ?? defaultValues.websiteUrl,
+      address: watchedAddress ?? defaultValues.address,
+      headOfficeEmailAddress: watchedEmail ?? defaultValues.headOfficeEmailAddress,
+      headOfficeTelephoneNo: watchedPhone ?? defaultValues.headOfficeTelephoneNo,
+      accreditationBanner:
+        watchedBanner === undefined
+          ? defaultValues.accreditationBanner
+          : watchedBanner,
     }),
-    [defaultValues, watchedValues],
-  )
+    [
+      defaultValues,
+      watchedAddress,
+      watchedBanner,
+      watchedEmail,
+      watchedIsActive,
+      watchedName,
+      watchedPhone,
+      watchedWebsiteUrl,
+    ],
+  );
 
   return (
     <FormProvider {...methods}>
@@ -110,6 +141,7 @@ export const DivisionForm = ({
 
             <DivisionFormActions
               mode={mode}
+              submitLabel={submitLabel}
               isSubmitting={isSubmitting}
               canReset={methods.formState.isDirty}
               onSubmit={() => void methods.handleSubmit(onSubmit)()}
@@ -120,7 +152,7 @@ export const DivisionForm = ({
 
           <DivisionFormAsideSummary
             mode={mode}
-            values={values}
+            values={summaryValues}
             details={division}
           />
         </div>

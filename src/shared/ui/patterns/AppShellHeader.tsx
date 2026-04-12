@@ -1,14 +1,31 @@
-import { useAppShellNavigation } from '@/shared/composables/useAppShellNavigation';
+import type { To } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
 import { AppNavLink } from '@/shared/ui/primitives';
 import { AppBrandMark } from '@/shared/ui/patterns/AppBrandMark';
 
+interface AppShellHeaderTab {
+  id: string;
+  label: string;
+  to: To | null;
+  isActive: boolean;
+  inert: boolean;
+}
+
+interface AppShellHeaderNavigation {
+  topTabs: AppShellHeaderTab[];
+  showAllDivisionsLink: boolean;
+  allDivisionsTarget: To | null;
+}
+
 export interface AppShellHeaderProps {
+  navigation: AppShellHeaderNavigation;
   showAllDivisionsLink?: boolean;
 }
 
-export const AppShellHeader = ({ showAllDivisionsLink }: AppShellHeaderProps) => {
-  const navigation = useAppShellNavigation();
+export const AppShellHeader = ({
+  navigation,
+  showAllDivisionsLink,
+}: AppShellHeaderProps) => {
   const resolvedShowAllDivisionsLink =
     showAllDivisionsLink ?? navigation.showAllDivisionsLink;
   const allDivisionsTarget =

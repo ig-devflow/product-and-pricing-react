@@ -1,5 +1,5 @@
 import { AppPageHeader } from '@/shared/ui/patterns';
-import { useDivisionListPage } from '@/modules/divisions/composables/useDivisionListPage';
+import { useDivisionListPage } from '@/modules/divisions/hooks/useDivisionListPage';
 import {
   DivisionCardList,
   DivisionListToolbar,

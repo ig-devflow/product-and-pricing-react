@@ -1,8 +1,7 @@
-import { Link } from 'react-router';
 import { AppPill } from '@/shared/ui/AppPill';
-import { AppSurface } from '@/shared/ui/primitives';
+import { AppButtonLink, AppSurface } from '@/shared/ui/primitives';
 import { getDivisionBannerSrc } from '@/modules/divisions/lib/banner';
-import type { DivisionListItem } from '@/modules/divisions/model/division';
+import type { DivisionListItem } from '@/modules/divisions/model/types';
 import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
 
 export interface DivisionCardProps {
@@ -67,19 +66,21 @@ export const DivisionCard = ({ division }: DivisionCardProps) => {
       </div>
 
       <footer className="app-card__footer division-card__footer">
-        <Link
+        <AppButtonLink
           to={DIVISION_MANAGER_ROUTES.details(division.id)}
-          className="app-button app-button--secondary app-button--md app-button--block"
+          variant="secondary"
+          block
         >
           Open
-        </Link>
+        </AppButtonLink>
 
-        <Link
+        <AppButtonLink
           to={DIVISION_MANAGER_ROUTES.edit(division.id)}
-          className="app-button app-button--primary app-button--md app-button--block"
+          variant="primary"
+          block
         >
           Edit
-        </Link>
+        </AppButtonLink>
       </footer>
     </AppSurface>
   );

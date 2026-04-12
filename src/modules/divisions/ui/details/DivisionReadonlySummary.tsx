@@ -1,6 +1,6 @@
 import { AppSummaryRows } from '@/shared/ui/AppSummaryRows';
 import { AppSidebarSummary } from '@/shared/ui/patterns';
-import type { DivisionDetails } from '@/modules/divisions/model/division';
+import type { DivisionDetails } from '@/modules/divisions/model/types';
 
 export interface DivisionReadonlySummaryProps {
   division: DivisionDetails;

@@ -1,7 +1,17 @@
-import { appShellFooterLinks } from '@/shared/config/app-shell';
+import type { To } from 'react-router';
 import { AppNavLink } from '@/shared/ui/primitives';
 
-export const AppShellFooter = () => {
+export interface AppShellFooterLink {
+  id: string;
+  label: string;
+  to: To;
+}
+
+export interface AppShellFooterProps {
+  links: AppShellFooterLink[];
+}
+
+export const AppShellFooter = ({ links }: AppShellFooterProps) => {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -18,7 +28,7 @@ export const AppShellFooter = () => {
         <nav className="app-shell-footer__links" aria-label="Footer quick links">
           <h2 className="app-shell-footer__heading">Quick links</h2>
           <div className="app-shell-footer__link-list">
-            {appShellFooterLinks.map((link) => (
+            {links.map((link) => (
               <AppNavLink key={link.id} to={link.to} variant="footer" forceLink>
                 {link.label}
               </AppNavLink>

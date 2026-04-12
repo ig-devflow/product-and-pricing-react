@@ -1,6 +1,6 @@
 import { AppPageHeader } from '@/shared/ui/patterns';
 import { DivisionForm } from '@/modules/divisions/ui/form';
-import { useDivisionCreatePage } from '@/modules/divisions/composables/useDivisionCreatePage';
+import { useDivisionCreatePage } from '@/modules/divisions/hooks/useDivisionCreatePage';
 
 const DivisionCreatePage = () => {
   const page = useDivisionCreatePage();

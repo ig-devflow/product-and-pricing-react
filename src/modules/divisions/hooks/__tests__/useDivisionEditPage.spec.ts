@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ContentFormat, type DivisionDetails } from '@/modules/divisions/model/division';
-import type { DivisionFormValues } from '@/modules/divisions/model/division-form';
-import { useDivisionEditPage } from '@/modules/divisions/composables/useDivisionEditPage';
+import { ContentFormat, type DivisionDetails } from '@/modules/divisions/model/types';
+import type { DivisionFormValues } from '@/modules/divisions/model/types';
+import { useDivisionEditPage } from '@/modules/divisions/hooks/useDivisionEditPage';
 
 const navigateMock = vi.fn();
 const mutateAsyncMock = vi.fn();
@@ -57,7 +57,7 @@ vi.mock('react-router', async () => {
   };
 });
 
-vi.mock('@/modules/divisions/composables/useDivisionRouteId', () => ({
+vi.mock('@/modules/divisions/hooks/useDivisionRouteId', () => ({
   useDivisionRouteId: () => 7,
 }));
 
@@ -70,8 +70,8 @@ vi.mock('@/modules/divisions/queries/useDivisionDetailsQuery', () => ({
   }),
 }));
 
-vi.mock('@/modules/divisions/queries/useSaveDivisionMutation', () => ({
-  useSaveDivisionMutation: () => ({
+vi.mock('@/modules/divisions/queries/useUpdateDivisionMutation', () => ({
+  useUpdateDivisionMutation: () => ({
     isPending: false,
     error: null,
     mutateAsync: mutateAsyncMock,
@@ -97,10 +97,21 @@ describe('useDivisionEditPage', () => {
     await result.current.onSubmit(values);
 
     expect(mutateAsyncMock).toHaveBeenCalledWith({
-      mode: 'edit',
       divisionId: 7,
-      values,
-      existingReportTexts: divisionFixture.reportTexts,
+      payload: expect.objectContaining({
+        name: 'EC Malta Updated',
+        visaLetterNote: 'Updated note',
+        address: expect.objectContaining({
+          countryISOCode: 'MT',
+        }),
+        divisionReportTexts: expect.arrayContaining([
+          expect.objectContaining({
+            id: 91,
+            reportTextId: 4,
+            divisionId: 7,
+          }),
+        ]),
+      }),
     });
 
     expect(navigateMock).toHaveBeenCalledWith('/division-manager/7');

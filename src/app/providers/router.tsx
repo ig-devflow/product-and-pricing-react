@@ -1,18 +1,18 @@
-import { createBrowserRouter, Navigate, type RouteObject } from 'react-router'
+import { createBrowserRouter, Navigate, type RouteObject } from 'react-router';
 import {
   DivisionCreatePage,
   DivisionDetailsPage,
   DivisionEditPage,
   DivisionListPage,
   DivisionManagerLayout,
-} from '@/pages/division-manager'
-import { NotFoundPage } from '@/pages/not-found'
-import { APP_ROUTES, DIVISION_MANAGER_ROUTES } from '@/shared/config/routes'
+} from '@/pages/division-manager';
+import { NotFoundPage } from '@/pages/not-found';
 import {
   divisionManagerContextualRouteMeta,
   divisionManagerRouteMeta,
-} from '@/app/router/route-manifest'
-import type { AppRouteHandle } from '@/app/router/route-meta'
+  type AppRouteHandle,
+} from '@/app/config/app-shell';
+import { APP_ROUTES, DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
 
 export const appRoutes: RouteObject[] = [
   {
@@ -57,6 +57,6 @@ export const appRoutes: RouteObject[] = [
     path: '*',
     element: <NotFoundPage />,
   },
-]
+];
 
-export const router = createBrowserRouter(appRoutes)
+export const router = createBrowserRouter(appRoutes);

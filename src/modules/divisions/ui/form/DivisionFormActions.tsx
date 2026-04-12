@@ -3,6 +3,7 @@ import { AppButton } from '@/shared/ui/primitives';
 
 export interface DivisionFormActionsProps {
   mode: 'create' | 'edit';
+  submitLabel?: string;
   isSubmitting?: boolean;
   canReset?: boolean;
   onSubmit: () => void;
@@ -12,12 +13,15 @@ export interface DivisionFormActionsProps {
 
 export const DivisionFormActions = ({
   mode,
+  submitLabel,
   isSubmitting = false,
   canReset = false,
   onSubmit,
   onCancel,
   onReset,
 }: DivisionFormActionsProps) => {
+  const resolvedSubmitLabel =
+    submitLabel ?? (mode === 'create' ? 'Create division' : 'Save changes');
   const title =
     mode === 'create'
       ? 'Ready to create this division?'
@@ -54,11 +58,7 @@ export const DivisionFormActions = ({
         disabled={isSubmitting}
         onClick={onSubmit}
       >
-        {isSubmitting
-          ? 'Saving...'
-          : mode === 'create'
-            ? 'Create division'
-            : 'Save changes'}
+        {isSubmitting ? 'Saving...' : resolvedSubmitLabel}
       </AppButton>
     </AppFormActionsPanel>
   );
