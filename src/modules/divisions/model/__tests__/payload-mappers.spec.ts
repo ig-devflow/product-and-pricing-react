@@ -6,7 +6,7 @@ import {
   mapFormValuesToUpdateDto,
 } from '../mappers';
 
-describe('division serializers', () => {
+describe('division payload mappers', () => {
   it('builds create payload with trimmed values and an empty report-text collection', () => {
     const payload = mapFormValuesToCreateDto({
       ...createEmptyDivisionFormValues(),

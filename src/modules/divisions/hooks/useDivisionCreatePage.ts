@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
+import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 import { useApiErrorMessage } from '@/shared/hooks/useApiErrorMessage';
 import type { DivisionFormValues } from '@/modules/divisions/model/types';
 import {
