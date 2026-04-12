@@ -1,11 +1,106 @@
 version: 2
-updates:
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
+      day: 'tuesday'
+      time: '08:00'
+      timezone: 'Europe/Warsaw'
+
+    open-pull-requests-limit: 5
+
+    commit-message:
+      prefix: 'chore'
+      prefix-development: 'chore'
+      include: 'scope'
+
+    groups:
+      linting:
+        dependency-type: 'development'
+        patterns:
+          - 'eslint*'
+          - '@eslint/*'
+          - '@typescript-eslint/*'
+          - 'oxlint'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+      testing-and-build:
+        dependency-type: 'development'
+        patterns:
+          - 'typescript'
+          - 'vite'
+          - 'vitest'
+          - '@vitest/*'
+          - 'playwright'
+          - '@playwright/*'
+          - 'msw'
+          - 'prettier'
+          - 'globals'
+          - '@types/*'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+    ignore:
+      - dependency-name: 'eslint*'
+        update-types:
+          - 'version-update:semver-major'
+
+      - dependency-name: '@eslint/*'
+        update-types:
+          - 'version-update:semver-major'
+
+      - dependency-name: '@typescript-eslint/*'
+        update-types:
+          - 'version-update:semver-major'
+
+      - dependency-name: 'typescript'
+        update-types:
+          - 'version-update:semver-major'
+
+      - dependency-name: 'vite'
+        update-types:
+          - 'version-update:semver-major'
+
+      - dependency-name: 'vitest'
+        update-types:
+          - 'version-update:semver-major'
+
+      - dependency-name: '@vitest/*'
+        update-types:
+          - 'version-update:semver-major'
+
+      - dependency-name: 'playwright'
+        update-types:
+          - 'version-update:semver-major'
+
+      - dependency-name: '@playwright/*'
+        update-types:
+          - 'version-update:semver-major'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'tuesday'
+      time: '08:30'
+      timezone: 'Europe/Warsaw'
+
+    open-pull-requests-limit: 3
+
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+
+    groups:
+      github-actions:
+        patterns:
+          - 'actions/*'
+        update-types:
+          - 'major'
+          - 'minor'
+          - 'patch'
