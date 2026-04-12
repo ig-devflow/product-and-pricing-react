@@ -12,7 +12,7 @@ import {
   divisionManagerRouteMeta,
   type AppRouteHandle,
 } from '@/app/config/app-shell';
-import { APP_ROUTES, DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
+import { APP_ROUTES, DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 
 export const appRoutes: RouteObject[] = [
   {

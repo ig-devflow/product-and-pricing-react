@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
+import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 import { useResourcePageState } from '@/shared/hooks/useResourcePageState';
 import { useDivisionRouteId } from './useDivisionRouteId';
 import { useDivisionDetailsQuery } from '@/modules/divisions/queries/useDivisionDetailsQuery';

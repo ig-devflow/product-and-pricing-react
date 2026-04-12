@@ -2,7 +2,7 @@ import { AppPill } from '@/shared/ui/AppPill';
 import { AppButtonLink, AppSurface } from '@/shared/ui/primitives';
 import { getDivisionBannerSrc } from '@/modules/divisions/lib/banner';
 import type { DivisionListItem } from '@/modules/divisions/model/types';
-import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
+import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 
 export interface DivisionCardProps {
   division: DivisionListItem;

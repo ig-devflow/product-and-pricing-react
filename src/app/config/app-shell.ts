@@ -1,5 +1,5 @@
 import type { To } from 'react-router';
-import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
+import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 
 export type AppShellSection = 'division-manager';
 

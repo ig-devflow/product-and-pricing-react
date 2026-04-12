@@ -1,5 +1,5 @@
 import type { To } from 'react-router';
-import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
+import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 import { AppNavLink } from '@/shared/ui/primitives';
 import { AppBrandMark } from '@/shared/ui/patterns/AppBrandMark';
 

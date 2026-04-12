@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
-import { matchRoutes, useLocation, type To } from 'react-router';
+import { useMatches, type To } from 'react-router';
 import {
   appShellContextualTargets,
   appShellTopTabs,
   type AppRouteHandle,
 } from '@/app/config/app-shell';
-import { appRoutes } from '@/app/providers/router';
 
 interface AppShellTopTabItem {
   id: string;
@@ -22,14 +21,13 @@ export interface AppShellNavigationState {
 }
 
 export const useAppShellNavigation = (): AppShellNavigationState => {
-  const location = useLocation();
+  const matches = useMatches();
 
   return useMemo(() => {
-    const matches = matchRoutes(appRoutes, location) ?? [];
     const shellMeta =
       [...matches]
-        .reverse()
-        .map((match) => (match.route.handle as AppRouteHandle | undefined)?.shell)
+        .reverse()        
+        .map((match) => (match.handle as AppRouteHandle | undefined)?.shell)
         .find(Boolean) ?? null;
     const activeTab = shellMeta?.shellTab ?? null;
     const contextualLink = shellMeta?.shellContextualLink ?? null;
@@ -47,5 +45,5 @@ export const useAppShellNavigation = (): AppShellNavigationState => {
         ? appShellContextualTargets[contextualLink]
         : null,
     };
-  }, [location]);
+  }, [matches]);
 };

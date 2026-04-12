@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { DIVISION_MANAGER_ROUTES } from '@/shared/config/routes';
+import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 import { useApiErrorMessage } from '@/shared/hooks/useApiErrorMessage';
 import { useDivisionListQuery } from '@/modules/divisions/queries/useDivisionListQuery';
 
