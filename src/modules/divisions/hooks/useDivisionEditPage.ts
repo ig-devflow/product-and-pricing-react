@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
-import { useApiErrorMessage } from '@/shared/hooks/useApiErrorMessage';
-import { useResourcePageState } from '@/shared/hooks/useResourcePageState';
+import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
+import { buildResourcePageState } from '@/shared/lib/resource/buildResourcePageState';
 import type { DivisionFormValues } from '@/modules/divisions/model/types';
 import {
   createEmptyDivisionFormValues,
@@ -12,21 +12,21 @@ import {
 import { useDivisionRouteId } from './useDivisionRouteId';
 import { useDivisionDetailsQuery } from '@/modules/divisions/queries/useDivisionDetailsQuery';
 import { useUpdateDivisionMutation } from '@/modules/divisions/queries/useUpdateDivisionMutation';
-import { useDivisionPageHeader } from './useDivisionPageHeader';
+import { divisionPageHeaders } from '@/modules/divisions/config/page-headers';
 
 export const useDivisionEditPage = () => {
   const navigate = useNavigate();
-  const pageHeader = useDivisionPageHeader('edit');
+  const pageHeader = divisionPageHeaders.edit;
   const divisionId = useDivisionRouteId();
   const divisionQuery = useDivisionDetailsQuery(divisionId);
   const updateMutation = useUpdateDivisionMutation();
-  const pageState = useResourcePageState({
+  const pageState = buildResourcePageState({
     data: divisionQuery.data,
     isLoading: divisionQuery.isLoading,
     error: divisionQuery.error,
     fallbackErrorMessage: 'Failed to load division.',
   });
-  const saveErrorMessage = useApiErrorMessage(
+  const saveErrorMessage = getApiErrorMessage(
     updateMutation.error,
     'Failed to save division.',
   );

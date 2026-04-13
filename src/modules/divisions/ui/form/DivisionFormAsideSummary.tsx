@@ -1,5 +1,4 @@
-import { AppPill } from '@/shared/ui/AppPill';
-import { AppSummaryRows } from '@/shared/ui/AppSummaryRows';
+import { AppPill, AppSummaryRows } from '@/shared/ui/data-display';
 import { AppSidebarSummary } from '@/shared/ui/patterns';
 import type { DivisionDetails, DivisionFormValues } from '@/modules/divisions/model/types';
 import {

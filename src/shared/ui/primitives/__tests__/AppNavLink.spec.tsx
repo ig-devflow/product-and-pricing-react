@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { Route, Routes } from 'react-router';
@@ -12,18 +11,12 @@ describe('AppNavLink', () => {
     });
 
     render(
-      React.createElement(
-        Routes,
-        null,
-        React.createElement(Route, {
-          path: '/division-manager',
-          element: React.createElement(
-            AppNavLink,
-            { to: '/division-manager' },
-            'Divisions',
-          ),
-        }),
-      ),
+      <Routes>
+        <Route
+          path="/division-manager"
+          element={<AppNavLink to="/division-manager">Divisions</AppNavLink>}
+        />
+      </Routes>,
       { wrapper: Wrapper },
     );
 
@@ -34,11 +27,9 @@ describe('AppNavLink', () => {
     const { Wrapper } = withAppProviders();
 
     render(
-      React.createElement(
-        AppNavLink,
-        { to: '/division-manager', forceLink: true },
-        'Divisions',
-      ),
+      <AppNavLink to="/division-manager" forceLink>
+        Divisions
+      </AppNavLink>,
       { wrapper: Wrapper },
     );
 

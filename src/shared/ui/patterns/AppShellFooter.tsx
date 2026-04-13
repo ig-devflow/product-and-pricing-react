@@ -9,20 +9,32 @@ export interface AppShellFooterLink {
 
 export interface AppShellFooterProps {
   links: AppShellFooterLink[];
+  title?: string;
+  description?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  copyrightLabel?: string;
 }
 
-export const AppShellFooter = ({ links }: AppShellFooterProps) => {
+export const AppShellFooter = ({
+  links,
+  title = '',
+  description = '',
+  metaTitle = '',
+  metaDescription = '',
+  copyrightLabel = '',
+}: AppShellFooterProps) => {
   const currentYear = new Date().getFullYear();
+  const footerCopyright = copyrightLabel
+    ? `${currentYear} ${copyrightLabel}`
+    : `${currentYear}`;
 
   return (
     <footer className="app-shell-footer">
       <div className="app-container app-shell-footer__inner">
         <section className="app-shell-footer__brand">
-          <h2 className="app-shell-footer__title">Products & Pricing</h2>
-          <p className="app-shell-footer__text">
-            Division Manager keeps division details, pricing context, and content
-            settings in one clean workspace.
-          </p>
+          {title ? <h2 className="app-shell-footer__title">{title}</h2> : null}
+          {description ? <p className="app-shell-footer__text">{description}</p> : null}
         </section>
 
         <nav className="app-shell-footer__links" aria-label="Footer quick links">
@@ -37,11 +49,11 @@ export const AppShellFooter = ({ links }: AppShellFooterProps) => {
         </nav>
 
         <section className="app-shell-footer__meta">
-          <h2 className="app-shell-footer__heading">Product</h2>
-          <p className="app-shell-footer__text">Admin shell for operational workflows.</p>
-          <p className="app-shell-footer__copyright">
-            {currentYear} Products & Pricing. Internal product interface.
-          </p>
+          {metaTitle ? <h2 className="app-shell-footer__heading">{metaTitle}</h2> : null}
+          {metaDescription ? (
+            <p className="app-shell-footer__text">{metaDescription}</p>
+          ) : null}
+          <p className="app-shell-footer__copyright">{footerCopyright}</p>
         </section>
       </div>
     </footer>

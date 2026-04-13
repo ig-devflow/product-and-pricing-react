@@ -50,68 +50,41 @@ export const DivisionForm = ({
     methods.reset(defaultValues);
   }, [defaultValues, methods, resetKey]);
 
-  const watchedName = useWatch({
+  const watchedValues = useWatch({
     control: methods.control,
-    name: 'name',
-  });
-  const watchedIsActive = useWatch({
-    control: methods.control,
-    name: 'isActive',
-  });
-  const watchedWebsiteUrl = useWatch({
-    control: methods.control,
-    name: 'websiteUrl',
-  });
-  const watchedAddress = useWatch({
-    control: methods.control,
-    name: 'address',
-  });
-  const watchedEmail = useWatch({
-    control: methods.control,
-    name: 'headOfficeEmailAddress',
-  });
-  const watchedPhone = useWatch({
-    control: methods.control,
-    name: 'headOfficeTelephoneNo',
-  });
-  const watchedBanner = useWatch({
-    control: methods.control,
-    name: 'accreditationBanner',
   });
 
   const summaryValues = useMemo<DivisionFormValues>(
-    () => ({
-      ...defaultValues,
-      name: watchedName ?? defaultValues.name,
-      isActive: watchedIsActive ?? defaultValues.isActive,
-      websiteUrl: watchedWebsiteUrl ?? defaultValues.websiteUrl,
-      address: watchedAddress ?? defaultValues.address,
-      headOfficeEmailAddress: watchedEmail ?? defaultValues.headOfficeEmailAddress,
-      headOfficeTelephoneNo: watchedPhone ?? defaultValues.headOfficeTelephoneNo,
-      accreditationBanner:
-        watchedBanner === undefined
-          ? defaultValues.accreditationBanner
-          : watchedBanner,
-    }),
-    [
-      defaultValues,
-      watchedAddress,
-      watchedBanner,
-      watchedEmail,
-      watchedIsActive,
-      watchedName,
-      watchedPhone,
-      watchedWebsiteUrl,
-    ],
+    () => {
+      const watchedBanner = watchedValues?.accreditationBanner;
+
+      return {
+        ...defaultValues,
+        ...watchedValues,
+        address: {
+          ...defaultValues.address,
+          ...(watchedValues?.address ?? {}),
+        },
+        accreditationBanner:
+          watchedBanner === undefined
+            ? defaultValues.accreditationBanner
+            : watchedBanner === null
+              ? null
+              : {
+                  imageBase64: watchedBanner.imageBase64 ?? '',
+                  contentType: watchedBanner.contentType ?? '',
+                  fileName: watchedBanner.fileName ?? '',
+                },
+      };
+    },
+    [defaultValues, watchedValues],
   );
 
   return (
     <FormProvider {...methods}>
       <form
         className="division-form"
-        onSubmit={methods.handleSubmit(async (values: DivisionFormValues) => {
-          await onSubmit(values);
-        })}
+        onSubmit={methods.handleSubmit(onSubmit)}
       >
         <AppSurface
           className="app-section division-form__notice"
@@ -144,7 +117,6 @@ export const DivisionForm = ({
               submitLabel={submitLabel}
               isSubmitting={isSubmitting}
               canReset={methods.formState.isDirty}
-              onSubmit={() => void methods.handleSubmit(onSubmit)()}
               onCancel={onCancel ?? (() => {})}
               onReset={() => methods.reset(defaultValues)}
             />

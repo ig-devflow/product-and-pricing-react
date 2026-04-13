@@ -1,9 +1,8 @@
+import type { ReactNode } from 'react';
 import type { To } from 'react-router';
-import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 import { AppNavLink } from '@/shared/ui/primitives';
-import { AppBrandMark } from '@/shared/ui/patterns/AppBrandMark';
 
-interface AppShellHeaderTab {
+export interface AppShellHeaderTab {
   id: string;
   label: string;
   to: To | null;
@@ -11,7 +10,7 @@ interface AppShellHeaderTab {
   inert: boolean;
 }
 
-interface AppShellHeaderNavigation {
+export interface AppShellHeaderNavigation {
   topTabs: AppShellHeaderTab[];
   showAllDivisionsLink: boolean;
   allDivisionsTarget: To | null;
@@ -19,26 +18,35 @@ interface AppShellHeaderNavigation {
 
 export interface AppShellHeaderProps {
   navigation: AppShellHeaderNavigation;
-  showAllDivisionsLink?: boolean;
+  serviceLabel?: string;
+  contextualLinkLabel?: string;
+  sectionsAriaLabel?: string;
+  brandMark: ReactNode;
+  showContextualLink?: boolean;
 }
 
 export const AppShellHeader = ({
   navigation,
-  showAllDivisionsLink,
+  serviceLabel = '',
+  contextualLinkLabel = '',
+  sectionsAriaLabel,
+  brandMark,
+  showContextualLink,
 }: AppShellHeaderProps) => {
-  const resolvedShowAllDivisionsLink =
-    showAllDivisionsLink ?? navigation.showAllDivisionsLink;
-  const allDivisionsTarget =
-    navigation.allDivisionsTarget ?? DIVISION_MANAGER_ROUTES.list;
+  const resolvedShowContextualLink =
+    showContextualLink ?? navigation.showAllDivisionsLink;
+  const contextualLinkTarget = navigation.allDivisionsTarget;
 
   return (
     <header className="app-shell-header">
       <div className="app-shell-header__service-strip">
         <div className="app-container app-shell-header__service-inner">
-          <p className="app-shell-header__service-label">Division operations workspace</p>
-          {resolvedShowAllDivisionsLink ? (
-            <AppNavLink to={allDivisionsTarget} variant="utility" forceLink>
-              All divisions
+          {serviceLabel ? (
+            <p className="app-shell-header__service-label">{serviceLabel}</p>
+          ) : null}
+          {resolvedShowContextualLink && contextualLinkTarget && contextualLinkLabel ? (
+            <AppNavLink to={contextualLinkTarget} variant="utility" forceLink>
+              {contextualLinkLabel}
             </AppNavLink>
           ) : null}
         </div>
@@ -46,12 +54,9 @@ export const AppShellHeader = ({
 
       <div className="app-shell-header__main">
         <div className="app-container app-shell-header__main-inner">
-          <AppBrandMark />
+          {brandMark}
 
-          <nav
-            className="app-shell-header__tab-nav"
-            aria-label="Products and Pricing sections"
-          >
+          <nav className="app-shell-header__tab-nav" aria-label={sectionsAriaLabel}>
             <div className="app-shell-header__tab-list">
               {navigation.topTabs.map((tab) => (
                 <AppNavLink

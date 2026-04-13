@@ -38,10 +38,3 @@ export async function updateDivision(
     payload,
   );
 }
-
-export const divisionsApi = {
-  getList: getDivisions,
-  getById: getDivisionById,
-  create: createDivision,
-  update: updateDivision,
-};

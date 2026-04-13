@@ -17,7 +17,11 @@ export { AppSidebarSummary } from './AppSidebarSummary';
 export type { AppSidebarSummaryProps, AppSidebarSummaryItem } from './AppSidebarSummary';
 
 export { AppShellHeader } from './AppShellHeader';
-export type { AppShellHeaderProps } from './AppShellHeader';
+export type {
+  AppShellHeaderNavigation,
+  AppShellHeaderProps,
+  AppShellHeaderTab,
+} from './AppShellHeader';
 
 export { AppShellFooter } from './AppShellFooter';
 export type { AppShellFooterProps, AppShellFooterLink } from './AppShellFooter';

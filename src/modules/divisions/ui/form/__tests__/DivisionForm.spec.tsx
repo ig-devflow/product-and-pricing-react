@@ -1,4 +1,3 @@
-import React from 'react'
 import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
@@ -22,11 +21,11 @@ describe('DivisionForm', () => {
     const handleSubmit = vi.fn()
 
     render(
-      React.createElement(DivisionForm, {
-        defaultValues: createValidValues(),
-        submitLabel: 'Create division',
-        onSubmit: handleSubmit,
-      }),
+      <DivisionForm
+        defaultValues={createValidValues()}
+        submitLabel="Create division"
+        onSubmit={handleSubmit}
+      />,
     )
 
     await user.click(screen.getByRole('button', { name: 'Create division' }))
@@ -40,11 +39,11 @@ describe('DivisionForm', () => {
     const user = userEvent.setup()
 
     render(
-      React.createElement(DivisionForm, {
-        defaultValues: createEmptyDivisionFormValues(),
-        submitLabel: 'Create division',
-        onSubmit: vi.fn(),
-      }),
+      <DivisionForm
+        defaultValues={createEmptyDivisionFormValues()}
+        submitLabel="Create division"
+        onSubmit={vi.fn()}
+      />,
     )
 
     await user.click(screen.getByRole('button', { name: 'Create division' }))

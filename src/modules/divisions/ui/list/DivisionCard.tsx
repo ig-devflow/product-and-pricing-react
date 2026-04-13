@@ -1,4 +1,4 @@
-import { AppPill } from '@/shared/ui/AppPill';
+import { AppPill } from '@/shared/ui/data-display';
 import { AppButtonLink, AppSurface } from '@/shared/ui/primitives';
 import { getDivisionBannerSrc } from '@/modules/divisions/lib/banner';
 import type { DivisionListItem } from '@/modules/divisions/model/types';

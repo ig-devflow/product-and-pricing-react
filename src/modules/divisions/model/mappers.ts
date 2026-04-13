@@ -230,9 +230,7 @@ export function mapDivisionDetailsDto(dto: DivisionDetailsDto): DivisionDetails 
   };
 }
 
-export function mapFormValuesToCreateDto(
-  values: DivisionFormValues,
-): CreateDivisionRequestDto {
+function buildDivisionRequestBase(values: DivisionFormValues) {
   return {
     name: values.name.trim(),
     isActive: values.isActive,
@@ -245,6 +243,14 @@ export function mapFormValuesToCreateDto(
     accreditationBanner: mapDivisionBannerToDto(values.accreditationBanner),
     headOfficeEmailAddress: values.headOfficeEmailAddress.trim(),
     headOfficeTelephoneNo: values.headOfficeTelephoneNo.trim(),
+  };
+}
+
+export function mapFormValuesToCreateDto(
+  values: DivisionFormValues,
+): CreateDivisionRequestDto {
+  return {
+    ...buildDivisionRequestBase(values),
     divisionReportTexts: [],
   };
 }
@@ -254,17 +260,7 @@ export function mapFormValuesToUpdateDto(
   reportTexts: DivisionReportText[] = [],
 ): UpdateDivisionRequestDto {
   return {
-    name: values.name.trim(),
-    termsAndConditions: values.termsAndConditions.trim(),
-    groupsPaymentTerms: values.groupsPaymentTerms.trim(),
-    isActive: values.isActive,
-    websiteUrl: values.websiteUrl.trim(),
-    visaLetterNote: values.visaLetterNote.trim(),
-    visaLetterNoteFormat: mapContentFormatToDto(values.visaLetterNoteFormat),
-    address: mapDivisionAddressToDto(values.address),
-    accreditationBanner: mapDivisionBannerToDto(values.accreditationBanner),
-    headOfficeEmailAddress: values.headOfficeEmailAddress.trim(),
-    headOfficeTelephoneNo: values.headOfficeTelephoneNo.trim(),
+    ...buildDivisionRequestBase(values),
     divisionReportTexts: reportTexts.map(mapDivisionReportTextToDto),
   };
 }

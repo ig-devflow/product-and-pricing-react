@@ -1,5 +1,4 @@
-import { AppKeyValueList } from '@/shared/ui/AppKeyValueList';
-import { AppPill } from '@/shared/ui/AppPill';
+import { AppKeyValueList, AppPill } from '@/shared/ui/data-display';
 import { AppSectionCard } from '@/shared/ui/patterns';
 import type { DivisionDetails } from '@/modules/divisions/model/types';
 import {

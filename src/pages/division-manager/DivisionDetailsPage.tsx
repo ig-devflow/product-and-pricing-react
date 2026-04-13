@@ -1,4 +1,4 @@
-import { AppAsyncState } from '@/shared/ui/AppAsyncState';
+import { AppAsyncState } from '@/shared/ui/data-display';
 import { AppPageHeader } from '@/shared/ui/patterns';
 import { useDivisionDetailsPage } from '@/modules/divisions/hooks/useDivisionDetailsPage';
 import {

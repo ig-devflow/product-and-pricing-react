@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { AppShellHeader } from '@/shared/ui/patterns';
@@ -44,10 +43,14 @@ describe('AppShellHeader', () => {
     const { Wrapper } = withAppProviders();
 
     render(
-      React.createElement(AppShellHeader, {
-        navigation: navigationFixture,
-        showAllDivisionsLink: false,
-      }),
+      <AppShellHeader
+        navigation={navigationFixture}
+        brandMark={<span>Brand</span>}
+        serviceLabel="Division operations workspace"
+        contextualLinkLabel="All divisions"
+        sectionsAriaLabel="Products and Pricing sections"
+        showContextualLink={false}
+      />,
       {
         wrapper: Wrapper,
       },
@@ -69,10 +72,14 @@ describe('AppShellHeader', () => {
     const { Wrapper } = withAppProviders();
 
     render(
-      React.createElement(AppShellHeader, {
-        navigation: navigationFixture,
-        showAllDivisionsLink: true,
-      }),
+      <AppShellHeader
+        navigation={navigationFixture}
+        brandMark={<span>Brand</span>}
+        serviceLabel="Division operations workspace"
+        contextualLinkLabel="All divisions"
+        sectionsAriaLabel="Products and Pricing sections"
+        showContextualLink
+      />,
       {
         wrapper: Wrapper,
       },
@@ -87,12 +94,16 @@ describe('AppShellHeader', () => {
     });
 
     render(
-      React.createElement(AppShellHeader, {
-        navigation: {
+      <AppShellHeader
+        navigation={{
           ...navigationFixture,
           showAllDivisionsLink: true,
-        },
-      }),
+        }}
+        brandMark={<span>Brand</span>}
+        serviceLabel="Division operations workspace"
+        contextualLinkLabel="All divisions"
+        sectionsAriaLabel="Products and Pricing sections"
+      />,
       {
         wrapper: Wrapper,
       },

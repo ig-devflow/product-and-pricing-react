@@ -1,4 +1,4 @@
-import { AppAsyncState } from '@/shared/ui/AppAsyncState';
+import { AppAsyncState } from '@/shared/ui/data-display';
 import { AppSurface } from '@/shared/ui/primitives';
 import type { DivisionListItem } from '@/modules/divisions/model/types';
 import { DivisionCard } from './DivisionCard';

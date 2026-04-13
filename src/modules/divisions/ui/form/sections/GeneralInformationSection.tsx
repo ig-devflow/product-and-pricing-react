@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import type { DivisionFormValues } from '@/modules/divisions/model/types';
-import { AppPill } from '@/shared/ui/AppPill';
+import { AppPill } from '@/shared/ui/data-display';
 import { AppField } from '@/shared/ui/controls';
 import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns';
 import { AppInput, AppSwitch } from '@/shared/ui/primitives';

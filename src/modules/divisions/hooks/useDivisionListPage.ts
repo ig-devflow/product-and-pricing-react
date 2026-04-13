@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
-import { useApiErrorMessage } from '@/shared/hooks/useApiErrorMessage';
+import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
 import { useDivisionListQuery } from '@/modules/divisions/queries/useDivisionListQuery';
 
 export const useDivisionListPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const divisionsQuery = useDivisionListQuery();
-  const errorMessage = useApiErrorMessage(
+  const errorMessage = getApiErrorMessage(
     divisionsQuery.error,
     'Failed to load divisions.',
   );

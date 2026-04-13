@@ -6,7 +6,6 @@ export interface DivisionFormActionsProps {
   submitLabel?: string;
   isSubmitting?: boolean;
   canReset?: boolean;
-  onSubmit: () => void;
   onCancel: () => void;
   onReset: () => void;
 }
@@ -16,7 +15,6 @@ export const DivisionFormActions = ({
   submitLabel,
   isSubmitting = false,
   canReset = false,
-  onSubmit,
   onCancel,
   onReset,
 }: DivisionFormActionsProps) => {
@@ -52,11 +50,10 @@ export const DivisionFormActions = ({
       ) : null}
 
       <AppButton
-        type="button"
+        type="submit"
         variant="primary"
         loading={isSubmitting}
         disabled={isSubmitting}
-        onClick={onSubmit}
       >
         {isSubmitting ? 'Saving...' : resolvedSubmitLabel}
       </AppButton>

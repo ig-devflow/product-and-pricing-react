@@ -4,8 +4,10 @@ export const APP_ROUTES = {
 } as const;
 
 export const DIVISION_MANAGER_ROUTES = {
-  list: '/division-manager',
-  create: '/division-manager/create',
-  details: (divisionId: string | number) => `/division-manager/${divisionId}`,
-  edit: (divisionId: string | number) => `/division-manager/${divisionId}/edit`,
+  list: APP_ROUTES.divisionManager,
+  create: `${APP_ROUTES.divisionManager}/create`,
+  details: (divisionId: string | number) =>
+    `${APP_ROUTES.divisionManager}/${divisionId}`,
+  edit: (divisionId: string | number) =>
+    `${APP_ROUTES.divisionManager}/${divisionId}/edit`,
 } as const;
