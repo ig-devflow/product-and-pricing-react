@@ -63,7 +63,7 @@ export const DivisionForm = ({
         ...watchedValues,
         address: {
           ...defaultValues.address,
-          ...(watchedValues?.address ?? {}),
+          ...watchedValues?.address,
         },
         accreditationBanner:
           watchedBanner === undefined
