@@ -1,4 +1,10 @@
 export const divisionPageHeaders = {
+  list: {
+    eyebrow: 'Admin',
+    title: 'Division Manager',
+    subtitle:
+      'Browse divisions, open details, and move into create or edit flows.',
+  },
   create: {
     eyebrow: 'Division Manager',
     title: 'Create division',

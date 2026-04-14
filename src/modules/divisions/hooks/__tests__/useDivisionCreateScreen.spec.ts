@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ContentFormat } from '@/modules/divisions/model/types';
-import type { DivisionFormValues } from '@/modules/divisions/model/types';
-import { useDivisionCreatePage } from '@/modules/divisions/hooks/useDivisionCreatePage';
+import { ContentFormat } from '@/modules/divisions/model/content-format';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
+import { useDivisionCreateScreen } from '@/modules/divisions/hooks/useDivisionCreateScreen';
 
 const navigateMock = vi.fn();
 const mutateAsyncMock = vi.fn();
@@ -23,9 +23,9 @@ vi.mock('@/modules/divisions/queries/useCreateDivisionMutation', () => ({
   }),
 }));
 
-describe('useDivisionCreatePage', () => {
+describe('useDivisionCreateScreen', () => {
   it('passes create mode and navigates to list after save', async () => {
-    const { result } = renderHook(() => useDivisionCreatePage());
+    const { result } = renderHook(() => useDivisionCreateScreen());
 
     const values: DivisionFormValues = {
       name: 'EC Dublin',

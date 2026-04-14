@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { AppShellHeader } from '@/shared/ui/patterns';
+import { AppShellHeader } from '@/app/layout';
 import { withAppProviders } from '@/tests/renderWithProviders';
 
 const navigationFixture = {

@@ -1,8 +1,9 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ContentFormat, type DivisionDetails } from '@/modules/divisions/model/types';
-import type { DivisionFormValues } from '@/modules/divisions/model/types';
-import { useDivisionEditPage } from '@/modules/divisions/hooks/useDivisionEditPage';
+import { ContentFormat } from '@/modules/divisions/model/content-format';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
+import type { DivisionDetails } from '@/modules/divisions/model/types';
+import { useDivisionEditScreen } from '@/modules/divisions/hooks/useDivisionEditScreen';
 
 const navigateMock = vi.fn();
 const mutateAsyncMock = vi.fn();
@@ -78,9 +79,9 @@ vi.mock('@/modules/divisions/queries/useUpdateDivisionMutation', () => ({
   }),
 }));
 
-describe('useDivisionEditPage', () => {
+describe('useDivisionEditScreen', () => {
   it('provides mapped initial values and submits update input', async () => {
-    const { result } = renderHook(() => useDivisionEditPage());
+    const { result } = renderHook(() => useDivisionEditScreen());
 
     expect(result.current.initialValues.name).toBe('EC Malta');
 

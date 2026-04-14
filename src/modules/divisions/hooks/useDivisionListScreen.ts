@@ -2,10 +2,12 @@ import { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
+import { divisionPageHeaders } from '@/modules/divisions/config/pageHeaders';
 import { useDivisionListQuery } from '@/modules/divisions/queries/useDivisionListQuery';
 
-export const useDivisionListPage = () => {
+export const useDivisionListScreen = () => {
   const navigate = useNavigate();
+  const pageHeader = divisionPageHeaders.list;
   const [searchParams, setSearchParams] = useSearchParams();
   const divisionsQuery = useDivisionListQuery();
   const errorMessage = getApiErrorMessage(
@@ -68,6 +70,7 @@ export const useDivisionListPage = () => {
   }, [searchTerm]);
 
   return {
+    pageHeader,
     searchTerm,
     setSearchTerm,
     filteredDivisions,

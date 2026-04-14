@@ -1,9 +1,4 @@
-export const ContentFormat = {
-  PlainText: 'plainText',
-  Html: 'html',
-} as const;
-
-export type ContentFormat = (typeof ContentFormat)[keyof typeof ContentFormat];
+import type { ContentFormat } from './content-format';
 
 export interface DivisionAddress {
   id: number | null;
@@ -66,33 +61,3 @@ export interface DivisionDetails {
   headOfficeTelephoneNo: string;
   reportTexts: DivisionReportText[];
 }
-
-export interface DivisionFormValues {
-  name: string;
-  isActive: boolean;
-  websiteUrl: string;
-  termsAndConditions: string;
-  groupsPaymentTerms: string;
-  visaLetterNote: string;
-  visaLetterNoteFormat: ContentFormat;
-  address: DivisionAddress;
-  accreditationBanner: DivisionBanner | null;
-  headOfficeEmailAddress: string;
-  headOfficeTelephoneNo: string;
-}
-
-export const DivisionVisaLetterNoteFormat = {
-  PlainText: ContentFormat.PlainText,
-  RichText: ContentFormat.Html,
-} as const;
-
-export type DivisionVisaLetterNoteFormat =
-  (typeof DivisionVisaLetterNoteFormat)[keyof typeof DivisionVisaLetterNoteFormat];
-
-export const divisionVisaLetterNoteFormatOptions: Array<{
-  value: DivisionVisaLetterNoteFormat;
-  label: string;
-}> = [
-  { value: DivisionVisaLetterNoteFormat.RichText, label: 'HTML' },
-  { value: DivisionVisaLetterNoteFormat.PlainText, label: 'Plain text' },
-];

@@ -1,8 +1,8 @@
-import { useEffect, useMemo } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { useEffect, useMemo, useRef } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { DivisionFormValues } from '@/modules/divisions/model/types';
 import { AppSurface } from '@/shared/ui/primitives';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
 import type { DivisionDetails } from '@/modules/divisions/model/types';
 import { divisionFormSchema } from './schema';
 import {
@@ -46,39 +46,15 @@ export const DivisionForm = ({
     [division?.id, mode],
   );
 
+  const defaultValuesRef = useRef(defaultValues);
+
   useEffect(() => {
-    methods.reset(defaultValues);
-  }, [defaultValues, methods, resetKey]);
+    defaultValuesRef.current = defaultValues;
+  }, [defaultValues]);
 
-  const watchedValues = useWatch({
-    control: methods.control,
-  });
-
-  const summaryValues = useMemo<DivisionFormValues>(
-    () => {
-      const watchedBanner = watchedValues?.accreditationBanner;
-
-      return {
-        ...defaultValues,
-        ...watchedValues,
-        address: {
-          ...defaultValues.address,
-          ...watchedValues?.address,
-        },
-        accreditationBanner:
-          watchedBanner === undefined
-            ? defaultValues.accreditationBanner
-            : watchedBanner === null
-              ? null
-              : {
-                  imageBase64: watchedBanner.imageBase64 ?? '',
-                  contentType: watchedBanner.contentType ?? '',
-                  fileName: watchedBanner.fileName ?? '',
-                },
-      };
-    },
-    [defaultValues, watchedValues],
-  );
+  useEffect(() => {
+    methods.reset(defaultValuesRef.current);
+  }, [methods, resetKey]);
 
   return (
     <FormProvider {...methods}>
@@ -124,7 +100,7 @@ export const DivisionForm = ({
 
           <DivisionFormAsideSummary
             mode={mode}
-            values={summaryValues}
+            defaultValues={defaultValues}
             details={division}
           />
         </div>

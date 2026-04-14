@@ -1,18 +1,20 @@
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
-import type { DivisionFormValues } from '@/modules/divisions/model/types';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
 import {
   createEmptyDivisionFormValues,
   mapFormValuesToCreateDto,
 } from '@/modules/divisions/model/mappers';
 import { useCreateDivisionMutation } from '@/modules/divisions/queries/useCreateDivisionMutation';
-import { divisionPageHeaders } from '@/modules/divisions/config/page-headers';
+import { divisionPageHeaders } from '@/modules/divisions/config/pageHeaders';
 
-export const useDivisionCreatePage = () => {
+export const useDivisionCreateScreen = () => {
   const navigate = useNavigate();
   const pageHeader = divisionPageHeaders.create;
   const createMutation = useCreateDivisionMutation();
+  const initialValues = useMemo(() => createEmptyDivisionFormValues(), []);
   const saveErrorMessage = getApiErrorMessage(
     createMutation.error,
     'Failed to save division.',
@@ -20,7 +22,7 @@ export const useDivisionCreatePage = () => {
 
   return {
     pageHeader,
-    initialValues: createEmptyDivisionFormValues(),
+    initialValues,
     submitLabel: 'Create division',
     isSaving: createMutation.isPending,
     saveErrorMessage,

@@ -6,7 +6,7 @@ import {
   appShellHeaderCopy,
 } from '@/app/config/app-shell';
 import { useAppShellNavigation } from '@/app/hooks/useAppShellNavigation';
-import { AppBrandMark, AppShellFooter, AppShellHeader } from '@/shared/ui/patterns';
+import { AppBrandMark, AppShellFooter, AppShellHeader } from '@/app/layout';
 
 const DivisionManagerLayout = () => {
   const navigation = useAppShellNavigation();

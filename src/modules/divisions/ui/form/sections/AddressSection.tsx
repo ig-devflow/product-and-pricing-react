@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import type { DivisionFormValues } from '@/modules/divisions/model/types';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
 import { AppField } from '@/shared/ui/controls';
 import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns';
 import { AppInput } from '@/shared/ui/primitives';
@@ -126,3 +126,4 @@ export const AddressSection = () => {
     </AppSectionCard>
   );
 };
+

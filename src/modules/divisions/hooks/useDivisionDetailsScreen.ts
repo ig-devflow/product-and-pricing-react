@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 import { buildResourcePageState } from '@/shared/lib/resource/buildResourcePageState';
-import { useDivisionRouteId } from './useDivisionRouteId';
 import { useDivisionDetailsQuery } from '@/modules/divisions/queries/useDivisionDetailsQuery';
-import { divisionPageHeaders } from '@/modules/divisions/config/page-headers';
+import { divisionPageHeaders } from '@/modules/divisions/config/pageHeaders';
+import { useDivisionRouteId } from './useDivisionRouteId';
 
-export const useDivisionDetailsPage = () => {
+export const useDivisionDetailsScreen = () => {
   const navigate = useNavigate();
   const pageHeader = divisionPageHeaders.details;
   const divisionId = useDivisionRouteId();

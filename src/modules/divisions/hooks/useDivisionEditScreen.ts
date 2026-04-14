@@ -3,18 +3,18 @@ import { useNavigate } from 'react-router';
 import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
 import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
 import { buildResourcePageState } from '@/shared/lib/resource/buildResourcePageState';
-import type { DivisionFormValues } from '@/modules/divisions/model/types';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
 import {
   createEmptyDivisionFormValues,
   mapDivisionDetailsToFormValues,
   mapFormValuesToUpdateDto,
 } from '@/modules/divisions/model/mappers';
-import { useDivisionRouteId } from './useDivisionRouteId';
 import { useDivisionDetailsQuery } from '@/modules/divisions/queries/useDivisionDetailsQuery';
 import { useUpdateDivisionMutation } from '@/modules/divisions/queries/useUpdateDivisionMutation';
-import { divisionPageHeaders } from '@/modules/divisions/config/page-headers';
+import { divisionPageHeaders } from '@/modules/divisions/config/pageHeaders';
+import { useDivisionRouteId } from './useDivisionRouteId';
 
-export const useDivisionEditPage = () => {
+export const useDivisionEditScreen = () => {
   const navigate = useNavigate();
   const pageHeader = divisionPageHeaders.edit;
   const divisionId = useDivisionRouteId();

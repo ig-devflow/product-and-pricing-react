@@ -1,6 +1,9 @@
+import { useMemo } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { AppPill, AppSummaryRows } from '@/shared/ui/data-display';
 import { AppSidebarSummary } from '@/shared/ui/patterns';
-import type { DivisionDetails, DivisionFormValues } from '@/modules/divisions/model/types';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
+import type { DivisionDetails } from '@/modules/divisions/model/types';
 import {
   buildDivisionAddressText,
   removeProtocol,
@@ -8,17 +11,77 @@ import {
 
 export interface DivisionFormAsideSummaryProps {
   mode: 'create' | 'edit';
-  values: DivisionFormValues;
+  defaultValues: DivisionFormValues;
   details?: DivisionDetails | null;
 }
 
 export const DivisionFormAsideSummary = ({
   mode,
-  values,
+  defaultValues,
   details = null,
 }: DivisionFormAsideSummaryProps) => {
-  const addressPreview = buildDivisionAddressText(values.address);
-  const websitePreview = removeProtocol(values.websiteUrl);
+  const { control } = useFormContext<DivisionFormValues>();
+
+  const [
+    name,
+    isActive,
+    websiteUrl,
+    address,
+    headOfficeEmailAddress,
+    headOfficeTelephoneNo,
+    accreditationBanner,
+  ] = useWatch({
+    control,
+    name: [
+      'name',
+      'isActive',
+      'websiteUrl',
+      'address',
+      'headOfficeEmailAddress',
+      'headOfficeTelephoneNo',
+      'accreditationBanner',
+    ],
+  });
+
+  const summaryValues = useMemo<DivisionFormValues>(
+    () => ({
+      ...defaultValues,
+      name: name ?? defaultValues.name,
+      isActive: isActive ?? defaultValues.isActive,
+      websiteUrl: websiteUrl ?? defaultValues.websiteUrl,
+      address: {
+        ...defaultValues.address,
+        ...address,
+      },
+      headOfficeEmailAddress:
+        headOfficeEmailAddress ?? defaultValues.headOfficeEmailAddress,
+      headOfficeTelephoneNo:
+        headOfficeTelephoneNo ?? defaultValues.headOfficeTelephoneNo,
+      accreditationBanner:
+        accreditationBanner === undefined
+          ? defaultValues.accreditationBanner
+          : accreditationBanner === null
+            ? null
+            : {
+                imageBase64: accreditationBanner.imageBase64 ?? '',
+                contentType: accreditationBanner.contentType ?? '',
+                fileName: accreditationBanner.fileName ?? '',
+              },
+    }),
+    [
+      accreditationBanner,
+      address,
+      defaultValues,
+      headOfficeEmailAddress,
+      headOfficeTelephoneNo,
+      isActive,
+      name,
+      websiteUrl,
+    ],
+  );
+
+  const addressPreview = buildDivisionAddressText(summaryValues.address);
+  const websitePreview = removeProtocol(summaryValues.websiteUrl);
 
   return (
     <AppSidebarSummary
@@ -29,8 +92,8 @@ export const DivisionFormAsideSummary = ({
         <div className="division-form-aside__row">
           <span className="app-summary-card__label">Status</span>
           <span className="app-summary-card__value">
-            <AppPill variant={values.isActive ? 'success' : 'neutral'}>
-              {values.isActive ? 'Active' : 'Inactive'}
+            <AppPill variant={summaryValues.isActive ? 'success' : 'neutral'}>
+              {summaryValues.isActive ? 'Active' : 'Inactive'}
             </AppPill>
           </span>
         </div>
@@ -38,7 +101,7 @@ export const DivisionFormAsideSummary = ({
         <div className="division-form-aside__row">
           <span className="app-summary-card__label">Name</span>
           <span className="app-summary-card__value">
-            {values.name || 'Untitled division'}
+            {summaryValues.name || 'Untitled division'}
           </span>
         </div>
 
@@ -62,19 +125,19 @@ export const DivisionFormAsideSummary = ({
           {
             key: 'email',
             label: 'Email',
-            value: values.headOfficeEmailAddress || 'Not provided',
+            value: summaryValues.headOfficeEmailAddress || 'Not provided',
           },
           {
             key: 'phone',
             label: 'Phone',
-            value: values.headOfficeTelephoneNo || 'Not provided',
+            value: summaryValues.headOfficeTelephoneNo || 'Not provided',
           },
           {
             key: 'banner',
             label: 'Banner',
             value:
-              values.accreditationBanner?.fileName ||
-              (values.accreditationBanner ? 'Uploaded' : 'Not set'),
+              summaryValues.accreditationBanner?.fileName ||
+              (summaryValues.accreditationBanner ? 'Uploaded' : 'Not set'),
           },
         ]}
       />

@@ -221,10 +221,8 @@ test('creates a division and returns to the list', async ({ page }) => {
   await page.getByLabel('Country ISO code').fill('ie')
 
   const visaFormatCombobox = page.getByRole('combobox', { name: 'Visa letter note format' })
-  await visaFormatCombobox.focus()
-  await visaFormatCombobox.press('ArrowDown')
-  await visaFormatCombobox.press('ArrowDown')
-  await visaFormatCombobox.press('Enter')
+  await activate(visaFormatCombobox)
+  await page.getByRole('option', { name: 'Plain text' }).click()
   await expect(visaFormatCombobox).toContainText('Plain text')
 
   await page.getByRole('textbox', { name: 'Visa letter note' }).fill('Visa note for Dublin')

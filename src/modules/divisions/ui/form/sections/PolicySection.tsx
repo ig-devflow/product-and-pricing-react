@@ -1,22 +1,14 @@
 import { Controller, useFormContext } from 'react-hook-form';
-import {
-  type DivisionVisaLetterNoteFormat,
-  divisionVisaLetterNoteFormatOptions,
-} from '@/modules/divisions/model/types';
-import type { DivisionFormValues } from '@/modules/divisions/model/types';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
+import { divisionVisaLetterNoteFormatOptions } from '@/modules/divisions/model/view-options';
 import { AppField, AppSelect } from '@/shared/ui/controls';
 import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns';
 import { AppTextarea } from '@/shared/ui/primitives';
 
-const selectOptions = divisionVisaLetterNoteFormatOptions.map((option) => ({
-  label: option.label,
-  value: option.value,
-}));
-
 export const PolicySection = () => {
   const {
-    register,
     control,
+    register,
     formState: { errors },
   } = useFormContext<DivisionFormValues>();
 
@@ -63,9 +55,9 @@ export const PolicySection = () => {
 
       <AppFormGrid className="division-form-content__note-grid">
         <AppField
-          className="division-form-content__format-field"
           label="Visa letter note format"
-          forId="division-visa-format"
+          forId="division-visa-note-format"
+          className="division-form-content__format-field"
           error={errors.visaLetterNoteFormat?.message}
         >
           {({ describedBy, labelId }) => (
@@ -74,15 +66,16 @@ export const PolicySection = () => {
               control={control}
               render={({ field }) => (
                 <AppSelect
-                  id="division-visa-format"
-                  name="Visa letter note format"
+                  id="division-visa-note-format"
                   value={field.value}
+                  options={divisionVisaLetterNoteFormatOptions}
                   describedBy={describedBy}
                   labelledBy={labelId}
-                  onValueChange={(value) =>
-                    field.onChange(value as DivisionVisaLetterNoteFormat)
-                  }
-                  options={selectOptions}
+                  invalid={Boolean(errors.visaLetterNoteFormat?.message)}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    field.onBlur();
+                  }}
                 />
               )}
             />

@@ -17,5 +17,7 @@
 @import './patterns/summary.css';
 @import './patterns/state.css';
 @import './patterns/pill.css';
-@import './shared-ui.css';
-@import './divisions.css';
+@import './shared-ui-layout.css';
+@import './shared-ui-controls.css';
+@import './shared-ui-patterns.css';
+@import './shared-ui-data-display.css';
