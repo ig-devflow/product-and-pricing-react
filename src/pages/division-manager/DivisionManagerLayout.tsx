@@ -1,18 +1,36 @@
 import { Outlet } from 'react-router';
-import { appShellFooterLinks } from '@/app/config/app-shell';
+import {
+  appShellBrand,
+  appShellFooterCopy,
+  appShellFooterLinks,
+  appShellHeaderCopy,
+} from '@/app/config/app-shell';
 import { useAppShellNavigation } from '@/app/hooks/useAppShellNavigation';
-import { AppShellFooter, AppShellHeader } from '@/shared/ui/patterns';
+import { AppBrandMark, AppShellFooter, AppShellHeader } from '@/app/layout';
 
 const DivisionManagerLayout = () => {
   const navigation = useAppShellNavigation();
 
   return (
     <div className="app-shell">
-      <AppShellHeader navigation={navigation} />
+      <AppShellHeader
+        navigation={navigation}
+        brandMark={<AppBrandMark {...appShellBrand} />}
+        serviceLabel={appShellHeaderCopy.serviceLabel}
+        contextualLinkLabel={appShellHeaderCopy.contextualLinkLabel}
+        sectionsAriaLabel={appShellHeaderCopy.sectionsAriaLabel}
+      />
       <main className="app-shell__main">
         <Outlet />
       </main>
-      <AppShellFooter links={appShellFooterLinks} />
+      <AppShellFooter
+        links={appShellFooterLinks}
+        title={appShellFooterCopy.title}
+        description={appShellFooterCopy.description}
+        metaTitle={appShellFooterCopy.metaTitle}
+        metaDescription={appShellFooterCopy.metaDescription}
+        copyrightLabel={appShellFooterCopy.copyrightLabel}
+      />
     </div>
   );
 };

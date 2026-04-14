@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ContentFormat } from '../types';
+import { ContentFormat } from '../content-format';
 import {
   createEmptyDivisionFormValues,
   mapFormValuesToCreateDto,
@@ -14,6 +14,7 @@ describe('division payload mappers', () => {
       websiteUrl: '  https://ecenglish.com/en/malta/  ',
       headOfficeEmailAddress: '  hello@ecenglish.com  ',
       headOfficeTelephoneNo: '  +356 0000 0000  ',
+      visaLetterNoteFormat: ContentFormat.Html,
       address: {
         id: 5,
         line1: '  Street  ',
@@ -26,6 +27,7 @@ describe('division payload mappers', () => {
 
     expect(payload.name).toBe('EC Malta');
     expect(payload.websiteUrl).toBe('https://ecenglish.com/en/malta/');
+    expect(payload.visaLetterNoteFormat).toBe(1);
     expect(payload.address?.countryISOCode).toBe('MT');
     expect(payload.divisionReportTexts).toEqual([]);
   });
@@ -37,7 +39,7 @@ describe('division payload mappers', () => {
         name: 'EC London',
         websiteUrl: 'https://ecenglish.com/en/london/',
         visaLetterNote: 'Updated note',
-        visaLetterNoteFormat: ContentFormat.PlainText,
+        visaLetterNoteFormat: ContentFormat.Html,
         headOfficeEmailAddress: 'hello@ecenglish.com',
         headOfficeTelephoneNo: '+44 20 0000 0000',
       },
@@ -73,5 +75,6 @@ describe('division payload mappers', () => {
         isDeleted: false,
       },
     ]);
+    expect(payload.visaLetterNoteFormat).toBe(1);
   });
 });

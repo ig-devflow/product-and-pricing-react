@@ -1,10 +1,13 @@
-import { AppAsyncState } from '@/shared/ui/AppAsyncState';
+import type { To } from 'react-router';
+import { AppAsyncState } from '@/shared/ui/data-display';
 import { AppSurface } from '@/shared/ui/primitives';
 import type { DivisionListItem } from '@/modules/divisions/model/types';
 import { DivisionCard } from './DivisionCard';
 
 export interface DivisionCardListProps {
   items: DivisionListItem[];
+  getDetailsHref: (divisionId: number) => To;
+  getEditHref: (divisionId: number) => To;
   isLoading: boolean;
   errorMessage?: string;
   emptyMessage?: string;
@@ -15,6 +18,8 @@ const skeletonItems = Array.from({ length: 6 }, (_, index) => index);
 
 export const DivisionCardList = ({
   items,
+  getDetailsHref,
+  getEditHref,
   isLoading,
   errorMessage = '',
   emptyMessage = 'No items found.',
@@ -53,7 +58,12 @@ export const DivisionCardList = ({
     ) : (
       <div className="app-grid">
         {items.map((division) => (
-          <DivisionCard key={division.id} division={division} />
+          <DivisionCard
+            key={division.id}
+            division={division}
+            detailsHref={getDetailsHref(division.id)}
+            editHref={getEditHref(division.id)}
+          />
         ))}
       </div>
     )}

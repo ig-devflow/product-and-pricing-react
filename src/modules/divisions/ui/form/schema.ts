@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ContentFormat } from '@/modules/divisions/model/types';
+import { ContentFormat } from '@/modules/divisions/model/content-format';
 
 const requiredMessage = 'This field is required';
 

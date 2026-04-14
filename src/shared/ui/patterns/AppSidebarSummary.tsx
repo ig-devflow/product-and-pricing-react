@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn';
 import { AppSurface } from '@/shared/ui/primitives';
-import { AppSummaryRows } from '@/shared/ui/AppSummaryRows';
+import { AppSummaryRows } from '@/shared/ui/data-display';
 import type { ReactNode } from 'react';
 
 export interface AppSidebarSummaryItem {

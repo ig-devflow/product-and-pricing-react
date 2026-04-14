@@ -1,4 +1,4 @@
-import { AppSummaryRows } from '@/shared/ui/AppSummaryRows';
+import { AppSummaryRows } from '@/shared/ui/data-display';
 import { AppSidebarSummary } from '@/shared/ui/patterns';
 import type { DivisionDetails } from '@/modules/divisions/model/types';
 

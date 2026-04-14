@@ -1,0 +1,132 @@
+.division-list-page {
+  align-content: start;
+}
+
+.division-list-toolbar__search {
+  min-width: 280px;
+  flex: 1 1 460px;
+}
+
+.division-list-toolbar__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.division-list-toolbar__count {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-tertiary);
+}
+
+.division-list-toolbar__refreshing {
+  font-size: var(--font-size-sm);
+  color: var(--color-link-default);
+}
+
+.division-card-list {
+  min-height: 240px;
+}
+
+.division-card-list__skeleton-card {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.division-card-list__skeleton--banner {
+  height: 180px;
+}
+
+.division-card-list__skeleton--title {
+  height: 28px;
+  width: 62%;
+}
+
+.division-card-list__skeleton--line {
+  height: 16px;
+  width: 100%;
+}
+
+.division-card-list__skeleton--line-short {
+  height: 16px;
+  width: 72%;
+}
+
+.division-card__banner-wrap,
+.division-card__banner-placeholder {
+  height: 180px;
+  background: var(--color-bg-surface-soft);
+}
+
+.division-card__banner {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.division-card__banner-placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-disabled);
+  font-size: var(--font-size-sm);
+}
+
+.division-card__top-row {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.division-card__title {
+  margin: 0;
+  font-size: 26px;
+  line-height: var(--line-height-snug);
+  letter-spacing: -0.02em;
+  word-break: break-word;
+  color: var(--color-text-primary);
+}
+
+.division-card__text {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  white-space: pre-line;
+}
+
+.division-card__text--muted {
+  color: var(--color-text-disabled);
+}
+
+.division-card__meta {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding-top: var(--space-2);
+}
+
+.division-card__meta div {
+  display: grid;
+  gap: 4px;
+}
+
+.division-card__meta dt {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.division-card__meta dd {
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 720px) {
+  .division-list-toolbar__meta {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

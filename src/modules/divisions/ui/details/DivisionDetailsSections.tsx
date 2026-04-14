@@ -1,7 +1,8 @@
-import { AppKeyValueList } from '@/shared/ui/AppKeyValueList';
-import { AppPill } from '@/shared/ui/AppPill';
+import { AppKeyValueList, AppPill } from '@/shared/ui/data-display';
 import { AppSectionCard } from '@/shared/ui/patterns';
 import type { DivisionDetails } from '@/modules/divisions/model/types';
+import type { ContentFormat } from '@/modules/divisions/model/content-format';
+import { divisionVisaLetterNoteFormatOptions } from '@/modules/divisions/model/view-options';
 import {
   buildDivisionAddressText,
   removeProtocol,
@@ -9,6 +10,13 @@ import {
 
 export interface DivisionDetailsSectionsProps {
   division: DivisionDetails;
+}
+
+function getContentFormatLabel(value: ContentFormat): string {
+  return (
+    divisionVisaLetterNoteFormatOptions.find((option) => option.value === value)
+      ?.label ?? value
+  );
 }
 
 export const DivisionDetailsSections = ({
@@ -99,7 +107,9 @@ export const DivisionDetailsSections = ({
               <h3 className="division-details-sections__subheading">
                 Visa letter note
               </h3>
-              <AppPill variant="info">{division.visaLetterNoteFormat}</AppPill>
+              <AppPill variant="info">
+                {getContentFormatLabel(division.visaLetterNoteFormat)}
+              </AppPill>
             </div>
             <p className="division-details-sections__copy">
               {division.visaLetterNote || 'No visa letter note added yet.'}
@@ -121,7 +131,9 @@ export const DivisionDetailsSections = ({
               >
                 <div className="division-details-sections__report-meta">
                   <span>Report text #{reportText.reportTextId}</span>
-                  <AppPill variant="neutral">{reportText.format}</AppPill>
+                  <AppPill variant="neutral">
+                    {getContentFormatLabel(reportText.format)}
+                  </AppPill>
                 </div>
                 <p className="division-details-sections__copy">
                   {reportText.content || 'Empty content'}

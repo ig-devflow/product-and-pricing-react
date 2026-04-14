@@ -1,7 +1,5 @@
-import type { To } from 'react-router';
-import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
-
-export type AppShellSection = 'division-manager';
+import type { To } from 'react-router'
+import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes'
 
 export type AppShellTabId =
   | 'pricelist'
@@ -10,42 +8,40 @@ export type AppShellTabId =
   | 'agents'
   | 'pricing-reference-data'
   | 'new-pricing-year'
-  | 'calculator';
+  | 'calculator'
 
-export type AppShellContextualLink = 'all-divisions';
+export type AppShellContextualLink = 'all-divisions'
 
 export interface AppShellRouteMeta {
-  shellSection?: AppShellSection;
-  shellTab?: AppShellTabId;
-  shellContextualLink?: AppShellContextualLink;
+  shellTab?: AppShellTabId
+  shellContextualLink?: AppShellContextualLink
 }
 
 export interface AppRouteHandle {
-  shell?: AppShellRouteMeta;
+  shell?: AppShellRouteMeta
 }
 
 export interface AppShellTopTabConfig {
-  id: AppShellTabId;
-  label: string;
-  to?: To | null;
-  inert?: boolean;
+  id: AppShellTabId
+  label: string
+  to?: To | null
+  inert?: boolean
 }
 
 export interface AppShellFooterLinkConfig {
-  id: string;
-  label: string;
-  to: To;
+  id: string
+  label: string
+  to: To
 }
 
 export const divisionManagerRouteMeta: AppShellRouteMeta = {
-  shellSection: 'division-manager',
   shellTab: 'pricing-reference-data',
-};
+}
 
 export const divisionManagerContextualRouteMeta: AppShellRouteMeta = {
   ...divisionManagerRouteMeta,
   shellContextualLink: 'all-divisions',
-};
+}
 
 export const appShellTopTabs: AppShellTopTabConfig[] = [
   {
@@ -83,11 +79,33 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
     label: 'Calculator',
     inert: true,
   },
-];
+]
 
 export const appShellContextualTargets: Record<AppShellContextualLink, To> = {
   'all-divisions': DIVISION_MANAGER_ROUTES.list,
-};
+}
+
+export const appShellBrand = {
+  to: DIVISION_MANAGER_ROUTES.list,
+  title: 'Products & Pricing',
+  subtitle: 'Division Manager',
+  ariaLabel: 'Products and Pricing home',
+} as const
+
+export const appShellHeaderCopy = {
+  serviceLabel: 'Division operations workspace',
+  contextualLinkLabel: 'All divisions',
+  sectionsAriaLabel: 'Products and Pricing sections',
+} as const
+
+export const appShellFooterCopy = {
+  title: 'Products & Pricing',
+  description:
+    'Division Manager keeps division details, pricing context, and content settings in one clean workspace.',
+  metaTitle: 'Product',
+  metaDescription: 'Admin shell for operational workflows.',
+  copyrightLabel: 'Products & Pricing. Internal product interface.',
+} as const
 
 export const appShellFooterLinks: AppShellFooterLinkConfig[] = [
   {
@@ -100,4 +118,4 @@ export const appShellFooterLinks: AppShellFooterLinkConfig[] = [
     label: 'Create division',
     to: DIVISION_MANAGER_ROUTES.create,
   },
-];
+]

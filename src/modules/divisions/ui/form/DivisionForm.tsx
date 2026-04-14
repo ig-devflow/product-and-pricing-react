@@ -1,8 +1,8 @@
-import { useEffect, useMemo } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { useEffect, useMemo, useRef } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { DivisionFormValues } from '@/modules/divisions/model/types';
 import { AppSurface } from '@/shared/ui/primitives';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
 import type { DivisionDetails } from '@/modules/divisions/model/types';
 import { divisionFormSchema } from './schema';
 import {
@@ -46,72 +46,21 @@ export const DivisionForm = ({
     [division?.id, mode],
   );
 
+  const defaultValuesRef = useRef(defaultValues);
+
   useEffect(() => {
-    methods.reset(defaultValues);
-  }, [defaultValues, methods, resetKey]);
+    defaultValuesRef.current = defaultValues;
+  }, [defaultValues]);
 
-  const watchedName = useWatch({
-    control: methods.control,
-    name: 'name',
-  });
-  const watchedIsActive = useWatch({
-    control: methods.control,
-    name: 'isActive',
-  });
-  const watchedWebsiteUrl = useWatch({
-    control: methods.control,
-    name: 'websiteUrl',
-  });
-  const watchedAddress = useWatch({
-    control: methods.control,
-    name: 'address',
-  });
-  const watchedEmail = useWatch({
-    control: methods.control,
-    name: 'headOfficeEmailAddress',
-  });
-  const watchedPhone = useWatch({
-    control: methods.control,
-    name: 'headOfficeTelephoneNo',
-  });
-  const watchedBanner = useWatch({
-    control: methods.control,
-    name: 'accreditationBanner',
-  });
-
-  const summaryValues = useMemo<DivisionFormValues>(
-    () => ({
-      ...defaultValues,
-      name: watchedName ?? defaultValues.name,
-      isActive: watchedIsActive ?? defaultValues.isActive,
-      websiteUrl: watchedWebsiteUrl ?? defaultValues.websiteUrl,
-      address: watchedAddress ?? defaultValues.address,
-      headOfficeEmailAddress: watchedEmail ?? defaultValues.headOfficeEmailAddress,
-      headOfficeTelephoneNo: watchedPhone ?? defaultValues.headOfficeTelephoneNo,
-      accreditationBanner:
-        watchedBanner === undefined
-          ? defaultValues.accreditationBanner
-          : watchedBanner,
-    }),
-    [
-      defaultValues,
-      watchedAddress,
-      watchedBanner,
-      watchedEmail,
-      watchedIsActive,
-      watchedName,
-      watchedPhone,
-      watchedWebsiteUrl,
-    ],
-  );
+  useEffect(() => {
+    methods.reset(defaultValuesRef.current);
+  }, [methods, resetKey]);
 
   return (
     <FormProvider {...methods}>
       <form
         className="division-form"
-        onSubmit={methods.handleSubmit(async (values: DivisionFormValues) => {
-          await onSubmit(values);
-        })}
+        onSubmit={methods.handleSubmit(onSubmit)}
       >
         <AppSurface
           className="app-section division-form__notice"
@@ -144,7 +93,6 @@ export const DivisionForm = ({
               submitLabel={submitLabel}
               isSubmitting={isSubmitting}
               canReset={methods.formState.isDirty}
-              onSubmit={() => void methods.handleSubmit(onSubmit)()}
               onCancel={onCancel ?? (() => {})}
               onReset={() => methods.reset(defaultValues)}
             />
@@ -152,7 +100,7 @@ export const DivisionForm = ({
 
           <DivisionFormAsideSummary
             mode={mode}
-            values={summaryValues}
+            defaultValues={defaultValues}
             details={division}
           />
         </div>

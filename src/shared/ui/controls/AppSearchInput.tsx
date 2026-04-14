@@ -49,25 +49,12 @@ export const AppSearchInput = forwardRef<HTMLInputElement, AppSearchInputProps>(
     };
 
     const clear = () => {
-      const element = inputRef.current;
-
-      if (!element) {
-        if (!isControlled) {
-          setInternalValue('');
-        }
-
-        onValueChange?.('');
-        return;
+      if (!isControlled) {
+        setInternalValue('');
       }
 
-      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-        HTMLInputElement.prototype,
-        'value',
-      )?.set;
-
-      nativeInputValueSetter?.call(element, '');
-      element.dispatchEvent(new Event('input', { bubbles: true }));
-      element.focus();
+      onValueChange?.('');
+      inputRef.current?.focus();
     };
 
     return (
