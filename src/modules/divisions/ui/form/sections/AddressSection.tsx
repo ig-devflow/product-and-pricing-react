@@ -1,14 +1,14 @@
-import { useFormContext } from 'react-hook-form';
-import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
-import { AppField } from '@/shared/ui/controls';
-import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns';
-import { AppInput } from '@/shared/ui/primitives';
+import { useFormContext } from 'react-hook-form'
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types'
+import { AppField } from '@/shared/ui/controls'
+import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns'
+import { AppInput } from '@/shared/ui/primitives'
 
 export const AddressSection = () => {
   const {
     register,
     formState: { errors },
-  } = useFormContext<DivisionFormValues>();
+  } = useFormContext<DivisionFormValues>()
 
   return (
     <AppSectionCard
@@ -104,7 +104,7 @@ export const AddressSection = () => {
         </AppField>
 
         <AppField
-          label="Country ISO code"
+          label="Country ISO code temporal"
           forId="division-country"
           error={errors.address?.countryIsoCode?.message}
         >
@@ -124,6 +124,5 @@ export const AddressSection = () => {
         </AppField>
       </AppFormGrid>
     </AppSectionCard>
-  );
-};
-
+  )
+}
