@@ -114,7 +114,7 @@ export const AddressSection = () => {
               invalid={Boolean(errors.address?.countryIsoCode?.message)}
               describedBy={describedBy}
               labelledBy={labelId}
-              placeholder="GB"
+              placeholder="BY"
               maxLength={2}
               {...register('address.countryIsoCode', {
                 setValueAs: (value: string) => value.toUpperCase(),
