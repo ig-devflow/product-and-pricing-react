@@ -3,6 +3,12 @@ import { expect, test, type Locator, type Page, type Route } from '@playwright/t
 const sampleBannerBase64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9pQxWb8AAAAASUVORK5CYII='
 
+const countries = [
+  { id: 'IE', name: 'Ireland' },
+  { id: 'MT', name: 'Malta' },
+  { id: 'GB', name: 'United Kingdom' },
+]
+
 function jsonResponse(route: Route, payload: unknown, status = 200) {
   return route.fulfill({
     status,
@@ -81,6 +87,8 @@ async function mockDivisionsApi(page: Page) {
   const updatePayloads: Record<string, unknown>[] = []
   const divisionByIdPath = /^\/api\/divisions\/(\d+)$/
 
+  await page.route('/api/ReferenceData/countries', async (route) => jsonResponse(route, countries))
+
   await page.route(/\/api\/divisions(?:\/.*)?$/, async (route) => {
     const request = route.request()
     const pathname = new URL(request.url()).pathname
@@ -110,6 +118,9 @@ async function mockDivisionsApi(page: Page) {
         ...createDivisionDetails(newId, String(payload.name ?? 'New division')),
         name: String(payload.name ?? 'New division'),
         websiteUrl: String(payload.websiteUrl ?? 'https://new.example.com'),
+        address:
+          (payload.address as ReturnType<typeof createDivisionDetails>['address']) ??
+          createDivisionDetails(newId, String(payload.name ?? 'New division')).address,
         headOfficeEmailAddress: String(payload.headOfficeEmailAddress ?? 'hello@example.com'),
         headOfficeTelephoneNo: String(payload.headOfficeTelephoneNo ?? '+1 000 000 0000'),
         visaLetterNote: String(payload.visaLetterNote ?? ''),
@@ -134,6 +145,7 @@ async function mockDivisionsApi(page: Page) {
         ...current,
         name: String(payload.name ?? current.name),
         websiteUrl: String(payload.websiteUrl ?? current.websiteUrl),
+        address: (payload.address as typeof current.address | undefined) ?? current.address,
         termsAndConditions: String(payload.termsAndConditions ?? current.termsAndConditions),
         groupsPaymentTerms: String(payload.groupsPaymentTerms ?? current.groupsPaymentTerms),
         visaLetterNote: String(payload.visaLetterNote ?? current.visaLetterNote),
@@ -154,6 +166,7 @@ async function mockDivisionsApi(page: Page) {
             ...existing,
             name: String(payload.name ?? current.name),
             websiteUrl: String(payload.websiteUrl ?? current.websiteUrl),
+            address: (payload.address as typeof existing.address | undefined) ?? existing.address,
           })
         }
       }
@@ -177,32 +190,34 @@ test('opens division details and saves edit changes', async ({ page }) => {
   await page.goto('/division-manager')
   await expect(page.getByRole('heading', { name: 'Division Manager' })).toBeVisible()
   await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
+  await expect(page.getByText('7 Main Street, Central, Valletta, VLT 1000, Malta')).toBeVisible()
 
   const openLink = page.getByRole('link', { name: 'Open' })
-  await Promise.all([
-    page.waitForURL(/\/division-manager\/7$/),
-    activate(openLink),
-  ])
+  await Promise.all([page.waitForURL(/\/division-manager\/7$/), activate(openLink)])
   await expect(header.getByRole('link', { name: 'All divisions' })).toBeVisible()
+  await expect(page.getByText('7 Main Street, Central, Valletta, VLT 1000, Malta')).toBeVisible()
 
   const editDivisionButton = page.getByRole('button', { name: 'Edit division' })
-  await Promise.all([
-    page.waitForURL(/\/division-manager\/7\/edit$/),
-    activate(editDivisionButton),
-  ])
+  await Promise.all([page.waitForURL(/\/division-manager\/7\/edit$/), activate(editDivisionButton)])
 
   await page.getByLabel('Division name').fill('EC Malta Updated')
   await page
     .getByRole('textbox', { name: 'Visa letter note' })
     .fill('Updated visa note for testing')
+  const countryCombobox = page.getByRole('combobox', { name: 'Country' })
+  await activate(countryCombobox)
+  await page.getByPlaceholder('Search countries').fill('ire')
+  await page.getByRole('option', { name: 'Ireland' }).click()
+  await expect(countryCombobox).toContainText('Ireland')
   const saveChangesButton = page.getByRole('button', { name: 'Save changes' })
-  await Promise.all([
-    page.waitForURL(/\/division-manager\/7$/),
-    activate(saveChangesButton),
-  ])
+  await Promise.all([page.waitForURL(/\/division-manager\/7$/), activate(saveChangesButton)])
+  await expect(page.getByText('7 Main Street, Central, Valletta, VLT 1000, Ireland')).toBeVisible()
   expect(updatePayloads).toHaveLength(1)
   expect(updatePayloads[0]?.name).toBe('EC Malta Updated')
   expect(updatePayloads[0]?.visaLetterNote).toBe('Updated visa note for testing')
+  expect(updatePayloads[0]?.address).toMatchObject({
+    countryISOCode: 'IE',
+  })
 })
 
 test('creates a division and returns to the list', async ({ page }) => {
@@ -218,7 +233,11 @@ test('creates a division and returns to the list', async ({ page }) => {
   await page.getByLabel('Head office email').fill('dublin@ecenglish.com')
   await page.getByLabel('Head office phone').fill('+353 1 234 5678')
   await page.getByLabel('Address line 1').fill('Grand Canal Quay')
-  await page.getByLabel('Country ISO code').fill('ie')
+  const countryCombobox = page.getByRole('combobox', { name: 'Country' })
+  await activate(countryCombobox)
+  await page.getByPlaceholder('Search countries').fill('ire')
+  await page.getByRole('option', { name: 'Ireland' }).click()
+  await expect(countryCombobox).toContainText('Ireland')
 
   const visaFormatCombobox = page.getByRole('combobox', { name: 'Visa letter note format' })
   await activate(visaFormatCombobox)
@@ -239,6 +258,9 @@ test('creates a division and returns to the list', async ({ page }) => {
   expect(createPayloads[0]?.name).toBe('EC Dublin')
   expect(createPayloads[0]?.visaLetterNoteFormat).toBe(0)
   expect(createPayloads[0]?.headOfficeEmailAddress).toBe('dublin@ecenglish.com')
+  expect(createPayloads[0]?.address).toMatchObject({
+    countryISOCode: 'IE',
+  })
 })
 
 test('renders legacy products and pricing tabs on desktop and mobile', async ({
@@ -289,10 +311,7 @@ test('uses all divisions as a contextual return link', async ({ page }) => {
   const allDivisionsLink = header.getByRole('link', { name: 'All divisions' })
 
   await expect(allDivisionsLink).toBeVisible()
-  await Promise.all([
-    page.waitForURL(/\/division-manager$/),
-    activate(allDivisionsLink),
-  ])
+  await Promise.all([page.waitForURL(/\/division-manager$/), activate(allDivisionsLink)])
   await expect(page.getByRole('heading', { name: 'Division Manager' })).toBeVisible()
   await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
 })

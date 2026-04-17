@@ -1,14 +1,62 @@
-import { useFormContext } from 'react-hook-form'
+import { useMemo } from 'react'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import type { DivisionFormValues } from '@/modules/divisions/model/form.types'
-import { AppField } from '@/shared/ui/controls'
+import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage'
+import { findReferenceDataNameById } from '@/shared/lib/reference-data/findReferenceDataNameById'
+import { useCountriesQuery } from '@/shared/queries/useCountriesQuery'
+import { AppField, AppSelect } from '@/shared/ui/controls'
 import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns'
 import { AppInput } from '@/shared/ui/primitives'
 
 export const AddressSection = () => {
   const {
+    control,
     register,
     formState: { errors },
   } = useFormContext<DivisionFormValues>()
+  const countriesQuery = useCountriesQuery()
+  const selectedCountryId = useWatch({
+    control,
+    name: 'address.countryIsoCode',
+  })
+  const normalizedSelectedCountryId = selectedCountryId?.trim().toUpperCase() ?? ''
+  const hasLoadedCountries = Boolean(countriesQuery.data?.length)
+
+  const countryOptions = useMemo(() => {
+    const options = (countriesQuery.data ?? []).map((country) => ({
+      label: country.name,
+      value: country.id,
+    }))
+
+    if (
+      !normalizedSelectedCountryId ||
+      options.some((option) => option.value === normalizedSelectedCountryId)
+    ) {
+      return options
+    }
+
+    return [
+      {
+        label:
+          findReferenceDataNameById(countriesQuery.data ?? [], normalizedSelectedCountryId) ||
+          normalizedSelectedCountryId,
+        value: normalizedSelectedCountryId,
+      },
+      ...options,
+    ]
+  }, [countriesQuery.data, normalizedSelectedCountryId])
+
+  const countryHint = countriesQuery.isLoading
+    ? 'Loading countries...'
+    : countriesQuery.error && !hasLoadedCountries
+      ? getApiErrorMessage(countriesQuery.error, 'Country list is unavailable right now.')
+      : undefined
+
+  const countryPlaceholder = countriesQuery.isLoading
+    ? 'Loading countries...'
+    : countriesQuery.error && !hasLoadedCountries
+      ? 'Country list unavailable'
+      : 'Select country'
 
   return (
     <AppSectionCard
@@ -104,21 +152,36 @@ export const AddressSection = () => {
         </AppField>
 
         <AppField
-          label="Country ISO code temporal"
+          label="Country"
           forId="division-country"
           error={errors.address?.countryIsoCode?.message}
+          hint={countryHint}
         >
           {({ describedBy, labelId }) => (
-            <AppInput
-              id="division-country"
-              invalid={Boolean(errors.address?.countryIsoCode?.message)}
-              describedBy={describedBy}
-              labelledBy={labelId}
-              placeholder="BY"
-              maxLength={2}
-              {...register('address.countryIsoCode', {
-                setValueAs: (value: string) => value.toUpperCase(),
-              })}
+            <Controller
+              name="address.countryIsoCode"
+              control={control}
+              render={({ field }) => (
+                <AppSelect
+                  id="division-country"
+                  value={field.value?.trim().toUpperCase() ?? ''}
+                  options={countryOptions}
+                  placeholder={countryPlaceholder}
+                  searchable
+                  searchPlaceholder="Search countries"
+                  noOptionsText="No countries found"
+                  disabled={
+                    countriesQuery.isLoading || (countriesQuery.isError && !hasLoadedCountries)
+                  }
+                  invalid={Boolean(errors.address?.countryIsoCode?.message)}
+                  describedBy={describedBy}
+                  labelledBy={labelId}
+                  onValueChange={(value) => {
+                    field.onChange(value.toUpperCase())
+                    field.onBlur()
+                  }}
+                />
+              )}
             />
           )}
         </AppField>

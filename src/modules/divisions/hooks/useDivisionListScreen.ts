@@ -1,47 +1,55 @@
-import { useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
-import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes';
-import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
-import { divisionPageHeaders } from '@/modules/divisions/config/pageHeaders';
-import { useDivisionListQuery } from '@/modules/divisions/queries/useDivisionListQuery';
+import { useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router'
+import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes'
+import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage'
+import { findReferenceDataNameById } from '@/shared/lib/reference-data/findReferenceDataNameById'
+import { useCountriesQuery } from '@/shared/queries/useCountriesQuery'
+import { divisionPageHeaders } from '@/modules/divisions/config/pageHeaders'
+import { buildDivisionAddressText } from '@/modules/divisions/model/formatters'
+import { useDivisionListQuery } from '@/modules/divisions/queries/useDivisionListQuery'
 
 export const useDivisionListScreen = () => {
-  const navigate = useNavigate();
-  const pageHeader = divisionPageHeaders.list;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const divisionsQuery = useDivisionListQuery();
-  const errorMessage = getApiErrorMessage(
-    divisionsQuery.error,
-    'Failed to load divisions.',
-  );
-  const searchTerm = searchParams.get('q') ?? '';
+  const navigate = useNavigate()
+  const pageHeader = divisionPageHeaders.list
+  const [searchParams, setSearchParams] = useSearchParams()
+  const divisionsQuery = useDivisionListQuery()
+  const countriesQuery = useCountriesQuery()
+  const errorMessage = getApiErrorMessage(divisionsQuery.error, 'Failed to load divisions.')
+  const searchTerm = searchParams.get('q') ?? ''
 
   const setSearchTerm = (value: string) => {
-    const normalizedValue = value.trim();
-    const nextParams = new URLSearchParams(searchParams);
+    const normalizedValue = value.trim()
+    const nextParams = new URLSearchParams(searchParams)
 
     if (normalizedValue) {
-      nextParams.set('q', normalizedValue);
+      nextParams.set('q', normalizedValue)
     } else {
-      nextParams.delete('q');
+      nextParams.delete('q')
     }
 
-    setSearchParams(nextParams, { replace: true });
-  };
+    setSearchParams(nextParams, { replace: true })
+  }
 
   const sortedDivisions = useMemo(() => {
-    const items = divisionsQuery.data ?? [];
+    const countries = countriesQuery.data ?? []
+    const items = (divisionsQuery.data ?? []).map((division) => ({
+      ...division,
+      addressText: buildDivisionAddressText(division.address, {
+        countryName: findReferenceDataNameById(countries, division.address.countryIsoCode),
+        fallbackToCountryCode: false,
+      }),
+    }))
 
     return [...items].sort((left, right) =>
       left.name.localeCompare(right.name, undefined, { sensitivity: 'base' }),
-    );
-  }, [divisionsQuery.data]);
+    )
+  }, [countriesQuery.data, divisionsQuery.data])
 
   const filteredDivisions = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
+    const term = searchTerm.trim().toLowerCase()
 
     if (!term) {
-      return sortedDivisions;
+      return sortedDivisions
     }
 
     return sortedDivisions.filter((division) => {
@@ -53,21 +61,21 @@ export const useDivisionListScreen = () => {
         division.lastModifiedBy,
       ]
         .join(' ')
-        .toLowerCase();
+        .toLowerCase()
 
-      return searchable.includes(term);
-    });
-  }, [searchTerm, sortedDivisions]);
+      return searchable.includes(term)
+    })
+  }, [searchTerm, sortedDivisions])
 
   const emptyMessage = useMemo(() => {
-    const term = searchTerm.trim();
+    const term = searchTerm.trim()
 
     if (term) {
-      return `No divisions matched "${term}".`;
+      return `No divisions matched "${term}".`
     }
 
-    return 'No divisions found.';
-  }, [searchTerm]);
+    return 'No divisions found.'
+  }, [searchTerm])
 
   return {
     pageHeader,
@@ -82,5 +90,5 @@ export const useDivisionListScreen = () => {
     emptyMessage,
     refetch: divisionsQuery.refetch,
     handleCreateClick: () => navigate(DIVISION_MANAGER_ROUTES.create),
-  };
-};
+  }
+}

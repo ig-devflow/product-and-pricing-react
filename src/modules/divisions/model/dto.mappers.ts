@@ -4,27 +4,22 @@ import type {
   DivisionReportTextDto,
   DivisionSummaryDto,
   ImageFileDto,
-} from '@/modules/divisions/api/dto';
-import {
-  buildDivisionAddressText,
-  removeProtocol,
-} from '@/modules/divisions/model/formatters';
-import { mapContentFormatFromDto } from './content-format.mappers';
+} from '@/modules/divisions/api/dto'
+import { buildDivisionAddressText, removeProtocol } from '@/modules/divisions/model/formatters'
+import { mapContentFormatFromDto } from './content-format.mappers'
 import type {
   DivisionAddress,
   DivisionBanner,
   DivisionDetails,
   DivisionListItem,
   DivisionReportText,
-} from './types';
+} from './types'
 
 function toTrimmedString(value: string | null | undefined): string {
-  return value?.trim() ?? '';
+  return value?.trim() ?? ''
 }
 
-function mapDivisionAddressFromDto(
-  dto?: ContactAddressDto | null,
-): DivisionAddress {
+function mapDivisionAddressFromDto(dto?: ContactAddressDto | null): DivisionAddress {
   return {
     id: dto?.id ?? null,
     line1: dto?.line1 ?? '',
@@ -32,19 +27,19 @@ function mapDivisionAddressFromDto(
     line3: dto?.line3 ?? '',
     line4: dto?.line4 ?? '',
     countryIsoCode: dto?.countryISOCode ?? '',
-  };
+  }
 }
 
 function mapDivisionBannerFromDto(dto?: ImageFileDto | null): DivisionBanner | null {
   if (!dto?.image) {
-    return null;
+    return null
   }
 
   return {
     imageBase64: dto.image,
     contentType: dto.contentType ?? '',
     fileName: dto.fileName ?? '',
-  };
+  }
 }
 
 function mapDivisionReportTextFromDto(dto: DivisionReportTextDto): DivisionReportText {
@@ -60,12 +55,12 @@ function mapDivisionReportTextFromDto(dto: DivisionReportTextDto): DivisionRepor
     lastModifiedOn: dto.lastModifiedOn,
     lastModifiedBy: dto.lastModifiedBy ?? '',
     isDeleted: dto.isDeleted,
-  };
+  }
 }
 
 export function mapDivisionSummaryDto(dto: DivisionSummaryDto): DivisionListItem {
-  const address = mapDivisionAddressFromDto(dto.address);
-  const websiteUrl = dto.websiteUrl ?? '';
+  const address = mapDivisionAddressFromDto(dto.address)
+  const websiteUrl = dto.websiteUrl ?? ''
 
   return {
     id: dto.id,
@@ -73,11 +68,12 @@ export function mapDivisionSummaryDto(dto: DivisionSummaryDto): DivisionListItem
     isActive: dto.isActive,
     websiteUrl,
     websiteDisplayUrl: removeProtocol(websiteUrl),
+    address,
     addressText: buildDivisionAddressText(address),
     banner: mapDivisionBannerFromDto(dto.accreditationBanner),
     createdBy: dto.createdBy ?? '',
     lastModifiedBy: dto.lastModifiedBy ?? '',
-  };
+  }
 }
 
 export function mapDivisionDetailsDto(dto: DivisionDetailsDto): DivisionDetails {
@@ -100,5 +96,5 @@ export function mapDivisionDetailsDto(dto: DivisionDetailsDto): DivisionDetails 
     headOfficeEmailAddress: dto.headOfficeEmailAddress ?? '',
     headOfficeTelephoneNo: dto.headOfficeTelephoneNo ?? '',
     reportTexts: (dto.divisionReportTexts ?? []).map(mapDivisionReportTextFromDto),
-  };
+  }
 }
