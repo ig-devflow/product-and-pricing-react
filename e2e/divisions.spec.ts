@@ -190,6 +190,7 @@ test('opens division details and saves edit changes', async ({ page }) => {
   await page.goto('/division-manager')
   await expect(page.getByRole('heading', { name: 'Division Manager' })).toBeVisible()
   await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
+  await expect(page.getByText('7 Main Street, Central, Valletta, VLT 1000, Malta')).toBeVisible()
 
   const openLink = page.getByRole('link', { name: 'Open' })
   await Promise.all([page.waitForURL(/\/division-manager\/7$/), activate(openLink)])

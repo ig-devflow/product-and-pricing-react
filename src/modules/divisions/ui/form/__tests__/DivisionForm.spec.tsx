@@ -222,6 +222,11 @@ describe('DivisionForm', () => {
     expect(formatSelect).toHaveTextContent('HTML')
     await waitFor(() => {
       expect(screen.getByRole('combobox', { name: 'Country' })).toHaveTextContent('Malta')
+      expect(
+        screen.getByText('Malta', {
+          selector: '.division-form-aside__value--address',
+        }),
+      ).toBeInTheDocument()
     })
 
     rerender(

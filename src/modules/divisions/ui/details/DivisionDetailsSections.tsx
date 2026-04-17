@@ -25,6 +25,7 @@ export const DivisionDetailsSections = ({ division }: DivisionDetailsSectionsPro
       countriesQuery.data ?? [],
       division.address.countryIsoCode,
     ),
+    fallbackToCountryCode: false,
   })
 
   return (

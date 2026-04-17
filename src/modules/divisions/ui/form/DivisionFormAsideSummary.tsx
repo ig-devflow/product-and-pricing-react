@@ -1,18 +1,17 @@
-import { useMemo } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { AppPill, AppSummaryRows } from '@/shared/ui/data-display';
-import { AppSidebarSummary } from '@/shared/ui/patterns';
-import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
-import type { DivisionDetails } from '@/modules/divisions/model/types';
-import {
-  buildDivisionAddressText,
-  removeProtocol,
-} from '@/modules/divisions/model/formatters';
+import { useMemo } from 'react'
+import { useFormContext, useWatch } from 'react-hook-form'
+import { AppPill, AppSummaryRows } from '@/shared/ui/data-display'
+import { AppSidebarSummary } from '@/shared/ui/patterns'
+import { findReferenceDataNameById } from '@/shared/lib/reference-data/findReferenceDataNameById'
+import { useCountriesQuery } from '@/shared/queries/useCountriesQuery'
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types'
+import type { DivisionDetails } from '@/modules/divisions/model/types'
+import { buildDivisionAddressText, removeProtocol } from '@/modules/divisions/model/formatters'
 
 export interface DivisionFormAsideSummaryProps {
-  mode: 'create' | 'edit';
-  defaultValues: DivisionFormValues;
-  details?: DivisionDetails | null;
+  mode: 'create' | 'edit'
+  defaultValues: DivisionFormValues
+  details?: DivisionDetails | null
 }
 
 export const DivisionFormAsideSummary = ({
@@ -20,7 +19,8 @@ export const DivisionFormAsideSummary = ({
   defaultValues,
   details = null,
 }: DivisionFormAsideSummaryProps) => {
-  const { control } = useFormContext<DivisionFormValues>();
+  const { control } = useFormContext<DivisionFormValues>()
+  const countriesQuery = useCountriesQuery()
 
   const [
     name,
@@ -41,7 +41,7 @@ export const DivisionFormAsideSummary = ({
       'headOfficeTelephoneNo',
       'accreditationBanner',
     ],
-  });
+  })
 
   const summaryValues = useMemo<DivisionFormValues>(
     () => ({
@@ -53,10 +53,8 @@ export const DivisionFormAsideSummary = ({
         ...defaultValues.address,
         ...address,
       },
-      headOfficeEmailAddress:
-        headOfficeEmailAddress ?? defaultValues.headOfficeEmailAddress,
-      headOfficeTelephoneNo:
-        headOfficeTelephoneNo ?? defaultValues.headOfficeTelephoneNo,
+      headOfficeEmailAddress: headOfficeEmailAddress ?? defaultValues.headOfficeEmailAddress,
+      headOfficeTelephoneNo: headOfficeTelephoneNo ?? defaultValues.headOfficeTelephoneNo,
       accreditationBanner:
         accreditationBanner === undefined
           ? defaultValues.accreditationBanner
@@ -78,10 +76,16 @@ export const DivisionFormAsideSummary = ({
       name,
       websiteUrl,
     ],
-  );
+  )
 
-  const addressPreview = buildDivisionAddressText(summaryValues.address);
-  const websitePreview = removeProtocol(summaryValues.websiteUrl);
+  const addressPreview = buildDivisionAddressText(summaryValues.address, {
+    countryName: findReferenceDataNameById(
+      countriesQuery.data ?? [],
+      summaryValues.address.countryIsoCode,
+    ),
+    fallbackToCountryCode: false,
+  })
+  const websitePreview = removeProtocol(summaryValues.websiteUrl)
 
   return (
     <AppSidebarSummary
@@ -107,9 +111,7 @@ export const DivisionFormAsideSummary = ({
 
         <div className="division-form-aside__row">
           <span className="app-summary-card__label">Website</span>
-          <span className="app-summary-card__value">
-            {websitePreview || 'Not provided'}
-          </span>
+          <span className="app-summary-card__value">{websitePreview || 'Not provided'}</span>
         </div>
 
         <div className="division-form-aside__row division-form-aside__row--multiline">
@@ -164,5 +166,5 @@ export const DivisionFormAsideSummary = ({
         />
       ) : null}
     </AppSidebarSummary>
-  );
-};
+  )
+}
