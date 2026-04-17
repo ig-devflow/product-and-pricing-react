@@ -1,7 +1,7 @@
-import { z } from 'zod';
-import { ContentFormat } from '@/modules/divisions/model/content-format';
+import { z } from 'zod'
+import { ContentFormat } from '@/modules/divisions/model/content-format'
 
-const requiredMessage = 'This field is required';
+const requiredMessage = 'This field is required'
 
 export const divisionFormSchema = z.object({
   name: z.string().trim().min(1, requiredMessage),
@@ -19,7 +19,7 @@ export const divisionFormSchema = z.object({
       .string()
       .trim()
       .refine((value) => !value || value.length === 2, {
-        message: 'Use a 2-letter ISO code',
+        message: 'Select a valid country',
       }),
   }),
   visaLetterNoteFormat: z.nativeEnum(ContentFormat),
@@ -33,6 +33,6 @@ export const divisionFormSchema = z.object({
       fileName: z.string(),
     })
     .nullable(),
-});
+})
 
-export type DivisionFormSchema = z.infer<typeof divisionFormSchema>;
+export type DivisionFormSchema = z.infer<typeof divisionFormSchema>
