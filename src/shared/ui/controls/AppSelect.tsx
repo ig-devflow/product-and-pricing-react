@@ -85,9 +85,21 @@ export const AppSelect = ({
     [currentValue, visibleOptions],
   )
 
+  const highlightedOptionIndex = useMemo(() => {
+    if (!isOpen) {
+      return -1
+    }
+
+    if (highlightedIndex >= 0 && highlightedIndex < visibleOptions.length) {
+      return highlightedIndex
+    }
+
+    return selectedIndex >= 0 ? selectedIndex : visibleOptions.length ? 0 : -1
+  }, [highlightedIndex, isOpen, selectedIndex, visibleOptions.length])
+
   const activeDescendantId =
-    isOpen && highlightedIndex >= 0 && visibleOptions[highlightedIndex]
-      ? `${selectId}-option-${highlightedIndex}`
+    isOpen && highlightedOptionIndex >= 0 && visibleOptions[highlightedOptionIndex]
+      ? `${selectId}-option-${highlightedOptionIndex}`
       : undefined
 
   const getOptionId = (index: number) => `${selectId}-option-${index}`
@@ -167,20 +179,19 @@ export const AppSelect = ({
       return
     }
 
-    setHighlightedIndex((currentIndex) =>
-      currentIndex < 0 ? 0 : (currentIndex + step + visibleOptions.length) % visibleOptions.length,
-    )
+    setHighlightedIndex((currentIndex) => {
+      const baseIndex =
+        currentIndex >= 0 && currentIndex < visibleOptions.length
+          ? currentIndex
+          : highlightedOptionIndex
+
+      return baseIndex < 0
+        ? 0
+        : (baseIndex + step + visibleOptions.length) % visibleOptions.length
+    })
   }
 
-  const getHighlightedOption = () => visibleOptions[highlightedIndex] ?? null
-
-  useEffect(() => {
-    if (!isOpen) {
-      return
-    }
-
-    setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : visibleOptions.length ? 0 : -1)
-  }, [isOpen, selectedIndex, visibleOptions.length])
+  const getHighlightedOption = () => visibleOptions[highlightedOptionIndex] ?? null
 
   useEffect(() => {
     if (!isOpen) {
@@ -201,14 +212,14 @@ export const AppSelect = ({
   }, [isOpen, updateDropdownMetrics])
 
   useEffect(() => {
-    if (!isOpen || highlightedIndex < 0) {
+    if (!isOpen || highlightedOptionIndex < 0) {
       return
     }
 
-    optionRefs.current[highlightedIndex]?.scrollIntoView?.({
+    optionRefs.current[highlightedOptionIndex]?.scrollIntoView?.({
       block: 'nearest',
     })
-  }, [highlightedIndex, isOpen])
+  }, [highlightedOptionIndex, isOpen])
 
   useEffect(() => {
     const handleDocumentPointerDown = (event: MouseEvent) => {
@@ -409,7 +420,7 @@ export const AppSelect = ({
                   }}
                   className={cn('app-select__option', {
                     'app-select__option--selected': option.value === currentValue,
-                    'app-select__option--highlighted': index === highlightedIndex,
+                    'app-select__option--highlighted': index === highlightedOptionIndex,
                   })}
                   role="option"
                   aria-selected={option.value === currentValue}
