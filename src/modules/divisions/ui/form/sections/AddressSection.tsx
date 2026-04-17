@@ -167,6 +167,9 @@ export const AddressSection = () => {
                   value={field.value?.trim().toUpperCase() ?? ''}
                   options={countryOptions}
                   placeholder={countryPlaceholder}
+                  searchable
+                  searchPlaceholder="Search countries"
+                  noOptionsText="No countries found"
                   disabled={
                     countriesQuery.isLoading || (countriesQuery.isError && !hasLoadedCountries)
                   }

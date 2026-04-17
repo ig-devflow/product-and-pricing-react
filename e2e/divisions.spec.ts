@@ -205,6 +205,7 @@ test('opens division details and saves edit changes', async ({ page }) => {
     .fill('Updated visa note for testing')
   const countryCombobox = page.getByRole('combobox', { name: 'Country' })
   await activate(countryCombobox)
+  await page.getByPlaceholder('Search countries').fill('ire')
   await page.getByRole('option', { name: 'Ireland' }).click()
   await expect(countryCombobox).toContainText('Ireland')
   const saveChangesButton = page.getByRole('button', { name: 'Save changes' })
@@ -233,6 +234,7 @@ test('creates a division and returns to the list', async ({ page }) => {
   await page.getByLabel('Address line 1').fill('Grand Canal Quay')
   const countryCombobox = page.getByRole('combobox', { name: 'Country' })
   await activate(countryCombobox)
+  await page.getByPlaceholder('Search countries').fill('ire')
   await page.getByRole('option', { name: 'Ireland' }).click()
   await expect(countryCombobox).toContainText('Ireland')
 

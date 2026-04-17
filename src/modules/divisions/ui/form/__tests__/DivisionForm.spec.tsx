@@ -143,6 +143,7 @@ describe('DivisionForm', () => {
     })
 
     await user.click(countrySelect)
+    await user.type(screen.getByPlaceholderText('Search countries'), 'ire')
     await user.click(await screen.findByRole('option', { name: 'Ireland' }))
     expect(countrySelect).toHaveTextContent('Ireland')
 
