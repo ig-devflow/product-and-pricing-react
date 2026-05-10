@@ -40,16 +40,13 @@ export const useDivisionEditScreen = () => {
   );
 
   const onSubmit = async (values: DivisionFormValues) => {
-    if (divisionId === null) {
+    if (divisionId === null || !pageState.data) {
       return;
     }
 
     await updateMutation.mutateAsync({
       divisionId,
-      payload: mapFormValuesToUpdateDto(
-        values,
-        pageState.data?.reportTexts ?? [],
-      ),
+      payload: mapFormValuesToUpdateDto(values, pageState.data.version),
     });
     navigate(DIVISION_MANAGER_ROUTES.details(divisionId));
   };

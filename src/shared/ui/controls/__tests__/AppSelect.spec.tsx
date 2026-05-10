@@ -101,9 +101,9 @@ describe('AppSelect', () => {
   })
 
   it('keeps hidden input value in sync when name is provided', async () => {
-    const { user, combobox, container } = setupSelect({ name: 'visaLetterNoteFormat' })
+    const { user, combobox, container } = setupSelect({ name: 'contentFormat' })
     const hiddenInput = container.querySelector(
-      'input[type="hidden"][name="visaLetterNoteFormat"]',
+      'input[type="hidden"][name="contentFormat"]',
     ) as HTMLInputElement
 
     expect(hiddenInput.value).toBe('')

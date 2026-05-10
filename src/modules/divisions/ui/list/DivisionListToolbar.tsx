@@ -4,18 +4,28 @@ import { AppButton, AppSurface } from '@/shared/ui/primitives';
 export interface DivisionListToolbarProps {
   searchTerm: string;
   totalCount: number;
-  filteredCount: number;
+  visibleCount: number;
+  page: number;
+  totalPages: number;
+  canGoPrevious: boolean;
+  canGoNext: boolean;
   isRefreshing?: boolean;
   onSearchTermChange: (value: string) => void;
+  onPageChange: (page: number) => void;
   onCreate: () => void;
 }
 
 export const DivisionListToolbar = ({
   searchTerm,
   totalCount,
-  filteredCount,
+  visibleCount,
+  page,
+  totalPages,
+  canGoPrevious,
+  canGoNext,
   isRefreshing = false,
   onSearchTermChange,
+  onPageChange,
   onCreate,
 }: DivisionListToolbarProps) => (
   <AppSurface
@@ -31,7 +41,7 @@ export const DivisionListToolbar = ({
             value={searchTerm}
             aria-describedby={describedBy}
             aria-labelledby={labelId}
-            placeholder="Search by name, website, address, author..."
+            placeholder="Search divisions"
             onValueChange={onSearchTermChange}
           />
         )}
@@ -40,13 +50,36 @@ export const DivisionListToolbar = ({
 
     <div className="division-list-toolbar__meta">
       <span className="division-list-toolbar__count">
-        {filteredCount}
-        {filteredCount !== totalCount ? ` / ${totalCount}` : ''} divisions
+        Showing {visibleCount} of {totalCount} divisions
       </span>
 
       {isRefreshing ? (
         <span className="division-list-toolbar__refreshing">Updating...</span>
       ) : null}
+
+      <div className="division-list-toolbar__pagination" aria-label="Division pages">
+        <AppButton
+          type="button"
+          variant="secondary"
+          size="sm"
+          disabled={!canGoPrevious}
+          onClick={() => onPageChange(page - 1)}
+        >
+          Previous
+        </AppButton>
+        <span className="division-list-toolbar__page">
+          Page {page} of {totalPages}
+        </span>
+        <AppButton
+          type="button"
+          variant="secondary"
+          size="sm"
+          disabled={!canGoNext}
+          onClick={() => onPageChange(page + 1)}
+        >
+          Next
+        </AppButton>
+      </div>
 
       <AppButton type="button" variant="primary" onClick={onCreate}>
         Add division

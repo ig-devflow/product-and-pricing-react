@@ -10,6 +10,7 @@ import {
   BannerSection,
   GeneralInformationSection,
   PolicySection,
+  TextContentSection,
 } from './sections';
 import { DivisionFormActions } from './DivisionFormActions';
 import { DivisionFormAsideSummary } from './DivisionFormAsideSummary';
@@ -79,6 +80,7 @@ export const DivisionForm = ({
             <GeneralInformationSection />
             <AddressSection />
             <PolicySection />
+            <TextContentSection />
             <BannerSection />
 
             {errorMessage ? (

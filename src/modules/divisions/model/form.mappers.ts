@@ -1,15 +1,18 @@
 import { ContentFormat } from './content-format';
-import type { DivisionFormValues } from './form.types';
+import type {
+  DivisionAddressFormValue,
+  DivisionFormValues,
+  DivisionTextContentFormValue,
+} from './form.types';
 import type { DivisionAddress, DivisionBanner, DivisionDetails } from './types';
 
-function cloneDivisionAddress(address: DivisionAddress): DivisionAddress {
+function cloneDivisionAddress(address: DivisionAddress): DivisionAddressFormValue {
   return {
-    id: address.id,
-    line1: address.line1,
-    line2: address.line2,
-    line3: address.line3,
-    line4: address.line4,
-    countryIsoCode: address.countryIsoCode,
+    street: address.street,
+    district: address.district,
+    city: address.city,
+    postalCode: address.postalCode,
+    countryId: address.countryId ? String(address.countryId) : '',
   };
 }
 
@@ -27,6 +30,18 @@ function cloneDivisionBanner(
   };
 }
 
+function mapDivisionTextToFormValue(
+  text: DivisionDetails['texts'][number],
+): DivisionTextContentFormValue {
+  return {
+    textId: text.id,
+    contentTemplateId: String(text.contentTemplateId),
+    audienceId: text.audienceId ? String(text.audienceId) : '',
+    content: text.content,
+    format: text.format === ContentFormat.None ? ContentFormat.PlainText : text.format,
+  };
+}
+
 export function createEmptyDivisionFormValues(): DivisionFormValues {
   return {
     name: '',
@@ -34,19 +49,27 @@ export function createEmptyDivisionFormValues(): DivisionFormValues {
     websiteUrl: '',
     termsAndConditions: '',
     groupsPaymentTerms: '',
-    visaLetterNote: '',
-    visaLetterNoteFormat: ContentFormat.PlainText,
-    address: {
-      id: null,
-      line1: '',
-      line2: '',
-      line3: '',
-      line4: '',
-      countryIsoCode: '',
+    contactAddress: {
+      street: '',
+      district: '',
+      city: '',
+      postalCode: '',
+      countryId: '',
     },
     accreditationBanner: null,
-    headOfficeEmailAddress: '',
+    headOfficeEmail: '',
     headOfficeTelephoneNo: '',
+    texts: [],
+  };
+}
+
+export function createEmptyTextContentFormValue(): DivisionTextContentFormValue {
+  return {
+    textId: null,
+    contentTemplateId: '',
+    audienceId: '',
+    content: '',
+    format: ContentFormat.PlainText,
   };
 }
 
@@ -59,11 +82,10 @@ export function mapDivisionDetailsToFormValues(
     websiteUrl: details.websiteUrl,
     termsAndConditions: details.termsAndConditions,
     groupsPaymentTerms: details.groupsPaymentTerms,
-    visaLetterNote: details.visaLetterNote,
-    visaLetterNoteFormat: details.visaLetterNoteFormat,
-    address: cloneDivisionAddress(details.address),
+    contactAddress: cloneDivisionAddress(details.contactAddress),
     accreditationBanner: cloneDivisionBanner(details.accreditationBanner),
-    headOfficeEmailAddress: details.headOfficeEmailAddress,
+    headOfficeEmail: details.headOfficeEmail,
     headOfficeTelephoneNo: details.headOfficeTelephoneNo,
+    texts: details.texts.map(mapDivisionTextToFormValue),
   };
 }

@@ -1,17 +1,17 @@
-import { useMemo } from 'react'
-import { useFormContext, useWatch } from 'react-hook-form'
-import { AppPill, AppSummaryRows } from '@/shared/ui/data-display'
-import { AppSidebarSummary } from '@/shared/ui/patterns'
-import { findReferenceDataNameById } from '@/shared/lib/reference-data/findReferenceDataNameById'
-import { useCountriesQuery } from '@/shared/queries/useCountriesQuery'
-import type { DivisionFormValues } from '@/modules/divisions/model/form.types'
-import type { DivisionDetails } from '@/modules/divisions/model/types'
-import { buildDivisionAddressText, removeProtocol } from '@/modules/divisions/model/formatters'
+import { useMemo } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { AppPill, AppSummaryRows } from '@/shared/ui/data-display';
+import { AppSidebarSummary } from '@/shared/ui/patterns';
+import { findReferenceDataNameById } from '@/shared/lib/reference-data/findReferenceDataNameById';
+import { useCountriesQuery } from '@/shared/queries/useCountriesQuery';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
+import type { DivisionDetails } from '@/modules/divisions/model/types';
+import { buildDivisionAddressText, removeProtocol } from '@/modules/divisions/model/formatters';
 
 export interface DivisionFormAsideSummaryProps {
-  mode: 'create' | 'edit'
-  defaultValues: DivisionFormValues
-  details?: DivisionDetails | null
+  mode: 'create' | 'edit';
+  defaultValues: DivisionFormValues;
+  details?: DivisionDetails | null;
 }
 
 export const DivisionFormAsideSummary = ({
@@ -19,29 +19,31 @@ export const DivisionFormAsideSummary = ({
   defaultValues,
   details = null,
 }: DivisionFormAsideSummaryProps) => {
-  const { control } = useFormContext<DivisionFormValues>()
-  const countriesQuery = useCountriesQuery()
+  const { control } = useFormContext<DivisionFormValues>();
+  const countriesQuery = useCountriesQuery();
 
   const [
     name,
     isActive,
     websiteUrl,
-    address,
-    headOfficeEmailAddress,
+    contactAddress,
+    headOfficeEmail,
     headOfficeTelephoneNo,
     accreditationBanner,
+    texts,
   ] = useWatch({
     control,
     name: [
       'name',
       'isActive',
       'websiteUrl',
-      'address',
-      'headOfficeEmailAddress',
+      'contactAddress',
+      'headOfficeEmail',
       'headOfficeTelephoneNo',
       'accreditationBanner',
+      'texts',
     ],
-  })
+  });
 
   const summaryValues = useMemo<DivisionFormValues>(
     () => ({
@@ -49,12 +51,13 @@ export const DivisionFormAsideSummary = ({
       name: name ?? defaultValues.name,
       isActive: isActive ?? defaultValues.isActive,
       websiteUrl: websiteUrl ?? defaultValues.websiteUrl,
-      address: {
-        ...defaultValues.address,
-        ...address,
+      contactAddress: {
+        ...defaultValues.contactAddress,
+        ...contactAddress,
       },
-      headOfficeEmailAddress: headOfficeEmailAddress ?? defaultValues.headOfficeEmailAddress,
-      headOfficeTelephoneNo: headOfficeTelephoneNo ?? defaultValues.headOfficeTelephoneNo,
+      headOfficeEmail: headOfficeEmail ?? defaultValues.headOfficeEmail,
+      headOfficeTelephoneNo:
+        headOfficeTelephoneNo ?? defaultValues.headOfficeTelephoneNo,
       accreditationBanner:
         accreditationBanner === undefined
           ? defaultValues.accreditationBanner
@@ -65,27 +68,36 @@ export const DivisionFormAsideSummary = ({
                 contentType: accreditationBanner.contentType ?? '',
                 fileName: accreditationBanner.fileName ?? '',
               },
+      texts: texts ?? defaultValues.texts,
     }),
     [
       accreditationBanner,
-      address,
+      contactAddress,
       defaultValues,
-      headOfficeEmailAddress,
+      headOfficeEmail,
       headOfficeTelephoneNo,
       isActive,
       name,
+      texts,
       websiteUrl,
     ],
-  )
+  );
 
-  const addressPreview = buildDivisionAddressText(summaryValues.address, {
-    countryName: findReferenceDataNameById(
-      countriesQuery.data ?? [],
-      summaryValues.address.countryIsoCode,
-    ),
-    fallbackToCountryCode: false,
-  })
-  const websitePreview = removeProtocol(summaryValues.websiteUrl)
+  const addressPreview = buildDivisionAddressText(
+    {
+      ...summaryValues.contactAddress,
+      countryId: summaryValues.contactAddress.countryId
+        ? Number(summaryValues.contactAddress.countryId)
+        : null,
+    },
+    {
+      countryName: findReferenceDataNameById(
+        countriesQuery.data ?? [],
+        summaryValues.contactAddress.countryId,
+      ),
+    },
+  );
+  const websitePreview = removeProtocol(summaryValues.websiteUrl);
 
   return (
     <AppSidebarSummary
@@ -127,7 +139,7 @@ export const DivisionFormAsideSummary = ({
           {
             key: 'email',
             label: 'Email',
-            value: summaryValues.headOfficeEmailAddress || 'Not provided',
+            value: summaryValues.headOfficeEmail || 'Not provided',
           },
           {
             key: 'phone',
@@ -141,6 +153,11 @@ export const DivisionFormAsideSummary = ({
               summaryValues.accreditationBanner?.fileName ||
               (summaryValues.accreditationBanner ? 'Uploaded' : 'Not set'),
           },
+          {
+            key: 'texts',
+            label: 'Texts',
+            value: summaryValues.texts.length,
+          },
         ]}
       />
 
@@ -148,23 +165,13 @@ export const DivisionFormAsideSummary = ({
         <AppSummaryRows
           items={[
             {
-              key: 'createdBy',
-              label: 'Created by',
-              value: details.createdBy,
-            },
-            {
-              key: 'lastModifiedBy',
-              label: 'Last modified by',
-              value: details.lastModifiedBy,
-            },
-            {
-              key: 'reportTexts',
-              label: 'Report texts',
-              value: details.reportTexts.length,
+              key: 'version',
+              label: 'Version',
+              value: details.version,
             },
           ]}
         />
       ) : null}
     </AppSidebarSummary>
-  )
-}
+  );
+};

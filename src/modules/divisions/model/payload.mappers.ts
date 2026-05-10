@@ -1,63 +1,83 @@
 import type {
   ContactAddressDto,
   CreateDivisionRequestDto,
-  DivisionReportTextDto,
-  ImageFileDto,
+  ImageBannerDto,
+  TextContentRequestDto,
   UpdateDivisionRequestDto,
 } from '@/modules/divisions/api/dto';
+import { ContentFormatDto } from '@/modules/divisions/api/dto';
+import { ContentFormat } from './content-format';
 import { mapContentFormatToDto } from './content-format.mappers';
-import type { DivisionFormValues } from './form.types';
-import type { DivisionAddress, DivisionBanner, DivisionReportText } from './types';
+import type {
+  DivisionAddressFormValue,
+  DivisionFormValues,
+  DivisionTextContentFormValue,
+} from './form.types';
+import type { DivisionBanner } from './types';
 
-function mapDivisionAddressToDto(address: DivisionAddress): ContactAddressDto | null {
-  const hasValue =
-    address.line1 ||
-    address.line2 ||
-    address.line3 ||
-    address.line4 ||
-    address.countryIsoCode;
+function toNullableString(value: string): string | null {
+  const trimmedValue = value.trim();
+  return trimmedValue ? trimmedValue : null;
+}
+
+function toNullableNumber(value: string): number | null {
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return null;
+  }
+
+  const numericValue = Number(trimmedValue);
+  return Number.isFinite(numericValue) ? numericValue : null;
+}
+
+function mapDivisionAddressToDto(
+  address: DivisionAddressFormValue,
+): ContactAddressDto | null {
+  const countryId = toNullableNumber(address.countryId);
+  const street = toNullableString(address.street);
+  const district = toNullableString(address.district);
+  const city = toNullableString(address.city);
+  const postalCode = toNullableString(address.postalCode);
+  const hasValue = Boolean(street || district || city || postalCode || countryId);
 
   if (!hasValue) {
     return null;
   }
 
   return {
-    id: address.id,
-    line1: address.line1.trim(),
-    line2: address.line2.trim(),
-    line3: address.line3.trim(),
-    line4: address.line4.trim(),
-    countryISOCode: address.countryIsoCode.trim().toUpperCase(),
+    street,
+    district,
+    city,
+    postalCode,
+    countryId,
   };
 }
 
-function mapDivisionBannerToDto(banner: DivisionBanner | null): ImageFileDto | null {
+function mapDivisionBannerToDto(banner: DivisionBanner | null): ImageBannerDto | null {
   if (!banner?.imageBase64) {
     return null;
   }
 
   return {
-    image: banner.imageBase64,
-    contentType: banner.contentType,
-    fileName: banner.fileName,
+    data: banner.imageBase64,
+    contentType: toNullableString(banner.contentType),
+    fileName: toNullableString(banner.fileName),
   };
 }
 
-function mapDivisionReportTextToDto(
-  reportText: DivisionReportText,
-): DivisionReportTextDto {
+function mapDivisionTextContentToDto(
+  text: DivisionTextContentFormValue,
+): TextContentRequestDto {
+  const content = toNullableString(text.content);
+
   return {
-    id: reportText.id,
-    reportTextId: reportText.reportTextId,
-    divisionId: reportText.divisionId,
-    centreId: reportText.centreId,
-    content: reportText.content,
-    format: mapContentFormatToDto(reportText.format),
-    createdOn: reportText.createdOn,
-    createdBy: reportText.createdBy,
-    lastModifiedOn: reportText.lastModifiedOn,
-    lastModifiedBy: reportText.lastModifiedBy,
-    isDeleted: reportText.isDeleted,
+    contentTemplateId: Number(text.contentTemplateId),
+    audienceId: toNullableNumber(text.audienceId),
+    content,
+    format: content
+      ? mapContentFormatToDto(text.format)
+      : ContentFormatDto.None,
   };
 }
 
@@ -65,33 +85,34 @@ function buildDivisionRequestBase(values: DivisionFormValues) {
   return {
     name: values.name.trim(),
     isActive: values.isActive,
-    websiteUrl: values.websiteUrl.trim(),
-    termsAndConditions: values.termsAndConditions.trim(),
-    groupsPaymentTerms: values.groupsPaymentTerms.trim(),
-    visaLetterNote: values.visaLetterNote.trim(),
-    visaLetterNoteFormat: mapContentFormatToDto(values.visaLetterNoteFormat),
-    address: mapDivisionAddressToDto(values.address),
+    websiteUrl: toNullableString(values.websiteUrl),
+    termsAndConditions: toNullableString(values.termsAndConditions),
+    groupsPaymentTerms: toNullableString(values.groupsPaymentTerms),
+    contactAddress: mapDivisionAddressToDto(values.contactAddress),
     accreditationBanner: mapDivisionBannerToDto(values.accreditationBanner),
-    headOfficeEmailAddress: values.headOfficeEmailAddress.trim(),
-    headOfficeTelephoneNo: values.headOfficeTelephoneNo.trim(),
+    headOfficeEmail: toNullableString(values.headOfficeEmail),
+    headOfficeTelephoneNo: toNullableString(values.headOfficeTelephoneNo),
+    texts: values.texts.map((text) =>
+      mapDivisionTextContentToDto({
+        ...text,
+        format: text.format === ContentFormat.None ? ContentFormat.PlainText : text.format,
+      }),
+    ),
   };
 }
 
 export function mapFormValuesToCreateDto(
   values: DivisionFormValues,
 ): CreateDivisionRequestDto {
-  return {
-    ...buildDivisionRequestBase(values),
-    divisionReportTexts: [],
-  };
+  return buildDivisionRequestBase(values);
 }
 
 export function mapFormValuesToUpdateDto(
   values: DivisionFormValues,
-  reportTexts: DivisionReportText[] = [],
+  version: string,
 ): UpdateDivisionRequestDto {
   return {
     ...buildDivisionRequestBase(values),
-    divisionReportTexts: reportTexts.map(mapDivisionReportTextToDto),
+    version,
   };
 }

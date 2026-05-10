@@ -2,59 +2,89 @@ import {
   ContentFormatDto,
   type CreateDivisionRequestDto,
   type DivisionDetailsDto,
-  type DivisionSummaryDto,
+  type DivisionListItemDto,
+  type PagedResultDto,
+  type TextContentRequestDto,
   type UpdateDivisionRequestDto,
 } from '@/modules/divisions/api/dto';
 
 const baseBanner = {
-  image:
+  data:
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9pQxWb8AAAAASUVORK5CYII=',
   contentType: 'image/png',
   fileName: 'division.png',
 };
 
-const createSummary = (id: number, name: string): DivisionSummaryDto => ({
-  id,
-  name,
-  termsAndConditions: 'Terms',
-  groupsPaymentTerms: 'Groups terms',
-  isActive: true,
-  websiteUrl: `https://${name.toLowerCase().replace(/\s+/g, '')}.example.com`,
-  address: {
-    id: 100 + id,
-    line1: `${id} Main Street`,
-    line2: 'Central',
-    line3: 'Valletta',
-    line4: 'VLT 1000',
-    countryISOCode: 'MT',
-  },
-  accreditationBanner: baseBanner,
-  visaLetterNote: 'Visa note',
-  visaLetterNoteFormat: ContentFormatDto.Html,
-  createdBy: 'lydiavella@gmail.com',
-  lastModifiedBy: 'lydiavella@gmail.com',
-});
+const textTemplateNames = new Map([
+  [10, 'Visa letter note'],
+  [11, 'Arrival instructions'],
+]);
 
-const createDetails = (id: number, name: string): DivisionDetailsDto => ({
-  ...createSummary(id, name),
-  address: {
-    id: 100 + id,
-    line1: `${id} Main Street`,
-    line2: 'Central',
-    line3: 'Valletta',
-    line4: 'VLT 1000',
-    countryISOCode: 'MT',
-  },
-  accreditationBanner: baseBanner,
-  createdOn: '2026-04-01T08:00:00Z',
-  lastModifiedOn: '2026-04-02T09:30:00Z',
-  years: [2026],
-  headOfficeEmailAddress: 'hello@ecenglish.com',
-  headOfficeTelephoneNo: '+356 1234 5678',
-  divisionReportTexts: [],
-});
+const audienceNames = new Map([
+  [1, 'Student'],
+  [2, 'Agent'],
+]);
 
-const initialList = [createSummary(7, 'EC Malta')];
+const versionToken = 'AAAAAAAAB9E=';
+
+function createListItem(id: number, name: string): DivisionListItemDto {
+  return {
+    id,
+    name,
+    isActive: true,
+  };
+}
+
+function mapTextRequestToDetails(
+  text: TextContentRequestDto,
+  index: number,
+): DivisionDetailsDto['texts'][number] {
+  return {
+    id: index + 1,
+    contentTemplateId: text.contentTemplateId,
+    contentTemplateName:
+      textTemplateNames.get(text.contentTemplateId) ?? `Template #${text.contentTemplateId}`,
+    audienceId: text.audienceId,
+    audienceName: text.audienceId ? (audienceNames.get(text.audienceId) ?? null) : null,
+    content: text.content ?? '',
+    format: text.format,
+  };
+}
+
+function createDetails(id: number, name: string): DivisionDetailsDto {
+  return {
+    id,
+    name,
+    termsAndConditions: 'Terms',
+    groupsPaymentTerms: 'Groups terms',
+    isActive: true,
+    websiteUrl: `https://${name.toLowerCase().replace(/\s+/g, '')}.example.com`,
+    contactAddress: {
+      street: `${id} Main Street`,
+      district: 'Central',
+      city: 'Valletta',
+      postalCode: 'VLT 1000',
+      countryId: 2,
+    },
+    accreditationBanner: baseBanner,
+    headOfficeEmail: 'hello@ecenglish.com',
+    headOfficeTelephoneNo: '+356 1234 5678',
+    texts: [
+      {
+        id: 1,
+        contentTemplateId: 10,
+        contentTemplateName: 'Visa letter note',
+        audienceId: null,
+        audienceName: null,
+        content: 'Visa note',
+        format: ContentFormatDto.PlainText,
+      },
+    ],
+    version: versionToken,
+  };
+}
+
+const initialList = [createListItem(7, 'EC Malta')];
 const initialDetails = new Map<number, DivisionDetailsDto>([
   [7, createDetails(7, 'EC Malta')],
 ]);
@@ -62,24 +92,32 @@ const initialDetails = new Map<number, DivisionDetailsDto>([
 let list = structuredClone(initialList);
 let details = new Map(initialDetails);
 
-function resolveAddress(
-  address: CreateDivisionRequestDto['address'] | UpdateDivisionRequestDto['address'],
-  fallback: NonNullable<DivisionDetailsDto['address']>,
-) {
-  return address ?? fallback;
-}
+function createPagedResult(
+  items: DivisionListItemDto[],
+  page: number,
+  pageSize: number,
+): PagedResultDto<DivisionListItemDto> {
+  const startIndex = (page - 1) * pageSize;
 
-function resolveBanner(
-  banner:
-    | CreateDivisionRequestDto['accreditationBanner']
-    | UpdateDivisionRequestDto['accreditationBanner'],
-  fallback: NonNullable<DivisionDetailsDto['accreditationBanner']>,
-) {
-  return banner ?? fallback;
+  return {
+    items: items.slice(startIndex, startIndex + pageSize),
+    totalCount: items.length,
+    page,
+    pageSize,
+  };
 }
 
 export const divisionFixtures = {
-  getList: () => list,
+  getList: (params: { search?: string; page?: number; pageSize?: number } = {}) => {
+    const search = params.search?.trim().toLowerCase() ?? '';
+    const page = params.page ?? 1;
+    const pageSize = params.pageSize ?? 12;
+    const filteredList = search
+      ? list.filter((item) => item.name.toLowerCase().includes(search))
+      : list;
+
+    return createPagedResult(filteredList, page, pageSize);
+  },
   getById: (id: number) => details.get(id) ?? null,
   reset: () => {
     list = structuredClone(initialList);
@@ -87,39 +125,25 @@ export const divisionFixtures = {
   },
   create: (payload: CreateDivisionRequestDto) => {
     const nextId = Math.max(0, ...list.map((item) => item.id)) + 1;
-    const summary = createSummary(nextId, payload.name);
-    const detail = createDetails(nextId, payload.name);
-
-    const mergedSummary: DivisionSummaryDto = {
-      ...summary,
+    const detail: DivisionDetailsDto = {
+      ...createDetails(nextId, payload.name),
       name: payload.name,
       isActive: payload.isActive,
       websiteUrl: payload.websiteUrl,
-      address: payload.address ?? summary.address,
-      accreditationBanner: payload.accreditationBanner ?? summary.accreditationBanner,
+      contactAddress: payload.contactAddress,
+      accreditationBanner: payload.accreditationBanner,
       termsAndConditions: payload.termsAndConditions,
       groupsPaymentTerms: payload.groupsPaymentTerms,
-      visaLetterNote: payload.visaLetterNote,
-      visaLetterNoteFormat: payload.visaLetterNoteFormat,
-    };
-
-    const mergedDetail: DivisionDetailsDto = {
-      ...detail,
-      ...mergedSummary,
-      address: resolveAddress(payload.address, detail.address),
-      accreditationBanner: resolveBanner(
-        payload.accreditationBanner,
-        detail.accreditationBanner,
-      ),
-      headOfficeEmailAddress: payload.headOfficeEmailAddress,
+      headOfficeEmail: payload.headOfficeEmail,
       headOfficeTelephoneNo: payload.headOfficeTelephoneNo,
-      divisionReportTexts: payload.divisionReportTexts,
+      texts: payload.texts.map(mapTextRequestToDetails),
+      version: versionToken,
     };
 
-    list = [mergedSummary, ...list];
-    details.set(nextId, mergedDetail);
+    list = [createListItem(nextId, payload.name), ...list];
+    details.set(nextId, detail);
 
-    return mergedDetail;
+    return detail;
   },
   update: (id: number, payload: UpdateDivisionRequestDto) => {
     const existing = details.get(id);
@@ -130,29 +154,25 @@ export const divisionFixtures = {
     const updated: DivisionDetailsDto = {
       ...existing,
       name: payload.name,
-      isActive: payload.isActive ?? existing.isActive,
+      isActive: payload.isActive,
       websiteUrl: payload.websiteUrl,
-      termsAndConditions: payload.termsAndConditions ?? '',
-      groupsPaymentTerms: payload.groupsPaymentTerms ?? '',
-      visaLetterNoteFormat: payload.visaLetterNoteFormat ?? existing.visaLetterNoteFormat,
-      visaLetterNote: payload.visaLetterNote ?? '',
-      address: resolveAddress(payload.address, existing.address),
-      accreditationBanner: resolveBanner(
-        payload.accreditationBanner,
-        existing.accreditationBanner,
-      ),
-      headOfficeEmailAddress: payload.headOfficeEmailAddress,
+      termsAndConditions: payload.termsAndConditions,
+      groupsPaymentTerms: payload.groupsPaymentTerms,
+      contactAddress: payload.contactAddress,
+      accreditationBanner: payload.accreditationBanner,
+      headOfficeEmail: payload.headOfficeEmail,
       headOfficeTelephoneNo: payload.headOfficeTelephoneNo,
-      divisionReportTexts: payload.divisionReportTexts,
-      lastModifiedOn: new Date().toISOString(),
+      texts: payload.texts.map(mapTextRequestToDetails),
+      version: payload.version,
     };
 
     details.set(id, updated);
     list = list.map((item) =>
       item.id === id
         ? {
-            ...item,
-            ...updated,
+            id,
+            name: updated.name,
+            isActive: updated.isActive,
           }
         : item,
     );

@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { ContentFormatDto } from '@/modules/divisions/api/dto';
 import { ContentFormat } from '@/modules/divisions/model/content-format';
 import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
 import { useDivisionCreateScreen } from '@/modules/divisions/hooks/useDivisionCreateScreen';
@@ -24,28 +25,34 @@ vi.mock('@/modules/divisions/queries/useCreateDivisionMutation', () => ({
 }));
 
 describe('useDivisionCreateScreen', () => {
-  it('passes create mode and navigates to list after save', async () => {
+  it('passes create payload and navigates to list after save', async () => {
     const { result } = renderHook(() => useDivisionCreateScreen());
 
     const values: DivisionFormValues = {
       name: 'EC Dublin',
       isActive: true,
       websiteUrl: 'https://dublin.example.com',
-      headOfficeEmailAddress: 'dublin@ecenglish.com',
+      headOfficeEmail: 'dublin@ecenglish.com',
       headOfficeTelephoneNo: '+353 1 234 5678',
-      address: {
-        id: null,
-        line1: 'Grand Canal Quay',
-        line2: '',
-        line3: '',
-        line4: '',
-        countryIsoCode: 'ie',
+      contactAddress: {
+        street: 'Grand Canal Quay',
+        district: '',
+        city: '',
+        postalCode: '',
+        countryId: '1',
       },
-      visaLetterNoteFormat: ContentFormat.PlainText,
-      visaLetterNote: 'Visa note',
       termsAndConditions: 'Terms',
       groupsPaymentTerms: 'Groups terms',
       accreditationBanner: null,
+      texts: [
+        {
+          textId: null,
+          contentTemplateId: '10',
+          audienceId: '',
+          content: 'Visa note',
+          format: ContentFormat.PlainText,
+        },
+      ],
     };
 
     await result.current.handleSubmit(values);
@@ -54,22 +61,26 @@ describe('useDivisionCreateScreen', () => {
       name: 'EC Dublin',
       isActive: true,
       websiteUrl: 'https://dublin.example.com',
-      headOfficeEmailAddress: 'dublin@ecenglish.com',
+      headOfficeEmail: 'dublin@ecenglish.com',
       headOfficeTelephoneNo: '+353 1 234 5678',
       termsAndConditions: 'Terms',
       groupsPaymentTerms: 'Groups terms',
-      visaLetterNote: 'Visa note',
-      visaLetterNoteFormat: 0,
-      address: {
-        id: null,
-        line1: 'Grand Canal Quay',
-        line2: '',
-        line3: '',
-        line4: '',
-        countryISOCode: 'IE',
+      contactAddress: {
+        street: 'Grand Canal Quay',
+        district: null,
+        city: null,
+        postalCode: null,
+        countryId: 1,
       },
       accreditationBanner: null,
-      divisionReportTexts: [],
+      texts: [
+        {
+          contentTemplateId: 10,
+          audienceId: null,
+          content: 'Visa note',
+          format: ContentFormatDto.PlainText,
+        },
+      ],
     });
     expect(navigateMock).toHaveBeenCalledWith('/division-manager');
   });

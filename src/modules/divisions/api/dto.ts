@@ -1,103 +1,88 @@
 export const ContentFormatDto = {
-  PlainText: 0,
-  Html: 1,
+  None: 0,
+  PlainText: 1,
+  Html: 2,
 } as const;
 
 export type ContentFormatDto =
   (typeof ContentFormatDto)[keyof typeof ContentFormatDto];
 
+export interface PagedResultDto<TItem> {
+  items: TItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 export interface ContactAddressDto {
-  id?: number | null;
-  line1: string;
-  line2: string;
-  line3: string;
-  line4: string;
-  countryISOCode: string;
+  street: string | null;
+  district: string | null;
+  city: string | null;
+  postalCode: string | null;
+  countryId: number | null;
 }
 
-export interface ImageFileDto {
-  image?: string | null;
-  contentType: string;
-  fileName?: string | null;
+export interface ImageBannerDto {
+  data: string | null;
+  contentType: string | null;
+  fileName: string | null;
 }
 
-export interface DivisionReportTextDto {
+export interface DivisionTextContentDto {
   id: number;
-  reportTextId: number;
-  divisionId?: number | null;
-  centreId?: number | null;
+  contentTemplateId: number;
+  contentTemplateName: string;
+  audienceId: number | null;
+  audienceName: string | null;
   content: string;
   format: ContentFormatDto;
-  createdOn: string;
-  createdBy: string;
-  lastModifiedOn: string;
-  lastModifiedBy: string;
-  isDeleted: boolean;
 }
 
-export interface DivisionSummaryDto {
+export interface TextContentRequestDto {
+  contentTemplateId: number;
+  audienceId: number | null;
+  content: string | null;
+  format: ContentFormatDto;
+}
+
+export interface DivisionListItemDto {
   id: number;
   name: string;
-  termsAndConditions?: string | null;
-  groupsPaymentTerms?: string | null;
   isActive: boolean;
-  websiteUrl: string;
-  address?: ContactAddressDto | null;
-  accreditationBanner?: ImageFileDto | null;
-  visaLetterNote?: string | null;
-  visaLetterNoteFormat: ContentFormatDto;
-  createdBy: string;
-  lastModifiedBy: string;
 }
 
 export interface DivisionDetailsDto {
   id: number;
   name: string;
-  termsAndConditions?: string | null;
-  groupsPaymentTerms?: string | null;
   isActive: boolean;
-  websiteUrl: string;
-  address: ContactAddressDto;
-  accreditationBanner: ImageFileDto;
-  visaLetterNote?: string | null;
-  visaLetterNoteFormat: ContentFormatDto;
-  createdOn: string;
-  createdBy: string;
-  lastModifiedOn: string;
-  lastModifiedBy: string;
-  years: number[];
-  headOfficeEmailAddress: string;
-  headOfficeTelephoneNo: string;
-  divisionReportTexts: DivisionReportTextDto[];
+  termsAndConditions: string | null;
+  groupsPaymentTerms: string | null;
+  websiteUrl: string | null;
+  headOfficeEmail: string | null;
+  headOfficeTelephoneNo: string | null;
+  accreditationBanner: ImageBannerDto | null;
+  contactAddress: ContactAddressDto | null;
+  texts: DivisionTextContentDto[];
+  version: string;
 }
 
 export interface CreateDivisionRequestDto {
-  id?: number;
   name: string;
-  termsAndConditions?: string | null;
-  groupsPaymentTerms?: string | null;
+  websiteUrl: string | null;
   isActive: boolean;
-  websiteUrl: string;
-  visaLetterNote?: string | null;
-  visaLetterNoteFormat: ContentFormatDto;
-  address?: ContactAddressDto | null;
-  accreditationBanner?: ImageFileDto | null;
-  headOfficeEmailAddress: string;
-  headOfficeTelephoneNo: string;
-  divisionReportTexts: DivisionReportTextDto[];
+  termsAndConditions: string | null;
+  groupsPaymentTerms: string | null;
+  headOfficeEmail: string | null;
+  headOfficeTelephoneNo: string | null;
+  contactAddress: ContactAddressDto | null;
+  accreditationBanner: ImageBannerDto | null;
+  texts: TextContentRequestDto[];
 }
 
-export interface UpdateDivisionRequestDto {
-  name: string;
-  termsAndConditions?: string | null;
-  groupsPaymentTerms?: string | null;
-  isActive?: boolean | null;
-  websiteUrl: string;
-  visaLetterNote?: string | null;
-  visaLetterNoteFormat?: ContentFormatDto | null;
-  address?: ContactAddressDto | null;
-  accreditationBanner?: ImageFileDto | null;
-  headOfficeEmailAddress: string;
-  headOfficeTelephoneNo: string;
-  divisionReportTexts: DivisionReportTextDto[];
+export interface CreateDivisionResponseDto {
+  id: number;
+}
+
+export interface UpdateDivisionRequestDto extends CreateDivisionRequestDto {
+  version: string;
 }

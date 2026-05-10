@@ -2,13 +2,25 @@ import { ContentFormatDto } from '@/modules/divisions/api/dto';
 import { ContentFormat } from './content-format';
 
 export function mapContentFormatFromDto(value: ContentFormatDto): ContentFormat {
-  return value === ContentFormatDto.Html
-    ? ContentFormat.Html
-    : ContentFormat.PlainText;
+  switch (value) {
+    case ContentFormatDto.Html:
+      return ContentFormat.Html;
+    case ContentFormatDto.PlainText:
+      return ContentFormat.PlainText;
+    case ContentFormatDto.None:
+    default:
+      return ContentFormat.None;
+  }
 }
 
 export function mapContentFormatToDto(value: ContentFormat): ContentFormatDto {
-  return value === ContentFormat.Html
-    ? ContentFormatDto.Html
-    : ContentFormatDto.PlainText;
+  switch (value) {
+    case ContentFormat.Html:
+      return ContentFormatDto.Html;
+    case ContentFormat.PlainText:
+      return ContentFormatDto.PlainText;
+    case ContentFormat.None:
+    default:
+      return ContentFormatDto.None;
+  }
 }

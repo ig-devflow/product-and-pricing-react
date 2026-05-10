@@ -4,9 +4,19 @@ const sampleBannerBase64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9pQxWb8AAAAASUVORK5CYII='
 
 const countries = [
-  { id: 'IE', name: 'Ireland' },
-  { id: 'MT', name: 'Malta' },
-  { id: 'GB', name: 'United Kingdom' },
+  { id: 1, code: 'IE', name: 'Ireland' },
+  { id: 2, code: 'MT', name: 'Malta' },
+  { id: 3, code: 'GB', name: 'United Kingdom' },
+]
+
+const audiences = [
+  { id: 1, name: 'Student' },
+  { id: 2, name: 'Agent' },
+]
+
+const contentTemplates = [
+  { id: 10, name: 'Visa letter note', description: null, scope: 1 },
+  { id: 11, name: 'Arrival instructions', description: null, scope: 1 },
 ]
 
 function jsonResponse(route: Route, payload: unknown, status = 200) {
@@ -22,7 +32,15 @@ async function activate(locator: Locator) {
   await locator.press('Enter')
 }
 
-function createDivisionSummary(id: number, name: string) {
+function createDivisionListItem(id: number, name: string) {
+  return {
+    id,
+    name,
+    isActive: true,
+  }
+}
+
+function createDivisionDetails(id: number, name: string) {
   return {
     id,
     name,
@@ -30,73 +48,86 @@ function createDivisionSummary(id: number, name: string) {
     groupsPaymentTerms: 'Groups terms',
     isActive: true,
     websiteUrl: `https://${name.toLowerCase().replace(/\s+/g, '')}.example.com`,
-    address: {
-      id: 10 + id,
-      line1: `${id} Main Street`,
-      line2: 'Central',
-      line3: 'Valletta',
-      line4: 'VLT 1000',
-      countryISOCode: 'MT',
+    contactAddress: {
+      street: `${id} Main Street`,
+      district: 'Central',
+      city: 'Valletta',
+      postalCode: 'VLT 1000',
+      countryId: 2,
     },
     accreditationBanner: {
-      image: sampleBannerBase64,
+      data: sampleBannerBase64,
       contentType: 'image/png',
       fileName: `${name.toLowerCase().replace(/\s+/g, '-')}.png`,
     },
-    visaLetterNote: 'Visa note',
-    visaLetterNoteFormat: 1,
-    createdBy: 'lydiavella@gmail.com',
-    lastModifiedBy: 'lydiavella@gmail.com',
+    headOfficeEmail: 'hello@ecenglish.com',
+    headOfficeTelephoneNo: '+356 1234 5678',
+    texts: [
+      {
+        id: 1,
+        contentTemplateId: 10,
+        contentTemplateName: 'Visa letter note',
+        audienceId: null,
+        audienceName: null,
+        content: 'Existing text content',
+        format: 1,
+      },
+    ],
+    version: 'AAAAAAAAB9E=',
   }
 }
 
-function createDivisionDetails(id: number, name: string) {
-  const summary = createDivisionSummary(id, name)
+function buildPagedResponse<TItem>(items: TItem[], page: number, pageSize: number) {
+  const startIndex = (page - 1) * pageSize
 
   return {
-    ...summary,
-    createdOn: '2026-04-01T08:00:00Z',
-    lastModifiedOn: '2026-04-02T09:30:00Z',
-    years: [2026],
-    headOfficeEmailAddress: 'hello@ecenglish.com',
-    headOfficeTelephoneNo: '+356 1234 5678',
-    divisionReportTexts: [
-      {
-        id: 1,
-        reportTextId: 100,
-        divisionId: id,
-        centreId: null,
-        content: 'Terms',
-        format: 1,
-        createdOn: '2026-04-01T08:00:00Z',
-        createdBy: 'lydiavella@gmail.com',
-        lastModifiedOn: '2026-04-02T09:30:00Z',
-        lastModifiedBy: 'lydiavella@gmail.com',
-        isDeleted: false,
-      },
-    ],
+    items: items.slice(startIndex, startIndex + pageSize),
+    totalCount: items.length,
+    page,
+    pageSize,
   }
 }
 
 async function mockDivisionsApi(page: Page) {
-  const list = [createDivisionSummary(7, 'EC Malta')]
+  const list = [createDivisionListItem(7, 'EC Malta')]
   const details = new Map<number, ReturnType<typeof createDivisionDetails>>([
     [7, createDivisionDetails(7, 'EC Malta')],
   ])
   const createPayloads: Record<string, unknown>[] = []
   const updatePayloads: Record<string, unknown>[] = []
-  const divisionByIdPath = /^\/api\/divisions\/(\d+)$/
+  let countryRequests = 0
+  const divisionByIdPath = /^\/api\/v1\/divisions\/(\d+)$/
 
-  await page.route('/api/ReferenceData/countries', async (route) => jsonResponse(route, countries))
+  await page.route(/\/api\/v1\/reference-data\/countries(?:\?.*)?$/, async (route) => {
+    countryRequests += 1
+    return jsonResponse(route, countries)
+  })
+  await page.route(/\/api\/v1\/reference-data\/currencies(?:\?.*)?$/, async (route) =>
+    jsonResponse(route, []),
+  )
+  await page.route(/\/api\/v1\/reference-data\/audiences(?:\?.*)?$/, async (route) =>
+    jsonResponse(route, audiences),
+  )
+  await page.route(/\/api\/v1\/reference-data\/content-templates(?:\?.*)?$/, async (route) =>
+    jsonResponse(route, contentTemplates),
+  )
 
-  await page.route(/\/api\/divisions(?:\/.*)?$/, async (route) => {
+  await page.route(/\/api\/v1\/divisions(?:\/\d+)?(?:\?.*)?$/, async (route) => {
     const request = route.request()
-    const pathname = new URL(request.url()).pathname
+    const url = new URL(request.url())
+    const pathname = url.pathname
     const method = request.method()
     const divisionByIdMatch = divisionByIdPath.exec(pathname)
 
-    if (method === 'GET' && pathname === '/api/divisions') {
-      return jsonResponse(route, list)
+    if (method === 'GET' && pathname === '/api/v1/divisions') {
+      const search = url.searchParams.get('search')?.trim().toLowerCase() ?? ''
+      const pageNumber = Number(url.searchParams.get('page') ?? 1)
+      const pageSize = Number(url.searchParams.get('pageSize') ?? 12)
+      const filteredList = search
+        ? list.filter((item) => item.name.toLowerCase().includes(search))
+        : list
+
+      return jsonResponse(route, buildPagedResponse(filteredList, pageNumber, pageSize))
     }
 
     if (method === 'GET' && divisionByIdMatch) {
@@ -108,27 +139,32 @@ async function mockDivisionsApi(page: Page) {
       )
     }
 
-    if (method === 'PUT' && pathname === '/api/divisions/create') {
+    if (method === 'POST' && pathname === '/api/v1/divisions') {
       const payload = request.postDataJSON() as Record<string, unknown>
       createPayloads.push(payload)
 
       const newId = 11
-      list.unshift(createDivisionSummary(newId, String(payload.name ?? 'New division')))
-      details.set(newId, {
+      const created = {
         ...createDivisionDetails(newId, String(payload.name ?? 'New division')),
         name: String(payload.name ?? 'New division'),
         websiteUrl: String(payload.websiteUrl ?? 'https://new.example.com'),
-        address:
-          (payload.address as ReturnType<typeof createDivisionDetails>['address']) ??
-          createDivisionDetails(newId, String(payload.name ?? 'New division')).address,
-        headOfficeEmailAddress: String(payload.headOfficeEmailAddress ?? 'hello@example.com'),
-        headOfficeTelephoneNo: String(payload.headOfficeTelephoneNo ?? '+1 000 000 0000'),
-        visaLetterNote: String(payload.visaLetterNote ?? ''),
-        termsAndConditions: String(payload.termsAndConditions ?? ''),
-        groupsPaymentTerms: String(payload.groupsPaymentTerms ?? ''),
-      })
+        contactAddress:
+          (payload.contactAddress as ReturnType<typeof createDivisionDetails>['contactAddress']) ??
+          null,
+        accreditationBanner:
+          (payload.accreditationBanner as
+            | ReturnType<typeof createDivisionDetails>['accreditationBanner']
+            | null) ?? null,
+        headOfficeEmail: String(payload.headOfficeEmail ?? ''),
+        headOfficeTelephoneNo: String(payload.headOfficeTelephoneNo ?? ''),
+        texts:
+          (payload.texts as ReturnType<typeof createDivisionDetails>['texts'] | undefined) ?? [],
+      }
 
-      return jsonResponse(route, {})
+      list.unshift(createDivisionListItem(newId, created.name))
+      details.set(newId, created)
+
+      return jsonResponse(route, { id: newId }, 201)
     }
 
     if (method === 'PUT' && divisionByIdMatch) {
@@ -141,37 +177,45 @@ async function mockDivisionsApi(page: Page) {
         return jsonResponse(route, { message: 'Not found' }, 404)
       }
 
-      details.set(id, {
+      const updated = {
         ...current,
         name: String(payload.name ?? current.name),
-        websiteUrl: String(payload.websiteUrl ?? current.websiteUrl),
-        address: (payload.address as typeof current.address | undefined) ?? current.address,
-        termsAndConditions: String(payload.termsAndConditions ?? current.termsAndConditions),
-        groupsPaymentTerms: String(payload.groupsPaymentTerms ?? current.groupsPaymentTerms),
-        visaLetterNote: String(payload.visaLetterNote ?? current.visaLetterNote),
-        headOfficeEmailAddress: String(
-          payload.headOfficeEmailAddress ?? current.headOfficeEmailAddress,
-        ),
-        headOfficeTelephoneNo: String(
-          payload.headOfficeTelephoneNo ?? current.headOfficeTelephoneNo,
-        ),
-        lastModifiedOn: '2026-04-07T10:00:00Z',
-      })
-
-      const existingIndex = list.findIndex((item) => item.id === id)
-      if (existingIndex >= 0) {
-        const existing = list[existingIndex]
-        if (existing) {
-          list.splice(existingIndex, 1, {
-            ...existing,
-            name: String(payload.name ?? current.name),
-            websiteUrl: String(payload.websiteUrl ?? current.websiteUrl),
-            address: (payload.address as typeof existing.address | undefined) ?? existing.address,
-          })
-        }
+        websiteUrl:
+          typeof payload.websiteUrl === 'string' ? payload.websiteUrl : current.websiteUrl,
+        contactAddress:
+          (payload.contactAddress as typeof current.contactAddress | null) ??
+          current.contactAddress,
+        termsAndConditions:
+          typeof payload.termsAndConditions === 'string'
+            ? payload.termsAndConditions
+            : current.termsAndConditions,
+        groupsPaymentTerms:
+          typeof payload.groupsPaymentTerms === 'string'
+            ? payload.groupsPaymentTerms
+            : current.groupsPaymentTerms,
+        headOfficeEmail:
+          typeof payload.headOfficeEmail === 'string'
+            ? payload.headOfficeEmail
+            : current.headOfficeEmail,
+        headOfficeTelephoneNo:
+          typeof payload.headOfficeTelephoneNo === 'string'
+            ? payload.headOfficeTelephoneNo
+            : current.headOfficeTelephoneNo,
+        texts: (payload.texts as typeof current.texts | undefined) ?? current.texts,
+        version: String(payload.version ?? current.version),
       }
 
-      return jsonResponse(route, {})
+      details.set(id, updated)
+      const existingIndex = list.findIndex((item) => item.id === id)
+      if (existingIndex >= 0) {
+        list.splice(existingIndex, 1, {
+          id,
+          name: updated.name,
+          isActive: updated.isActive,
+        })
+      }
+
+      return route.fulfill({ status: 204, body: '' })
     }
 
     return jsonResponse(route, { message: `Unhandled request: ${method} ${pathname}` }, 500)
@@ -180,44 +224,52 @@ async function mockDivisionsApi(page: Page) {
   return {
     createPayloads,
     updatePayloads,
+    getCountryRequests: () => countryRequests,
   }
 }
 
 test('opens division details and saves edit changes', async ({ page }) => {
-  const { updatePayloads } = await mockDivisionsApi(page)
+  const { updatePayloads, getCountryRequests } = await mockDivisionsApi(page)
   const header = page.getByRole('banner')
 
   await page.goto('/division-manager')
   await expect(page.getByRole('heading', { name: 'Division Manager' })).toBeVisible()
   await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
-  await expect(page.getByText('7 Main Street, Central, Valletta, VLT 1000, Malta')).toBeVisible()
+  await expect(page.getByText('EC Malta')).toBeVisible()
+  await expect(page.getByText('Showing 1 of 1 divisions')).toBeVisible()
 
   const openLink = page.getByRole('link', { name: 'Open' })
   await Promise.all([page.waitForURL(/\/division-manager\/7$/), activate(openLink)])
   await expect(header.getByRole('link', { name: 'All divisions' })).toBeVisible()
   await expect(page.getByText('7 Main Street, Central, Valletta, VLT 1000, Malta')).toBeVisible()
+  expect(getCountryRequests()).toBeGreaterThan(0)
 
   const editDivisionButton = page.getByRole('button', { name: 'Edit division' })
   await Promise.all([page.waitForURL(/\/division-manager\/7\/edit$/), activate(editDivisionButton)])
 
   await page.getByLabel('Division name').fill('EC Malta Updated')
-  await page
-    .getByRole('textbox', { name: 'Visa letter note' })
-    .fill('Updated visa note for testing')
   const countryCombobox = page.getByRole('combobox', { name: 'Country' })
   await activate(countryCombobox)
   await page.getByPlaceholder('Search countries').fill('ire')
-  await page.getByRole('option', { name: 'Ireland' }).click()
-  await expect(countryCombobox).toContainText('Ireland')
+  await page.getByRole('option', { name: 'Ireland (IE)' }).click()
+  await expect(countryCombobox).toContainText('Ireland (IE)')
   const saveChangesButton = page.getByRole('button', { name: 'Save changes' })
   await Promise.all([page.waitForURL(/\/division-manager\/7$/), activate(saveChangesButton)])
   await expect(page.getByText('7 Main Street, Central, Valletta, VLT 1000, Ireland')).toBeVisible()
   expect(updatePayloads).toHaveLength(1)
   expect(updatePayloads[0]?.name).toBe('EC Malta Updated')
-  expect(updatePayloads[0]?.visaLetterNote).toBe('Updated visa note for testing')
-  expect(updatePayloads[0]?.address).toMatchObject({
-    countryISOCode: 'IE',
+  expect(updatePayloads[0]?.version).toBe('AAAAAAAAB9E=')
+  expect(updatePayloads[0]?.contactAddress).toMatchObject({
+    countryId: 1,
   })
+  expect(updatePayloads[0]?.texts).toEqual([
+    {
+      contentTemplateId: 10,
+      audienceId: null,
+      content: 'Existing text content',
+      format: 1,
+    },
+  ])
 })
 
 test('creates a division and returns to the list', async ({ page }) => {
@@ -232,35 +284,58 @@ test('creates a division and returns to the list', async ({ page }) => {
   await page.getByLabel('Website URL').fill('https://dublin.example.com')
   await page.getByLabel('Head office email').fill('dublin@ecenglish.com')
   await page.getByLabel('Head office phone').fill('+353 1 234 5678')
-  await page.getByLabel('Address line 1').fill('Grand Canal Quay')
+  await page.getByLabel('Street').fill('Grand Canal Quay')
   const countryCombobox = page.getByRole('combobox', { name: 'Country' })
   await activate(countryCombobox)
   await page.getByPlaceholder('Search countries').fill('ire')
-  await page.getByRole('option', { name: 'Ireland' }).click()
-  await expect(countryCombobox).toContainText('Ireland')
+  await page.getByRole('option', { name: 'Ireland (IE)' }).click()
+  await expect(countryCombobox).toContainText('Ireland (IE)')
 
-  const visaFormatCombobox = page.getByRole('combobox', { name: 'Visa letter note format' })
-  await activate(visaFormatCombobox)
-  await page.getByRole('option', { name: 'Plain text' }).click()
-  await expect(visaFormatCombobox).toContainText('Plain text')
+  await page.getByRole('button', { name: 'Add text' }).click()
+  const templateCombobox = page.getByRole('combobox', { name: 'Content template' })
+  await activate(templateCombobox)
+  await page.getByRole('option', { name: 'Visa letter note' }).click()
+  const audienceCombobox = page.getByRole('combobox', { name: 'Audience' })
+  await activate(audienceCombobox)
+  await page.getByRole('option', { name: 'Student' }).click()
+  const formatCombobox = page.getByRole('combobox', { name: 'Format' })
+  await activate(formatCombobox)
+  await page.getByRole('option', { name: 'HTML' }).click()
+  await page.getByRole('textbox', { name: 'Content' }).fill('Visa note for Dublin')
 
-  await page.getByRole('textbox', { name: 'Visa letter note' }).fill('Visa note for Dublin')
   await page.getByLabel('Terms and conditions').fill('Division terms')
   await page.getByLabel('Groups payment terms').fill('Groups terms')
 
   const createDivisionButton = page.getByRole('button', { name: 'Create division' })
-
   await activate(createDivisionButton)
 
   await expect(page).toHaveURL(/\/division-manager$/)
   await expect(page.getByText('EC Dublin')).toBeVisible()
   expect(createPayloads).toHaveLength(1)
   expect(createPayloads[0]?.name).toBe('EC Dublin')
-  expect(createPayloads[0]?.visaLetterNoteFormat).toBe(0)
-  expect(createPayloads[0]?.headOfficeEmailAddress).toBe('dublin@ecenglish.com')
-  expect(createPayloads[0]?.address).toMatchObject({
-    countryISOCode: 'IE',
+  expect(createPayloads[0]?.headOfficeEmail).toBe('dublin@ecenglish.com')
+  expect(createPayloads[0]?.contactAddress).toMatchObject({
+    street: 'Grand Canal Quay',
+    countryId: 1,
   })
+  expect(createPayloads[0]?.texts).toEqual([
+    {
+      contentTemplateId: 10,
+      audienceId: 1,
+      content: 'Visa note for Dublin',
+      format: 2,
+    },
+  ])
+})
+
+test('uses backend search parameter for list filtering', async ({ page }) => {
+  await mockDivisionsApi(page)
+
+  await page.goto('/division-manager')
+  await page.getByRole('textbox', { name: 'Search' }).fill('missing')
+
+  await expect(page).toHaveURL(/search=missing/)
+  await expect(page.getByText('No divisions matched "missing".')).toBeVisible()
 })
 
 test('renders legacy products and pricing tabs on desktop and mobile', async ({
