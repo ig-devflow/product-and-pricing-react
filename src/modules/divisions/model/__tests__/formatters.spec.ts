@@ -1,40 +1,33 @@
-import { describe, expect, it } from 'vitest'
-import { buildDivisionAddressText } from '../formatters'
+import { describe, expect, it } from 'vitest';
+import { buildDivisionAddressText } from '../formatters';
 
 describe('division formatters', () => {
-  it('prefers the resolved country name over the stored country code', () => {
+  it('builds address text with the resolved country name', () => {
     const addressText = buildDivisionAddressText(
       {
-        id: 7,
-        line1: 'Marguerite Mangion Street',
-        line2: 'St Julians',
-        line3: '',
-        line4: '',
-        countryIsoCode: 'MT',
+        street: 'Marguerite Mangion Street',
+        district: 'St Julians',
+        city: '',
+        postalCode: '',
+        countryId: 2,
       },
       {
         countryName: 'Malta',
       },
-    )
+    );
 
-    expect(addressText).toBe('Marguerite Mangion Street, St Julians, Malta')
-  })
+    expect(addressText).toBe('Marguerite Mangion Street, St Julians, Malta');
+  });
 
-  it('can omit country code fallback when the country name is not resolved yet', () => {
-    const addressText = buildDivisionAddressText(
-      {
-        id: 7,
-        line1: 'Marguerite Mangion Street',
-        line2: 'St Julians',
-        line3: '',
-        line4: '',
-        countryIsoCode: 'MT',
-      },
-      {
-        fallbackToCountryCode: false,
-      },
-    )
+  it('omits country when the country name is not resolved yet', () => {
+    const addressText = buildDivisionAddressText({
+      street: 'Marguerite Mangion Street',
+      district: 'St Julians',
+      city: '',
+      postalCode: '',
+      countryId: 2,
+    });
 
-    expect(addressText).toBe('Marguerite Mangion Street, St Julians')
-  })
-})
+    expect(addressText).toBe('Marguerite Mangion Street, St Julians');
+  });
+});

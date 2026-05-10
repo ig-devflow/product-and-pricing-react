@@ -1,21 +1,19 @@
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
-import { divisionVisaLetterNoteFormatOptions } from '@/modules/divisions/model/view-options';
-import { AppField, AppSelect } from '@/shared/ui/controls';
-import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns';
+import { AppField } from '@/shared/ui/controls';
+import { AppSectionCard } from '@/shared/ui/patterns';
 import { AppTextarea } from '@/shared/ui/primitives';
 
 export const PolicySection = () => {
   const {
-    control,
     register,
     formState: { errors },
   } = useFormContext<DivisionFormValues>();
 
   return (
     <AppSectionCard
-      title="Content blocks"
-      description="Manage long-form content shown for this division."
+      title="Policies"
+      description="Long-form policy copy stored directly on the division."
     >
       <div className="division-form-content__stack">
         <AppField
@@ -52,53 +50,6 @@ export const PolicySection = () => {
           )}
         </AppField>
       </div>
-
-      <AppFormGrid className="division-form-content__note-grid">
-        <AppField
-          label="Visa letter note format"
-          forId="division-visa-note-format"
-          className="division-form-content__format-field"
-          error={errors.visaLetterNoteFormat?.message}
-        >
-          {({ describedBy, labelId }) => (
-            <Controller
-              name="visaLetterNoteFormat"
-              control={control}
-              render={({ field }) => (
-                <AppSelect
-                  id="division-visa-note-format"
-                  value={field.value}
-                  options={divisionVisaLetterNoteFormatOptions}
-                  describedBy={describedBy}
-                  labelledBy={labelId}
-                  invalid={Boolean(errors.visaLetterNoteFormat?.message)}
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                    field.onBlur();
-                  }}
-                />
-              )}
-            />
-          )}
-        </AppField>
-
-        <AppField
-          label="Visa letter note"
-          forId="division-visa-note"
-          error={errors.visaLetterNote?.message}
-        >
-          {({ describedBy, labelId }) => (
-            <AppTextarea
-              id="division-visa-note"
-              className="division-form-content__textarea division-form-content__textarea--xl"
-              describedBy={describedBy}
-              labelledBy={labelId}
-              placeholder="Provide any visa letter instructions or disclaimers"
-              {...register('visaLetterNote')}
-            />
-          )}
-        </AppField>
-      </AppFormGrid>
     </AppSectionCard>
   );
 };

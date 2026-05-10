@@ -1,62 +1,62 @@
-import { useMemo } from 'react'
-import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import type { DivisionFormValues } from '@/modules/divisions/model/form.types'
-import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage'
-import { findReferenceDataNameById } from '@/shared/lib/reference-data/findReferenceDataNameById'
-import { useCountriesQuery } from '@/shared/queries/useCountriesQuery'
-import { AppField, AppSelect } from '@/shared/ui/controls'
-import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns'
-import { AppInput } from '@/shared/ui/primitives'
+import { useMemo } from 'react';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
+import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
+import { useCountriesQuery } from '@/shared/queries/useCountriesQuery';
+import { AppField, AppSelect } from '@/shared/ui/controls';
+import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns';
+import { AppInput } from '@/shared/ui/primitives';
+
+function getCountryOptionLabel(country: { code: string; name: string }): string {
+  return `${country.name} (${country.code})`;
+}
 
 export const AddressSection = () => {
   const {
     control,
     register,
     formState: { errors },
-  } = useFormContext<DivisionFormValues>()
-  const countriesQuery = useCountriesQuery()
+  } = useFormContext<DivisionFormValues>();
+  const countriesQuery = useCountriesQuery();
   const selectedCountryId = useWatch({
     control,
-    name: 'address.countryIsoCode',
-  })
-  const normalizedSelectedCountryId = selectedCountryId?.trim().toUpperCase() ?? ''
-  const hasLoadedCountries = Boolean(countriesQuery.data?.length)
+    name: 'contactAddress.countryId',
+  });
+  const hasLoadedCountries = Boolean(countriesQuery.data?.length);
 
   const countryOptions = useMemo(() => {
     const options = (countriesQuery.data ?? []).map((country) => ({
-      label: country.name,
-      value: country.id,
-    }))
+      label: getCountryOptionLabel(country),
+      value: String(country.id),
+    }));
 
     if (
-      !normalizedSelectedCountryId ||
-      options.some((option) => option.value === normalizedSelectedCountryId)
+      !selectedCountryId ||
+      options.some((option) => option.value === selectedCountryId)
     ) {
-      return options
+      return options;
     }
 
     return [
       {
-        label:
-          findReferenceDataNameById(countriesQuery.data ?? [], normalizedSelectedCountryId) ||
-          normalizedSelectedCountryId,
-        value: normalizedSelectedCountryId,
+        label: `Country #${selectedCountryId}`,
+        value: selectedCountryId,
       },
       ...options,
-    ]
-  }, [countriesQuery.data, normalizedSelectedCountryId])
+    ];
+  }, [countriesQuery.data, selectedCountryId]);
 
   const countryHint = countriesQuery.isLoading
     ? 'Loading countries...'
     : countriesQuery.error && !hasLoadedCountries
       ? getApiErrorMessage(countriesQuery.error, 'Country list is unavailable right now.')
-      : undefined
+      : undefined;
 
   const countryPlaceholder = countriesQuery.isLoading
     ? 'Loading countries...'
     : countriesQuery.error && !hasLoadedCountries
       ? 'Country list unavailable'
-      : 'Select country'
+      : 'Select country';
 
   return (
     <AppSectionCard
@@ -67,18 +67,17 @@ export const AddressSection = () => {
         <AppField
           label="Head office email"
           forId="division-email"
-          error={errors.headOfficeEmailAddress?.message}
-          required
+          error={errors.headOfficeEmail?.message}
         >
           {({ describedBy, labelId }) => (
             <AppInput
               id="division-email"
               type="email"
-              invalid={Boolean(errors.headOfficeEmailAddress?.message)}
+              invalid={Boolean(errors.headOfficeEmail?.message)}
               describedBy={describedBy}
               labelledBy={labelId}
               placeholder="hello@ecenglish.com"
-              {...register('headOfficeEmailAddress')}
+              {...register('headOfficeEmail')}
             />
           )}
         </AppField>
@@ -87,7 +86,6 @@ export const AddressSection = () => {
           label="Head office phone"
           forId="division-phone"
           error={errors.headOfficeTelephoneNo?.message}
-          required
         >
           {({ describedBy, labelId }) => (
             <AppInput
@@ -103,50 +101,50 @@ export const AddressSection = () => {
       </AppFormGrid>
 
       <AppFormGrid>
-        <AppField label="Address line 1" forId="division-line1">
+        <AppField label="Street" forId="division-street">
           {({ describedBy, labelId }) => (
             <AppInput
-              id="division-line1"
+              id="division-street"
               describedBy={describedBy}
               labelledBy={labelId}
               placeholder="Street and number"
-              {...register('address.line1')}
+              {...register('contactAddress.street')}
             />
           )}
         </AppField>
 
-        <AppField label="Address line 2" forId="division-line2">
+        <AppField label="District" forId="division-district">
           {({ describedBy, labelId }) => (
             <AppInput
-              id="division-line2"
+              id="division-district"
               describedBy={describedBy}
               labelledBy={labelId}
               placeholder="Area or district"
-              {...register('address.line2')}
+              {...register('contactAddress.district')}
             />
           )}
         </AppField>
 
-        <AppField label="Address line 3" forId="division-line3">
+        <AppField label="City" forId="division-city">
           {({ describedBy, labelId }) => (
             <AppInput
-              id="division-line3"
+              id="division-city"
               describedBy={describedBy}
               labelledBy={labelId}
               placeholder="City"
-              {...register('address.line3')}
+              {...register('contactAddress.city')}
             />
           )}
         </AppField>
 
-        <AppField label="Address line 4" forId="division-line4">
+        <AppField label="Postal code" forId="division-postal-code">
           {({ describedBy, labelId }) => (
             <AppInput
-              id="division-line4"
+              id="division-postal-code"
               describedBy={describedBy}
               labelledBy={labelId}
               placeholder="Postal code"
-              {...register('address.line4')}
+              {...register('contactAddress.postalCode')}
             />
           )}
         </AppField>
@@ -154,31 +152,32 @@ export const AddressSection = () => {
         <AppField
           label="Country"
           forId="division-country"
-          error={errors.address?.countryIsoCode?.message}
+          error={errors.contactAddress?.countryId?.message}
           hint={countryHint}
         >
           {({ describedBy, labelId }) => (
             <Controller
-              name="address.countryIsoCode"
+              name="contactAddress.countryId"
               control={control}
               render={({ field }) => (
                 <AppSelect
                   id="division-country"
-                  value={field.value?.trim().toUpperCase() ?? ''}
+                  value={field.value ?? ''}
                   options={countryOptions}
                   placeholder={countryPlaceholder}
                   searchable
                   searchPlaceholder="Search countries"
                   noOptionsText="No countries found"
                   disabled={
-                    countriesQuery.isLoading || (countriesQuery.isError && !hasLoadedCountries)
+                    countriesQuery.isLoading ||
+                    (countriesQuery.isError && !hasLoadedCountries)
                   }
-                  invalid={Boolean(errors.address?.countryIsoCode?.message)}
+                  invalid={Boolean(errors.contactAddress?.countryId?.message)}
                   describedBy={describedBy}
                   labelledBy={labelId}
                   onValueChange={(value) => {
-                    field.onChange(value.toUpperCase())
-                    field.onBlur()
+                    field.onChange(value);
+                    field.onBlur();
                   }}
                 />
               )}
@@ -187,5 +186,5 @@ export const AddressSection = () => {
         </AppField>
       </AppFormGrid>
     </AppSectionCard>
-  )
-}
+  );
+};

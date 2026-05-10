@@ -8,60 +8,41 @@ export interface DivisionReadonlySummaryProps {
 
 export const DivisionReadonlySummary = ({
   division,
-}: DivisionReadonlySummaryProps) => {
-  const yearsText = division.years.length
-    ? division.years.join(', ')
-    : 'No year values';
+}: DivisionReadonlySummaryProps) => (
+  <AppSidebarSummary
+    title="Division summary"
+    subtitle="Readonly operational snapshot"
+  >
+    <AppSummaryRows
+      items={[
+        {
+          key: 'status',
+          label: 'Status',
+          value: division.isActive ? 'Active' : 'Inactive',
+        },
+        {
+          key: 'texts',
+          label: 'Texts',
+          value: division.texts.length,
+        },
+        {
+          key: 'banner',
+          label: 'Banner',
+          value:
+            division.accreditationBanner?.fileName ||
+            (division.accreditationBanner ? 'Uploaded' : 'Not set'),
+        },
+      ]}
+    />
 
-  return (
-    <AppSidebarSummary
-      title="Division summary"
-      subtitle="Readonly operational snapshot"
-    >
-      <AppSummaryRows
-        items={[
-          {
-            key: 'status',
-            label: 'Status',
-            value: division.isActive ? 'Active' : 'Inactive',
-          },
-          {
-            key: 'years',
-            label: 'Years',
-            value: yearsText,
-          },
-          {
-            key: 'reportTexts',
-            label: 'Report texts',
-            value: division.reportTexts.length,
-          },
-        ]}
-      />
-
-      <AppSummaryRows
-        items={[
-          {
-            key: 'createdBy',
-            label: 'Created by',
-            value: division.createdBy,
-          },
-          {
-            key: 'createdOn',
-            label: 'Created on',
-            value: division.createdOn,
-          },
-          {
-            key: 'lastModifiedBy',
-            label: 'Last modified by',
-            value: division.lastModifiedBy,
-          },
-          {
-            key: 'lastModifiedOn',
-            label: 'Last modified on',
-            value: division.lastModifiedOn,
-          },
-        ]}
-      />
-    </AppSidebarSummary>
-  );
-};
+    <AppSummaryRows
+      items={[
+        {
+          key: 'version',
+          label: 'Version',
+          value: division.version,
+        },
+      ]}
+    />
+  </AppSidebarSummary>
+);

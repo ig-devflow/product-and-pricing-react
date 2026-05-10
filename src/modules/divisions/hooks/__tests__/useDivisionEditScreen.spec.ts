@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { ContentFormatDto } from '@/modules/divisions/api/dto';
 import { ContentFormat } from '@/modules/divisions/model/content-format';
 import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
 import type { DivisionDetails } from '@/modules/divisions/model/types';
@@ -15,39 +16,28 @@ const divisionFixture: DivisionDetails = {
   termsAndConditions: 'Terms',
   groupsPaymentTerms: 'Groups terms',
   isActive: true,
-  address: {
-    id: 17,
-    line1: '7 Main Street',
-    line2: '',
-    line3: '',
-    line4: '',
-    countryIsoCode: 'MT',
+  contactAddress: {
+    street: '7 Main Street',
+    district: '',
+    city: '',
+    postalCode: '',
+    countryId: 2,
   },
   accreditationBanner: null,
-  visaLetterNote: 'Visa note',
-  visaLetterNoteFormat: ContentFormat.Html,
-  createdBy: 'test@example.com',
-  lastModifiedBy: 'test@example.com',
-  createdOn: '2026-04-01T08:00:00Z',
-  lastModifiedOn: '2026-04-02T09:30:00Z',
-  years: [2026],
-  headOfficeEmailAddress: 'hello@ecenglish.com',
+  headOfficeEmail: 'hello@ecenglish.com',
   headOfficeTelephoneNo: '+356 1234 5678',
-  reportTexts: [
+  texts: [
     {
       id: 91,
-      reportTextId: 4,
-      divisionId: 7,
-      centreId: null,
-      content: 'Existing report text',
+      contentTemplateId: 10,
+      contentTemplateName: 'Visa letter note',
+      audienceId: null,
+      audienceName: '',
+      content: 'Existing text',
       format: ContentFormat.Html,
-      createdOn: '2026-03-01T10:00:00Z',
-      createdBy: 'Alice',
-      lastModifiedOn: '2026-03-02T10:00:00Z',
-      lastModifiedBy: 'Bob',
-      isDeleted: false,
     },
   ],
+  version: 'AAAAAAAAB9E=',
 };
 
 vi.mock('react-router', async () => {
@@ -80,19 +70,16 @@ vi.mock('@/modules/divisions/queries/useUpdateDivisionMutation', () => ({
 }));
 
 describe('useDivisionEditScreen', () => {
-  it('provides mapped initial values and submits update input', async () => {
+  it('provides mapped initial values and submits update payload with version', async () => {
     const { result } = renderHook(() => useDivisionEditScreen());
 
     expect(result.current.initialValues.name).toBe('EC Malta');
+    expect(result.current.initialValues.contactAddress.countryId).toBe('2');
 
     const values: DivisionFormValues = {
       ...result.current.initialValues,
       name: 'EC Malta Updated',
-      address: {
-        ...result.current.initialValues.address,
-        countryIsoCode: 'mt',
-      },
-      visaLetterNote: 'Updated note',
+      texts: result.current.initialValues.texts,
     };
 
     await result.current.onSubmit(values);
@@ -101,17 +88,18 @@ describe('useDivisionEditScreen', () => {
       divisionId: 7,
       payload: expect.objectContaining({
         name: 'EC Malta Updated',
-        visaLetterNote: 'Updated note',
-        address: expect.objectContaining({
-          countryISOCode: 'MT',
+        version: 'AAAAAAAAB9E=',
+        contactAddress: expect.objectContaining({
+          countryId: 2,
         }),
-        divisionReportTexts: expect.arrayContaining([
-          expect.objectContaining({
-            id: 91,
-            reportTextId: 4,
-            divisionId: 7,
-          }),
-        ]),
+        texts: [
+          {
+            contentTemplateId: 10,
+            audienceId: null,
+            content: 'Existing text',
+            format: ContentFormatDto.Html,
+          },
+        ],
       }),
     });
 

@@ -1,24 +1,25 @@
-import type { DivisionAddress } from './types'
+import type { DivisionAddress } from './types';
 
 interface BuildDivisionAddressTextOptions {
-  countryName?: string
-  fallbackToCountryCode?: boolean
+  countryName?: string;
 }
 
 export function buildDivisionAddressText(
   address: DivisionAddress,
   options: BuildDivisionAddressTextOptions = {},
 ): string {
-  const countryText =
-    options.countryName?.trim() ||
-    (options.fallbackToCountryCode === false ? '' : address.countryIsoCode)
-
-  return [address.line1, address.line2, address.line3, address.line4, countryText]
-    .map((part) => part.trim())
+  return [
+    address.street,
+    address.district,
+    address.city,
+    address.postalCode,
+    options.countryName,
+  ]
+    .map((part) => part?.trim() ?? '')
     .filter(Boolean)
-    .join(', ')
+    .join(', ');
 }
 
 export function removeProtocol(url: string): string {
-  return url.replace(/^https?:\/\//i, '').replace(/^www\./i, '')
+  return url.replace(/^https?:\/\//i, '').replace(/^www\./i, '');
 }

@@ -19,15 +19,20 @@ export const DivisionListScreen = () => {
 
       <DivisionListToolbar
         searchTerm={page.searchTerm}
-        filteredCount={page.filteredCount}
+        visibleCount={page.visibleCount}
         totalCount={page.totalCount}
+        page={page.page}
+        totalPages={page.totalPages}
+        canGoPrevious={page.canGoPrevious}
+        canGoNext={page.canGoNext}
         isRefreshing={page.isRefreshing}
         onSearchTermChange={page.setSearchTerm}
+        onPageChange={page.setPage}
         onCreate={page.handleCreateClick}
       />
 
       <DivisionCardList
-        items={page.filteredDivisions}
+        items={page.divisions}
         getDetailsHref={(id) => DIVISION_MANAGER_ROUTES.details(id)}
         getEditHref={(id) => DIVISION_MANAGER_ROUTES.edit(id)}
         isLoading={page.isLoading}

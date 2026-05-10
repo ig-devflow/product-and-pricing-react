@@ -1,13 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { getDivisions } from '@/modules/divisions/api/divisions.api';
-import { mapDivisionSummaryDto } from '@/modules/divisions/model/mappers';
+import {
+  getDivisions,
+  type GetDivisionsParams,
+} from '@/modules/divisions/api/divisions.api';
+import { mapDivisionListPageDto } from '@/modules/divisions/model/mappers';
 import { divisionQueryKeys } from '@/modules/divisions/model/query-keys';
 
-export const useDivisionListQuery = () =>
+export const useDivisionListQuery = (params: GetDivisionsParams) =>
   useQuery({
-    queryKey: divisionQueryKeys.list(),
+    queryKey: divisionQueryKeys.list(params),
     queryFn: async () => {
-      const response = await getDivisions();
-      return response.map(mapDivisionSummaryDto);
+      const response = await getDivisions(params);
+      return mapDivisionListPageDto(response);
     },
   });

@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCountries } from '@/shared/api/reference-data/reference-data.api';
+import { getAudiences } from '@/shared/api/reference-data/reference-data.api';
 import {
   referenceDataQueryKeys,
   referenceDataStaleTime,
 } from './reference-data-query-keys';
 
-export const useCountriesQuery = () =>
+export const useAudiencesQuery = () =>
   useQuery({
-    queryKey: referenceDataQueryKeys.countries(),
-    queryFn: getCountries,
+    queryKey: referenceDataQueryKeys.audiences(),
+    queryFn: getAudiences,
     staleTime: referenceDataStaleTime,
   });

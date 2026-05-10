@@ -1,17 +1,17 @@
 import { ContentFormat } from './content-format';
 
-export const DivisionVisaLetterNoteFormat = {
-  PlainText: ContentFormat.PlainText,
-  RichText: ContentFormat.Html,
-} as const;
-
-export type DivisionVisaLetterNoteFormat =
-  (typeof DivisionVisaLetterNoteFormat)[keyof typeof DivisionVisaLetterNoteFormat];
-
-export const divisionVisaLetterNoteFormatOptions: Array<{
-  value: DivisionVisaLetterNoteFormat;
+export const contentFormatOptions: Array<{
+  value: ContentFormat;
   label: string;
 }> = [
-  { value: DivisionVisaLetterNoteFormat.RichText, label: 'HTML' },
-  { value: DivisionVisaLetterNoteFormat.PlainText, label: 'Plain text' },
+  { value: ContentFormat.PlainText, label: 'Plain text' },
+  { value: ContentFormat.Html, label: 'HTML' },
 ];
+
+export function getContentFormatLabel(value: ContentFormat): string {
+  if (value === ContentFormat.None) {
+    return 'None';
+  }
+
+  return contentFormatOptions.find((option) => option.value === value)?.label ?? value;
+}

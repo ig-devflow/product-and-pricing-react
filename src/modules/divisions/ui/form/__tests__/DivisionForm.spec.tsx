@@ -1,29 +1,30 @@
-import type { ComponentProps } from 'react'
-import userEvent from '@testing-library/user-event'
-import { render, screen, waitFor } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
-import { DivisionForm } from '@/modules/divisions/ui/form'
-import { createEmptyDivisionFormValues } from '@/modules/divisions/model/mappers'
-import { ContentFormat } from '@/modules/divisions/model/content-format'
-import type { DivisionFormValues } from '@/modules/divisions/model/form.types'
-import type { DivisionDetails } from '@/modules/divisions/model/types'
-import { withAppProviders } from '@/tests/renderWithProviders'
+import type { ComponentProps } from 'react';
+import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { DivisionForm } from '@/modules/divisions/ui/form';
+import { createEmptyDivisionFormValues } from '@/modules/divisions/model/mappers';
+import { ContentFormat } from '@/modules/divisions/model/content-format';
+import type { DivisionFormValues } from '@/modules/divisions/model/form.types';
+import type { DivisionDetails } from '@/modules/divisions/model/types';
+import { withAppProviders } from '@/tests/renderWithProviders';
 
 function createValidValues(overrides: Partial<DivisionFormValues> = {}): DivisionFormValues {
-  const emptyValues = createEmptyDivisionFormValues()
+  const emptyValues = createEmptyDivisionFormValues();
 
   return {
     ...emptyValues,
     name: 'EC Malta',
     websiteUrl: 'https://ecenglish.com/en/malta/',
-    headOfficeEmailAddress: 'hello@ecenglish.com',
+    headOfficeEmail: 'hello@ecenglish.com',
     headOfficeTelephoneNo: '+356 1234 5678',
     ...overrides,
-    address: {
-      ...emptyValues.address,
-      ...overrides.address,
+    contactAddress: {
+      ...emptyValues.contactAddress,
+      ...overrides.contactAddress,
     },
-  }
+    texts: overrides.texts ?? emptyValues.texts,
+  };
 }
 
 function createDivisionDetails(id: number): DivisionDetails {
@@ -34,148 +35,228 @@ function createDivisionDetails(id: number): DivisionDetails {
     websiteUrl: `https://division-${id}.example.com`,
     termsAndConditions: 'Terms',
     groupsPaymentTerms: 'Groups terms',
-    visaLetterNote: 'Visa note',
-    visaLetterNoteFormat: ContentFormat.PlainText,
-    address: {
-      id: null,
-      line1: '',
-      line2: '',
-      line3: '',
-      line4: '',
-      countryIsoCode: 'MT',
+    contactAddress: {
+      street: '',
+      district: '',
+      city: '',
+      postalCode: '',
+      countryId: 2,
     },
     accreditationBanner: null,
-    createdOn: '2026-04-01T00:00:00Z',
-    createdBy: 'qa@example.com',
-    lastModifiedOn: '2026-04-01T00:00:00Z',
-    lastModifiedBy: 'qa@example.com',
-    years: [2026],
-    headOfficeEmailAddress: 'qa@example.com',
+    headOfficeEmail: 'qa@example.com',
     headOfficeTelephoneNo: '+356 1234 5678',
-    reportTexts: [],
-  }
+    texts: [
+      {
+        id: 91,
+        contentTemplateId: 10,
+        contentTemplateName: 'Visa letter note',
+        audienceId: null,
+        audienceName: '',
+        content: 'Existing note',
+        format: ContentFormat.PlainText,
+      },
+    ],
+    version: 'AAAAAAAAB9E=',
+  };
 }
 
 function renderDivisionForm(props: ComponentProps<typeof DivisionForm>) {
-  const { Wrapper } = withAppProviders()
-  return render(<DivisionForm {...props} />, { wrapper: Wrapper })
+  const { Wrapper } = withAppProviders();
+  return render(<DivisionForm {...props} />, { wrapper: Wrapper });
 }
 
 describe('DivisionForm', () => {
   it('submits valid form values', async () => {
-    const user = userEvent.setup()
-    const handleSubmit = vi.fn()
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
 
     renderDivisionForm({
       defaultValues: createValidValues(),
       submitLabel: 'Create division',
       onSubmit: handleSubmit,
-    })
+    });
 
-    await user.click(screen.getByRole('button', { name: 'Create division' }))
+    await user.click(screen.getByRole('button', { name: 'Create division' }));
 
     await waitFor(() => {
-      expect(handleSubmit).toHaveBeenCalledTimes(1)
-    })
-  })
+      expect(handleSubmit).toHaveBeenCalledTimes(1);
+    });
+  });
 
   it('shows validation errors for required fields', async () => {
-    const user = userEvent.setup()
+    const user = userEvent.setup();
 
     renderDivisionForm({
       defaultValues: createEmptyDivisionFormValues(),
       submitLabel: 'Create division',
       onSubmit: vi.fn(),
-    })
+    });
 
-    await user.click(screen.getByRole('button', { name: 'Create division' }))
+    await user.click(screen.getByRole('button', { name: 'Create division' }));
 
-    expect(await screen.findAllByText('This field is required')).not.toHaveLength(0)
-  })
-
-  it('renders visa-letter format field and submits selected format', async () => {
-    const user = userEvent.setup()
-    const handleSubmit = vi.fn()
-
-    renderDivisionForm({
-      defaultValues: createValidValues({
-        visaLetterNoteFormat: ContentFormat.PlainText,
-      }),
-      submitLabel: 'Create division',
-      onSubmit: handleSubmit,
-    })
-
-    const formatSelect = screen.getByRole('combobox', {
-      name: 'Visa letter note format',
-    })
-    expect(formatSelect).toHaveTextContent('Plain text')
-
-    await user.click(formatSelect)
-    await user.click(screen.getByRole('option', { name: 'HTML' }))
-    expect(formatSelect).toHaveTextContent('HTML')
-
-    await user.click(screen.getByRole('button', { name: 'Create division' }))
-
-    await waitFor(() => {
-      expect(handleSubmit).toHaveBeenCalledTimes(1)
-    })
-
-    const submittedValues = handleSubmit.mock.calls.at(0)?.[0]
-
-    expect(submittedValues).toMatchObject({
-      visaLetterNoteFormat: ContentFormat.Html,
-    })
-  })
+    expect(await screen.findAllByText('This field is required')).not.toHaveLength(0);
+  });
 
   it('renders country options from reference data and submits selected country id', async () => {
-    const user = userEvent.setup()
-    const handleSubmit = vi.fn()
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
 
     renderDivisionForm({
       defaultValues: createValidValues(),
       submitLabel: 'Create division',
       onSubmit: handleSubmit,
-    })
+    });
 
-    const countrySelect = screen.getByRole('combobox', { name: 'Country' })
+    const countrySelect = screen.getByRole('combobox', { name: 'Country' });
     await waitFor(() => {
-      expect(countrySelect).not.toBeDisabled()
-    })
+      expect(countrySelect).not.toBeDisabled();
+    });
 
-    await user.click(countrySelect)
-    await user.type(screen.getByPlaceholderText('Search countries'), 'ire')
-    await user.click(await screen.findByRole('option', { name: 'Ireland' }))
-    expect(countrySelect).toHaveTextContent('Ireland')
+    await user.click(countrySelect);
+    await user.type(screen.getByPlaceholderText('Search countries'), 'ire');
+    await user.click(await screen.findByRole('option', { name: 'Ireland (IE)' }));
+    expect(countrySelect).toHaveTextContent('Ireland (IE)');
 
-    await user.click(screen.getByRole('button', { name: 'Create division' }))
+    await user.click(screen.getByRole('button', { name: 'Create division' }));
 
     await waitFor(() => {
-      expect(handleSubmit).toHaveBeenCalledTimes(1)
-    })
+      expect(handleSubmit).toHaveBeenCalledTimes(1);
+    });
 
-    const submittedValues = handleSubmit.mock.calls.at(0)?.[0]
+    const submittedValues = handleSubmit.mock.calls.at(0)?.[0];
 
     expect(submittedValues).toMatchObject({
-      address: {
-        countryIsoCode: 'IE',
+      contactAddress: {
+        countryId: '1',
       },
-    })
-  })
+    });
+  });
+
+  it('requires country when address data is entered', async () => {
+    const user = userEvent.setup();
+
+    renderDivisionForm({
+      defaultValues: createValidValues({
+        contactAddress: {
+          street: 'Grand Canal Quay',
+          district: '',
+          city: '',
+          postalCode: '',
+          countryId: '',
+        },
+      }),
+      submitLabel: 'Create division',
+      onSubmit: vi.fn(),
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Create division' }));
+
+    expect(
+      await screen.findByText('Country is required when address is provided'),
+    ).toBeInTheDocument();
+  });
+
+  it('adds text content rows and submits selected template, audience, format, and content', async () => {
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
+
+    renderDivisionForm({
+      defaultValues: createValidValues(),
+      submitLabel: 'Create division',
+      onSubmit: handleSubmit,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Add text' }));
+
+    const templateSelect = screen.getByRole('combobox', { name: 'Content template' });
+    await waitFor(() => {
+      expect(templateSelect).not.toBeDisabled();
+    });
+    await user.click(templateSelect);
+    await user.click(await screen.findByRole('option', { name: 'Visa letter note' }));
+
+    const audienceSelect = screen.getByRole('combobox', { name: 'Audience' });
+    await waitFor(() => {
+      expect(audienceSelect).not.toBeDisabled();
+    });
+    await user.click(audienceSelect);
+    await user.click(await screen.findByRole('option', { name: 'Student' }));
+
+    const formatSelect = screen.getByRole('combobox', { name: 'Format' });
+    expect(formatSelect).toHaveTextContent('Plain text');
+    await user.click(formatSelect);
+    await user.click(screen.getByRole('option', { name: 'HTML' }));
+
+    await user.type(
+      screen.getByRole('textbox', { name: 'Content' }),
+      'Text content for testing',
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Create division' }));
+
+    await waitFor(() => {
+      expect(handleSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    expect(handleSubmit.mock.calls.at(0)?.[0]).toMatchObject({
+      texts: [
+        {
+          contentTemplateId: '10',
+          audienceId: '1',
+          content: 'Text content for testing',
+          format: ContentFormat.Html,
+        },
+      ],
+    });
+  });
+
+  it('prevents duplicate text content keys', async () => {
+    const user = userEvent.setup();
+
+    renderDivisionForm({
+      defaultValues: createValidValues({
+        texts: [
+          {
+            textId: null,
+            contentTemplateId: '10',
+            audienceId: '',
+            content: 'First',
+            format: ContentFormat.PlainText,
+          },
+          {
+            textId: null,
+            contentTemplateId: '10',
+            audienceId: '',
+            content: 'Second',
+            format: ContentFormat.PlainText,
+          },
+        ],
+      }),
+      submitLabel: 'Create division',
+      onSubmit: vi.fn(),
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Create division' }));
+
+    expect(
+      await screen.findByText('Duplicate text content for this template and audience'),
+    ).toBeInTheDocument();
+  });
 
   it('keeps entered values in create mode when defaultValues reference changes but resetKey stays same', async () => {
-    const user = userEvent.setup()
-    const handleSubmit = vi.fn()
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
     const { rerender } = renderDivisionForm({
       mode: 'create',
       defaultValues: createValidValues({ name: 'Initial from props' }),
       submitLabel: 'Create division',
       onSubmit: handleSubmit,
-    })
+    });
 
-    const nameInput = screen.getByRole('textbox', { name: 'Division name' })
-    await user.clear(nameInput)
-    await user.type(nameInput, 'Draft name')
-    expect(nameInput).toHaveValue('Draft name')
+    const nameInput = screen.getByRole('textbox', { name: 'Division name' });
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Draft name');
+    expect(nameInput).toHaveValue('Draft name');
 
     rerender(
       <DivisionForm
@@ -184,50 +265,45 @@ describe('DivisionForm', () => {
         submitLabel="Create division"
         onSubmit={handleSubmit}
       />,
-    )
+    );
 
-    expect(screen.getByRole('textbox', { name: 'Division name' })).toHaveValue('Draft name')
-  })
+    expect(screen.getByRole('textbox', { name: 'Division name' })).toHaveValue('Draft name');
+  });
 
   it('resets form in edit mode when resetKey changes because division id changes', async () => {
-    const user = userEvent.setup()
+    const user = userEvent.setup();
     const { rerender } = renderDivisionForm({
       mode: 'edit',
       division: createDivisionDetails(10),
       defaultValues: createValidValues({
         name: 'EC Malta',
-        address: {
-          id: null,
-          line1: '',
-          line2: '',
-          line3: '',
-          line4: '',
-          countryIsoCode: 'MT',
+        contactAddress: {
+          street: '',
+          district: '',
+          city: '',
+          postalCode: '',
+          countryId: '2',
         },
       }),
       submitLabel: 'Save changes',
       onSubmit: vi.fn(),
-    })
+    });
 
-    const nameInput = screen.getByRole('textbox', { name: 'Division name' })
-    await user.clear(nameInput)
-    await user.type(nameInput, 'Local edit')
-    expect(nameInput).toHaveValue('Local edit')
+    const nameInput = screen.getByRole('textbox', { name: 'Division name' });
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Local edit');
+    expect(nameInput).toHaveValue('Local edit');
 
-    const formatSelect = screen.getByRole('combobox', {
-      name: 'Visa letter note format',
-    })
-    await user.click(formatSelect)
-    await user.click(screen.getByRole('option', { name: 'HTML' }))
-    expect(formatSelect).toHaveTextContent('HTML')
     await waitFor(() => {
-      expect(screen.getByRole('combobox', { name: 'Country' })).toHaveTextContent('Malta')
+      expect(screen.getByRole('combobox', { name: 'Country' })).toHaveTextContent(
+        'Malta (MT)',
+      );
       expect(
         screen.getByText('Malta', {
           selector: '.division-form-aside__value--address',
         }),
-      ).toBeInTheDocument()
-    })
+      ).toBeInTheDocument();
+    });
 
     rerender(
       <DivisionForm
@@ -237,15 +313,10 @@ describe('DivisionForm', () => {
         submitLabel="Save changes"
         onSubmit={vi.fn()}
       />,
-    )
+    );
 
     await waitFor(() => {
-      expect(screen.getByRole('textbox', { name: 'Division name' })).toHaveValue('EC Dublin')
-      expect(
-        screen.getByRole('combobox', {
-          name: 'Visa letter note format',
-        }),
-      ).toHaveTextContent('Plain text')
-    })
-  })
-})
+      expect(screen.getByRole('textbox', { name: 'Division name' })).toHaveValue('EC Dublin');
+    });
+  });
+});

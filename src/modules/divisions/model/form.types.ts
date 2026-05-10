@@ -1,5 +1,21 @@
 import type { ContentFormat } from './content-format';
-import type { DivisionAddress, DivisionBanner } from './types';
+import type { DivisionBanner } from './types';
+
+export interface DivisionAddressFormValue {
+  street: string;
+  district: string;
+  city: string;
+  postalCode: string;
+  countryId: string;
+}
+
+export interface DivisionTextContentFormValue {
+  textId: number | null;
+  contentTemplateId: string;
+  audienceId: string;
+  content: string;
+  format: ContentFormat;
+}
 
 export interface DivisionFormValues {
   name: string;
@@ -7,10 +23,9 @@ export interface DivisionFormValues {
   websiteUrl: string;
   termsAndConditions: string;
   groupsPaymentTerms: string;
-  visaLetterNote: string;
-  visaLetterNoteFormat: ContentFormat;
-  address: DivisionAddress;
+  contactAddress: DivisionAddressFormValue;
   accreditationBanner: DivisionBanner | null;
-  headOfficeEmailAddress: string;
+  headOfficeEmail: string;
   headOfficeTelephoneNo: string;
+  texts: DivisionTextContentFormValue[];
 }

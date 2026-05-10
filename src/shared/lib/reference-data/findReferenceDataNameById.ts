@@ -1,11 +1,18 @@
-import type { ReferenceDataItem } from '@/shared/api/reference-data/types'
+import type { ReferenceDataNameItem } from '@/shared/api/reference-data/types';
 
-export function findReferenceDataNameById(items: ReferenceDataItem[], id: string): string {
-  const normalizedId = id.trim().toLowerCase()
-
-  if (!normalizedId) {
-    return ''
+export function findReferenceDataNameById(
+  items: ReferenceDataNameItem[],
+  id: number | string | null | undefined,
+): string {
+  if (id === null || id === undefined || id === '') {
+    return '';
   }
 
-  return items.find((item) => item.id.trim().toLowerCase() === normalizedId)?.name ?? ''
+  const numericId = Number(id);
+
+  if (!Number.isFinite(numericId)) {
+    return '';
+  }
+
+  return items.find((item) => item.id === numericId)?.name ?? '';
 }

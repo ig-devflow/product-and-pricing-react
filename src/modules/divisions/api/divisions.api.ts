@@ -1,15 +1,29 @@
 import { httpClient } from '@/shared/api/http/http-client';
 import type {
   CreateDivisionRequestDto,
+  CreateDivisionResponseDto,
   DivisionDetailsDto,
-  DivisionSummaryDto,
+  DivisionListItemDto,
+  PagedResultDto,
   UpdateDivisionRequestDto,
 } from './dto';
 
-const DIVISIONS_BASE_PATH = '/api/divisions';
+const DIVISIONS_BASE_PATH = '/api/v1/divisions';
 
-export async function getDivisions(): Promise<DivisionSummaryDto[]> {
-  return httpClient.get<DivisionSummaryDto[]>(DIVISIONS_BASE_PATH);
+export interface GetDivisionsParams {
+  search?: string;
+  isActive?: boolean;
+  page?: number;
+  pageSize?: number;
+}
+
+export async function getDivisions(
+  params: GetDivisionsParams = {},
+): Promise<PagedResultDto<DivisionListItemDto>> {
+  return httpClient.get<PagedResultDto<DivisionListItemDto>>(
+    DIVISIONS_BASE_PATH,
+    { ...params },
+  );
 }
 
 export async function getDivisionById(
@@ -22,9 +36,9 @@ export async function getDivisionById(
 
 export async function createDivision(
   payload: CreateDivisionRequestDto,
-): Promise<void> {
-  await httpClient.put<unknown, CreateDivisionRequestDto>(
-    `${DIVISIONS_BASE_PATH}/create`,
+): Promise<CreateDivisionResponseDto> {
+  return httpClient.post<CreateDivisionResponseDto, CreateDivisionRequestDto>(
+    DIVISIONS_BASE_PATH,
     payload,
   );
 }
@@ -33,7 +47,7 @@ export async function updateDivision(
   divisionId: number,
   payload: UpdateDivisionRequestDto,
 ): Promise<void> {
-  await httpClient.put<unknown, UpdateDivisionRequestDto>(
+  await httpClient.put<null, UpdateDivisionRequestDto>(
     `${DIVISIONS_BASE_PATH}/${divisionId}`,
     payload,
   );

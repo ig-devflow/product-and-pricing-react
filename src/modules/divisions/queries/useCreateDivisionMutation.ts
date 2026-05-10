@@ -7,10 +7,7 @@ export const useCreateDivisionMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: CreateDivisionRequestDto) => {
-      await createDivision(payload);
-      return payload;
-    },
+    mutationFn: (payload: CreateDivisionRequestDto) => createDivision(payload),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: divisionQueryKeys.lists() });
     },

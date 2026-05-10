@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { ContentFormatDto } from '../../api/dto';
 import { ContentFormat } from '../content-format';
 import {
   createEmptyDivisionFormValues,
@@ -7,74 +8,105 @@ import {
 } from '../mappers';
 
 describe('division payload mappers', () => {
-  it('builds create payload with trimmed values and an empty report-text collection', () => {
+  it('builds create payload with trimmed values and backend content format values', () => {
     const payload = mapFormValuesToCreateDto({
       ...createEmptyDivisionFormValues(),
       name: '  EC Malta  ',
       websiteUrl: '  https://ecenglish.com/en/malta/  ',
-      headOfficeEmailAddress: '  hello@ecenglish.com  ',
+      headOfficeEmail: '  hello@ecenglish.com  ',
       headOfficeTelephoneNo: '  +356 0000 0000  ',
-      visaLetterNoteFormat: ContentFormat.Html,
-      address: {
-        id: 5,
-        line1: '  Street  ',
-        line2: '',
-        line3: '',
-        line4: '',
-        countryIsoCode: ' mt ',
+      contactAddress: {
+        street: '  Street  ',
+        district: '',
+        city: '',
+        postalCode: '',
+        countryId: '2',
       },
+      accreditationBanner: {
+        imageBase64: 'base64-banner',
+        contentType: 'image/png',
+        fileName: 'banner.png',
+      },
+      texts: [
+        {
+          textId: 41,
+          contentTemplateId: '10',
+          audienceId: '',
+          content: '  Keep existing text  ',
+          format: ContentFormat.Html,
+        },
+      ],
     });
 
+    expect(ContentFormatDto).toEqual({
+      None: 0,
+      PlainText: 1,
+      Html: 2,
+    });
     expect(payload.name).toBe('EC Malta');
     expect(payload.websiteUrl).toBe('https://ecenglish.com/en/malta/');
-    expect(payload.visaLetterNoteFormat).toBe(1);
-    expect(payload.address?.countryISOCode).toBe('MT');
-    expect(payload.divisionReportTexts).toEqual([]);
+    expect(payload.headOfficeEmail).toBe('hello@ecenglish.com');
+    expect(payload.contactAddress).toEqual({
+      street: 'Street',
+      district: null,
+      city: null,
+      postalCode: null,
+      countryId: 2,
+    });
+    expect(payload.accreditationBanner).toEqual({
+      data: 'base64-banner',
+      contentType: 'image/png',
+      fileName: 'banner.png',
+    });
+    expect(payload.texts).toEqual([
+      {
+        contentTemplateId: 10,
+        audienceId: null,
+        content: 'Keep existing text',
+        format: ContentFormatDto.Html,
+      },
+    ]);
   });
 
-  it('builds update payload and preserves existing division report texts', () => {
+  it('omits empty address and banner objects', () => {
+    const payload = mapFormValuesToCreateDto({
+      ...createEmptyDivisionFormValues(),
+      name: 'EC London',
+      websiteUrl: 'https://ecenglish.com/en/london/',
+    });
+
+    expect(payload.contactAddress).toBeNull();
+    expect(payload.accreditationBanner).toBeNull();
+    expect(payload.texts).toEqual([]);
+  });
+
+  it('builds update payload with version and preserved texts from form values', () => {
     const payload = mapFormValuesToUpdateDto(
       {
         ...createEmptyDivisionFormValues(),
         name: 'EC London',
         websiteUrl: 'https://ecenglish.com/en/london/',
-        visaLetterNote: 'Updated note',
-        visaLetterNoteFormat: ContentFormat.Html,
-        headOfficeEmailAddress: 'hello@ecenglish.com',
-        headOfficeTelephoneNo: '+44 20 0000 0000',
+        texts: [
+          {
+            textId: 91,
+            contentTemplateId: '11',
+            audienceId: '2',
+            content: 'Keep existing text',
+            format: ContentFormat.PlainText,
+          },
+        ],
       },
-      [
-        {
-          id: 41,
-          reportTextId: 7,
-          divisionId: 2,
-          centreId: null,
-          content: 'Keep existing text',
-          format: ContentFormat.Html,
-          createdOn: '2026-03-01T10:00:00Z',
-          createdBy: 'Alice',
-          lastModifiedOn: '2026-03-02T10:00:00Z',
-          lastModifiedBy: 'Bob',
-          isDeleted: false,
-        },
-      ],
+      'AAAAAAAAB9E=',
     );
 
-    expect(payload.divisionReportTexts).toEqual([
+    expect(payload.version).toBe('AAAAAAAAB9E=');
+    expect(payload.texts).toEqual([
       {
-        id: 41,
-        reportTextId: 7,
-        divisionId: 2,
-        centreId: null,
+        contentTemplateId: 11,
+        audienceId: 2,
         content: 'Keep existing text',
-        format: 1,
-        createdOn: '2026-03-01T10:00:00Z',
-        createdBy: 'Alice',
-        lastModifiedOn: '2026-03-02T10:00:00Z',
-        lastModifiedBy: 'Bob',
-        isDeleted: false,
+        format: ContentFormatDto.PlainText,
       },
     ]);
-    expect(payload.visaLetterNoteFormat).toBe(1);
   });
 });

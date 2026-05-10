@@ -1,4 +1,5 @@
 export const ContentFormat = {
+  None: 'none',
   PlainText: 'plainText',
   Html: 'html',
 } as const;
