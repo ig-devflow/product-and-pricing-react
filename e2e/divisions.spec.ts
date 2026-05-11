@@ -277,17 +277,23 @@ test('opens division details and saves edit changes', async ({ page }) => {
 
   await page.goto('/division-manager')
   await expect(page.getByRole('heading', { name: 'Division Manager' })).toBeVisible()
-  await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
+  await expect(header.getByRole('link', { name: 'Back to divisions' })).toHaveCount(0)
   await expect(page.getByText('EC Malta')).toBeVisible()
   await expect(page.getByText('ecmalta.example.com')).toBeVisible()
   await expect(page.getByText('Valletta, Malta')).toBeVisible()
-  await expect(page.getByText('10 May 2026, 14:08 by System User')).toBeVisible()
+  await expect(
+    page
+      .getByLabel('Division audit information')
+      .locator('.division-card__audit-item')
+      .filter({ hasText: 'Created' })
+      .getByText('10 May 2026, 14:08 by System User'),
+  ).toBeVisible()
   await expect(page.locator('.division-card img')).toHaveCount(0)
   await expect(page.getByText('Showing 1 of 1 divisions')).toBeVisible()
 
-  const openLink = page.getByRole('link', { name: 'Open' })
+  const openLink = page.getByRole('link', { name: 'Open details' })
   await Promise.all([page.waitForURL(/\/division-manager\/7$/), activate(openLink)])
-  await expect(header.getByRole('link', { name: 'All divisions' })).toBeVisible()
+  await expect(header.getByRole('link', { name: 'Back to divisions' })).toBeVisible()
   await expect(page.getByText('7 Main Street, Central, Valletta, VLT 1000, Malta')).toBeVisible()
   await expect(page.getByText('Created')).toBeVisible()
   await expect(page.getByText('Last updated')).toBeVisible()
@@ -337,7 +343,7 @@ test('creates a division and returns to the list', async ({ page }) => {
 
   await page.goto('/division-manager/create')
   await expect(page.getByRole('heading', { name: 'Create division' })).toBeVisible()
-  await expect(header.getByRole('link', { name: 'All divisions' })).toBeVisible()
+  await expect(header.getByRole('link', { name: 'Back to divisions' })).toBeVisible()
 
   await page.getByLabel('Division name').fill('EC Dublin')
   await page.getByLabel('Website URL').fill('https://dublin.example.com')
@@ -387,6 +393,33 @@ test('creates a division and returns to the list', async ({ page }) => {
   ])
 })
 
+test('clears create banner file name when removing or resetting changes', async ({ page }) => {
+  await mockDivisionsApi(page)
+  const bannerFile = {
+    name: 'malta-banner.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(sampleBannerBase64, 'base64'),
+  }
+
+  await page.goto('/division-manager/create')
+
+  const bannerInput = page.getByLabel('Upload accreditation banner')
+
+  await bannerInput.setInputFiles(bannerFile)
+  await expect(page.getByText('malta-banner.png').first()).toBeVisible()
+
+  await page.getByRole('button', { name: 'Remove banner' }).click()
+  await expect(page.getByText('malta-banner.png')).toHaveCount(0)
+  await expect(page.getByText('No file selected')).toBeVisible()
+
+  await bannerInput.setInputFiles(bannerFile)
+  await expect(page.getByText('malta-banner.png').first()).toBeVisible()
+
+  await page.getByRole('button', { name: 'Reset changes' }).click()
+  await expect(page.getByText('malta-banner.png')).toHaveCount(0)
+  await expect(page.getByText('No file selected')).toBeVisible()
+})
+
 test('uses backend search parameter for list filtering', async ({ page }) => {
   await mockDivisionsApi(page)
 
@@ -414,7 +447,7 @@ test('renders legacy products and pricing tabs on desktop and mobile', async ({
   await expect(tabsNav).toContainText('Pricing Reference Data')
   await expect(tabsNav).toContainText('Calculator')
   await expect(header.getByRole('link', { name: 'Create division' })).toHaveCount(0)
-  await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
+  await expect(header.getByRole('link', { name: 'Back to divisions' })).toHaveCount(0)
 
   const mobileContext = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -436,16 +469,16 @@ test('renders legacy products and pricing tabs on desktop and mobile', async ({
   }
 })
 
-test('uses all divisions as a contextual return link', async ({ page }) => {
+test('uses back to divisions as a contextual return link', async ({ page }) => {
   await mockDivisionsApi(page)
   const header = page.getByRole('banner')
 
   await page.goto('/division-manager/create')
 
-  const allDivisionsLink = header.getByRole('link', { name: 'All divisions' })
+  const backToDivisionsLink = header.getByRole('link', { name: 'Back to divisions' })
 
-  await expect(allDivisionsLink).toBeVisible()
-  await Promise.all([page.waitForURL(/\/division-manager$/), activate(allDivisionsLink)])
+  await expect(backToDivisionsLink).toBeVisible()
+  await Promise.all([page.waitForURL(/\/division-manager$/), activate(backToDivisionsLink)])
   await expect(page.getByRole('heading', { name: 'Division Manager' })).toBeVisible()
-  await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
+  await expect(header.getByRole('link', { name: 'Back to divisions' })).toHaveCount(0)
 })
