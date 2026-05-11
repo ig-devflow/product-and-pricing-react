@@ -11,6 +11,14 @@ describe('division dto mappers', () => {
           id: 4,
           name: 'EC Malta',
           isActive: true,
+          websiteUrl: 'https://ecmalta.example.com',
+          headOfficeEmail: 'hello@ecenglish.com',
+          city: 'Valletta',
+          countryName: 'Malta',
+          createdAt: '2026-05-10T14:08:00Z',
+          createdByName: 'System User',
+          updatedAt: '2026-05-10T15:30:00Z',
+          updatedByName: 'Andrei Dzemianchyk',
         },
       ],
       totalCount: 12,
@@ -18,14 +26,22 @@ describe('division dto mappers', () => {
       pageSize: 1,
     });
 
-    expect(page).toEqual({
-      items: [
-        {
-          id: 4,
-          name: 'EC Malta',
-          isActive: true,
-        },
-      ],
+    expect(page.items[0]).toMatchObject({
+      id: 4,
+      name: 'EC Malta',
+      isActive: true,
+      websiteUrl: 'https://ecmalta.example.com',
+      headOfficeEmail: 'hello@ecenglish.com',
+      city: 'Valletta',
+      countryName: 'Malta',
+      websiteDisplayUrl: 'ecmalta.example.com',
+      locationText: 'Valletta, Malta',
+      createdAtText: '10 May 2026, 14:08',
+      createdByText: 'System User',
+      updatedAtText: '10 May 2026, 15:30',
+      updatedByText: 'Andrei Dzemianchyk',
+    });
+    expect(page).toMatchObject({
       totalCount: 12,
       page: 2,
       pageSize: 1,
@@ -55,6 +71,10 @@ describe('division dto mappers', () => {
       headOfficeEmail: 'hello@ecenglish.com',
       headOfficeTelephoneNo: '+44 20 0000 0000',
       version: 'AAAAAAAAB9E=',
+      createdAt: '2026-05-10T14:08:00Z',
+      createdByName: null,
+      updatedAt: null,
+      updatedByName: null,
       texts: [
         {
           id: 13,
@@ -71,6 +91,9 @@ describe('division dto mappers', () => {
     expect(details.termsAndConditions).toBe('Terms');
     expect(details.groupsPaymentTerms).toBe('Group terms');
     expect(details.version).toBe('AAAAAAAAB9E=');
+    expect(details.createdAtText).toBe('10 May 2026, 14:08');
+    expect(details.createdByText).toBe('Unknown editor');
+    expect(details.updatedAtText).toBe('');
     expect(details.contactAddress).toMatchObject({
       street: 'Address 1',
       countryId: 3,

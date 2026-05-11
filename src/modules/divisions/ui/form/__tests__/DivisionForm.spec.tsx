@@ -57,6 +57,14 @@ function createDivisionDetails(id: number): DivisionDetails {
       },
     ],
     version: 'AAAAAAAAB9E=',
+    createdAt: '2026-05-10T14:08:00Z',
+    createdByName: 'System User',
+    updatedAt: '',
+    updatedByName: '',
+    createdAtText: '10 May 2026, 14:08',
+    createdByText: 'System User',
+    updatedAtText: '',
+    updatedByText: 'Unknown editor',
   };
 }
 

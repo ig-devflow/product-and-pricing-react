@@ -21,10 +21,41 @@
 
 .division-details-hero__placeholder {
   display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--space-3);
   place-items: center;
   height: 100%;
   padding: var(--space-6);
-  color: var(--color-text-disabled);
+  text-align: center;
+  background:
+    linear-gradient(145deg, rgba(19, 43, 76, 0.92), rgba(39, 73, 101, 0.86)),
+    var(--color-bg-surface-muted);
+  color: #ffffff;
+}
+
+.division-details-hero__placeholder-initials {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.division-details-hero__placeholder-title {
+  max-width: 240px;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+.division-details-hero__placeholder-text {
+  max-width: 260px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: var(--font-size-sm);
 }
 
 .division-details-hero__body {

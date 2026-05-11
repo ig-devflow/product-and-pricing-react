@@ -1,13 +1,13 @@
-import { defineConfig, globalIgnores } from 'eslint/config';
-import js from '@eslint/js';
-import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import playwright from 'eslint-plugin-playwright';
-import vitest from '@vitest/eslint-plugin';
-import oxlint from 'eslint-plugin-oxlint';
-import skipFormatting from 'eslint-config-prettier/flat';
-import tseslint from 'typescript-eslint';
+import { defineConfig, globalIgnores } from 'eslint/config'
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import playwright from 'eslint-plugin-playwright'
+import vitest from '@vitest/eslint-plugin'
+import oxlint from 'eslint-plugin-oxlint'
+import skipFormatting from 'eslint-config-prettier/flat'
+import tseslint from 'typescript-eslint'
 
 export default defineConfig(
   {
@@ -59,4 +59,4 @@ export default defineConfig(
   ...oxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
   skipFormatting,
-);
+)

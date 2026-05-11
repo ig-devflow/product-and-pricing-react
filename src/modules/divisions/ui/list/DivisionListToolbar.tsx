@@ -28,11 +28,14 @@ export const DivisionListToolbar = ({
   onPageChange,
   onCreate,
 }: DivisionListToolbarProps) => (
-  <AppSurface
-    className="app-toolbar-panel division-list-toolbar"
-    variant="soft"
-    padding="md"
-  >
+  <AppSurface className="app-toolbar-panel division-list-toolbar" variant="soft" padding="md">
+    <div className="division-list-toolbar__intro">
+      <span className="division-list-toolbar__label">Find your match</span>
+      <p className="division-list-toolbar__text">
+        Search division records by name, website, email, location, or editor.
+      </p>
+    </div>
+
     <div className="division-list-toolbar__search">
       <AppField label="Search" forId="division-search">
         {({ describedBy, labelId }) => (
@@ -49,41 +52,45 @@ export const DivisionListToolbar = ({
     </div>
 
     <div className="division-list-toolbar__meta">
-      <span className="division-list-toolbar__count">
-        Showing {visibleCount} of {totalCount} divisions
-      </span>
-
-      {isRefreshing ? (
-        <span className="division-list-toolbar__refreshing">Updating...</span>
-      ) : null}
-
-      <div className="division-list-toolbar__pagination" aria-label="Division pages">
-        <AppButton
-          type="button"
-          variant="secondary"
-          size="sm"
-          disabled={!canGoPrevious}
-          onClick={() => onPageChange(page - 1)}
-        >
-          Previous
-        </AppButton>
-        <span className="division-list-toolbar__page">
-          Page {page} of {totalPages}
+      <div className="division-list-toolbar__count-row">
+        <span className="division-list-toolbar__count">
+          Showing {visibleCount} of {totalCount} divisions
         </span>
-        <AppButton
-          type="button"
-          variant="secondary"
-          size="sm"
-          disabled={!canGoNext}
-          onClick={() => onPageChange(page + 1)}
-        >
-          Next
-        </AppButton>
+
+        {isRefreshing ? (
+          <span className="division-list-toolbar__refreshing">Updating...</span>
+        ) : null}
       </div>
 
-      <AppButton type="button" variant="primary" onClick={onCreate}>
-        Add division
-      </AppButton>
+      <div className="division-list-toolbar__controls">
+        <div className="division-list-toolbar__pagination" aria-label="Division pages">
+          <AppButton
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={!canGoPrevious}
+            onClick={() => onPageChange(page - 1)}
+          >
+            Previous
+          </AppButton>
+          <span className="division-list-toolbar__page">
+            Page {page} of {totalPages}
+          </span>
+          <AppButton
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={!canGoNext}
+            onClick={() => onPageChange(page + 1)}
+          >
+            Next
+          </AppButton>
+        </div>
+
+        <AppButton type="button" variant="primary" onClick={onCreate}>
+          Add division
+        </AppButton>
+      </div>
     </div>
   </AppSurface>
 );

@@ -39,6 +39,7 @@ export const DivisionListScreen = () => {
         errorMessage={page.errorMessage}
         emptyMessage={page.emptyMessage}
         onRetry={() => void page.refetch()}
+        onCreate={page.handleCreateClick}
       />
     </section>
   );

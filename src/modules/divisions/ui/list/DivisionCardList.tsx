@@ -12,6 +12,7 @@ export interface DivisionCardListProps {
   errorMessage?: string;
   emptyMessage?: string;
   onRetry: () => void;
+  onCreate: () => void;
 }
 
 const skeletonItems = Array.from({ length: 6 }, (_, index) => index);
@@ -24,10 +25,11 @@ export const DivisionCardList = ({
   errorMessage = '',
   emptyMessage = 'No items found.',
   onRetry,
+  onCreate,
 }: DivisionCardListProps) => (
   <div className="division-card-list">
     {isLoading ? (
-      <div className="app-grid">
+      <div className="division-card-list__items">
         {skeletonItems.map((item) => (
           <AppSurface
             key={item}
@@ -35,10 +37,12 @@ export const DivisionCardList = ({
             className="division-card-list__skeleton-card"
             padding="md"
           >
-            <div className="app-skeleton division-card-list__skeleton division-card-list__skeleton--banner" />
-            <div className="app-skeleton division-card-list__skeleton division-card-list__skeleton--title" />
-            <div className="app-skeleton division-card-list__skeleton division-card-list__skeleton--line" />
-            <div className="app-skeleton division-card-list__skeleton division-card-list__skeleton--line-short" />
+            <div className="app-skeleton division-card-list__skeleton division-card-list__skeleton--marker" />
+            <div className="division-card-list__skeleton-body">
+              <div className="app-skeleton division-card-list__skeleton division-card-list__skeleton--title" />
+              <div className="app-skeleton division-card-list__skeleton division-card-list__skeleton--line" />
+              <div className="app-skeleton division-card-list__skeleton division-card-list__skeleton--line-short" />
+            </div>
           </AppSurface>
         ))}
       </div>
@@ -51,12 +55,14 @@ export const DivisionCardList = ({
       />
     ) : !items.length ? (
       <AppAsyncState
-        title="Nothing to show"
+        title="No divisions found"
         text={emptyMessage}
+        actionText="Add division"
+        onAction={onCreate}
         surfaceVariant="outlined"
       />
     ) : (
-      <div className="app-grid">
+      <div className="division-card-list__items">
         {items.map((division) => (
           <DivisionCard
             key={division.id}
