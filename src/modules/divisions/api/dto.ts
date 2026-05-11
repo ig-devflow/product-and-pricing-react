@@ -49,6 +49,14 @@ export interface DivisionListItemDto {
   id: number;
   name: string;
   isActive: boolean;
+  websiteUrl: string | null;
+  headOfficeEmail: string | null;
+  city: string | null;
+  countryName: string | null;
+  createdAt: string;
+  createdByName: string | null;
+  updatedAt: string | null;
+  updatedByName: string | null;
 }
 
 export interface DivisionDetailsDto {
@@ -64,6 +72,10 @@ export interface DivisionDetailsDto {
   contactAddress: ContactAddressDto | null;
   texts: DivisionTextContentDto[];
   version: string;
+  createdAt: string;
+  createdByName: string | null;
+  updatedAt: string | null;
+  updatedByName: string | null;
 }
 
 export interface CreateDivisionRequestDto {

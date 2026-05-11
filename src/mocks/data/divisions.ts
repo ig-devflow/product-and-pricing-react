@@ -26,12 +26,22 @@ const audienceNames = new Map([
 ]);
 
 const versionToken = 'AAAAAAAAB9E=';
+const createdAt = '2026-05-10T14:08:00Z';
+const updatedAt = '2026-05-10T14:08:00Z';
 
 function createListItem(id: number, name: string): DivisionListItemDto {
   return {
     id,
     name,
     isActive: true,
+    websiteUrl: `https://${name.toLowerCase().replace(/\s+/g, '')}.example.com`,
+    headOfficeEmail: 'hello@ecenglish.com',
+    city: 'Valletta',
+    countryName: 'Malta',
+    createdAt,
+    createdByName: 'System User',
+    updatedAt,
+    updatedByName: 'System User',
   };
 }
 
@@ -69,6 +79,10 @@ function createDetails(id: number, name: string): DivisionDetailsDto {
     accreditationBanner: baseBanner,
     headOfficeEmail: 'hello@ecenglish.com',
     headOfficeTelephoneNo: '+356 1234 5678',
+    createdAt,
+    createdByName: 'System User',
+    updatedAt,
+    updatedByName: 'System User',
     texts: [
       {
         id: 1,
@@ -113,7 +127,19 @@ export const divisionFixtures = {
     const page = params.page ?? 1;
     const pageSize = params.pageSize ?? 12;
     const filteredList = search
-      ? list.filter((item) => item.name.toLowerCase().includes(search))
+      ? list.filter((item) =>
+          [
+            item.name,
+            item.websiteUrl,
+            item.headOfficeEmail,
+            item.city,
+            item.countryName,
+            item.createdByName,
+            item.updatedByName,
+          ]
+            .filter(Boolean)
+            .some((value) => value!.toLowerCase().includes(search)),
+        )
       : list;
 
     return createPagedResult(filteredList, page, pageSize);
@@ -140,7 +166,16 @@ export const divisionFixtures = {
       version: versionToken,
     };
 
-    list = [createListItem(nextId, payload.name), ...list];
+    list = [
+      {
+        ...createListItem(nextId, payload.name),
+        websiteUrl: payload.websiteUrl,
+        headOfficeEmail: payload.headOfficeEmail,
+        city: payload.contactAddress?.city ?? null,
+        countryName: payload.contactAddress?.countryId === 2 ? 'Malta' : null,
+      },
+      ...list,
+    ];
     details.set(nextId, detail);
 
     return detail;
@@ -173,6 +208,14 @@ export const divisionFixtures = {
             id,
             name: updated.name,
             isActive: updated.isActive,
+            websiteUrl: updated.websiteUrl,
+            headOfficeEmail: updated.headOfficeEmail,
+            city: updated.contactAddress?.city ?? null,
+            countryName: updated.contactAddress?.countryId === 2 ? 'Malta' : null,
+            createdAt: existing.createdAt,
+            createdByName: existing.createdByName,
+            updatedAt,
+            updatedByName: 'System User',
           }
         : item,
     );

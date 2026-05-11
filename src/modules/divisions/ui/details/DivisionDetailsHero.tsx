@@ -1,6 +1,7 @@
 import { AppPill } from '@/shared/ui/data-display';
 import { AppButton, AppSurface } from '@/shared/ui/primitives';
 import { getDivisionBannerSrc } from '@/modules/divisions/lib/banner';
+import { getDivisionInitials } from '@/modules/divisions/model/formatters';
 import type { DivisionDetails } from '@/modules/divisions/model/types';
 
 export interface DivisionDetailsHeroProps {
@@ -27,7 +28,15 @@ export const DivisionDetailsHero = ({
           />
         ) : (
           <div className="division-details-hero__placeholder">
-            No accreditation banner uploaded
+            <span className="division-details-hero__placeholder-initials">
+              {getDivisionInitials(division.name)}
+            </span>
+            <span className="division-details-hero__placeholder-title">
+              No accreditation banner uploaded
+            </span>
+            <span className="division-details-hero__placeholder-text">
+              Upload a banner when editing this division.
+            </span>
           </div>
         )}
       </div>

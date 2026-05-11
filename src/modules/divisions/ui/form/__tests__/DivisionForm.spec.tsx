@@ -57,6 +57,14 @@ function createDivisionDetails(id: number): DivisionDetails {
       },
     ],
     version: 'AAAAAAAAB9E=',
+    createdAt: '2026-05-10T14:08:00Z',
+    createdByName: 'System User',
+    updatedAt: '',
+    updatedByName: '',
+    createdAtText: '10 May 2026, 14:08',
+    createdByText: 'System User',
+    updatedAtText: '',
+    updatedByText: 'Unknown editor',
   };
 }
 
@@ -81,6 +89,41 @@ describe('DivisionForm', () => {
     await waitFor(() => {
       expect(handleSubmit).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('clears selected banner file name when removing or resetting changes', async () => {
+    const user = userEvent.setup();
+    const bannerFile = new File(['banner'], 'malta-banner.png', {
+      type: 'image/png',
+    });
+
+    renderDivisionForm({
+      defaultValues: createValidValues(),
+      submitLabel: 'Create division',
+      onSubmit: vi.fn(),
+    });
+
+    const bannerInput = screen.getByLabelText('Upload accreditation banner');
+
+    await user.upload(bannerInput, bannerFile);
+    expect(await screen.findAllByText('malta-banner.png')).not.toHaveLength(0);
+
+    await user.click(screen.getByRole('button', { name: 'Remove banner' }));
+
+    await waitFor(() => {
+      expect(screen.queryAllByText('malta-banner.png')).toHaveLength(0);
+    });
+    expect(screen.getByText('No file selected')).toBeVisible();
+
+    await user.upload(bannerInput, bannerFile);
+    expect(await screen.findAllByText('malta-banner.png')).not.toHaveLength(0);
+
+    await user.click(screen.getByRole('button', { name: 'Reset changes' }));
+
+    await waitFor(() => {
+      expect(screen.queryAllByText('malta-banner.png')).toHaveLength(0);
+    });
+    expect(screen.getByText('No file selected')).toBeVisible();
   });
 
   it('shows validation errors for required fields', async () => {

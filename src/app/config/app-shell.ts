@@ -94,7 +94,7 @@ export const appShellBrand = {
 
 export const appShellHeaderCopy = {
   serviceLabel: 'Admin operations workspace',
-  contextualLinkLabel: 'All divisions',
+  contextualLinkLabel: 'Back to divisions',
   sectionsAriaLabel: 'Products and Pricing sections',
 } as const
 

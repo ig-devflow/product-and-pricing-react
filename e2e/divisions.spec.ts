@@ -19,6 +19,13 @@ const contentTemplates = [
   { id: 11, name: 'Arrival instructions', description: null, scope: 1 },
 ]
 
+const auditMetadata = {
+  createdAt: '2026-05-10T14:08:00Z',
+  createdByName: 'System User',
+  updatedAt: '2026-05-10T14:08:00Z',
+  updatedByName: 'System User',
+}
+
 function jsonResponse(route: Route, payload: unknown, status = 200) {
   return route.fulfill({
     status,
@@ -37,10 +44,25 @@ function createDivisionListItem(id: number, name: string) {
     id,
     name,
     isActive: true,
+    websiteUrl: `https://${name.toLowerCase().replace(/\s+/g, '')}.example.com`,
+    headOfficeEmail: 'hello@ecenglish.com',
+    city: 'Valletta',
+    countryName: 'Malta',
+    ...auditMetadata,
   }
 }
 
 function createDivisionDetails(id: number, name: string) {
+  const accreditationBanner: {
+    data: string
+    contentType: string
+    fileName: string
+  } | null = {
+    data: sampleBannerBase64,
+    contentType: 'image/png',
+    fileName: `${name.toLowerCase().replace(/\s+/g, '-')}.png`,
+  }
+
   return {
     id,
     name,
@@ -55,13 +77,10 @@ function createDivisionDetails(id: number, name: string) {
       postalCode: 'VLT 1000',
       countryId: 2,
     },
-    accreditationBanner: {
-      data: sampleBannerBase64,
-      contentType: 'image/png',
-      fileName: `${name.toLowerCase().replace(/\s+/g, '-')}.png`,
-    },
+    accreditationBanner,
     headOfficeEmail: 'hello@ecenglish.com',
     headOfficeTelephoneNo: '+356 1234 5678',
+    ...auditMetadata,
     texts: [
       {
         id: 1,
@@ -88,11 +107,13 @@ function buildPagedResponse<TItem>(items: TItem[], page: number, pageSize: numbe
   }
 }
 
-async function mockDivisionsApi(page: Page) {
+async function mockDivisionsApi(page: Page, options: { withoutBanner?: boolean } = {}) {
   const list = [createDivisionListItem(7, 'EC Malta')]
-  const details = new Map<number, ReturnType<typeof createDivisionDetails>>([
-    [7, createDivisionDetails(7, 'EC Malta')],
-  ])
+  const initialDetails = createDivisionDetails(7, 'EC Malta')
+  if (options.withoutBanner) {
+    initialDetails.accreditationBanner = null
+  }
+  const details = new Map<number, ReturnType<typeof createDivisionDetails>>([[7, initialDetails]])
   const createPayloads: Record<string, unknown>[] = []
   const updatePayloads: Record<string, unknown>[] = []
   let countryRequests = 0
@@ -124,7 +145,19 @@ async function mockDivisionsApi(page: Page) {
       const pageNumber = Number(url.searchParams.get('page') ?? 1)
       const pageSize = Number(url.searchParams.get('pageSize') ?? 12)
       const filteredList = search
-        ? list.filter((item) => item.name.toLowerCase().includes(search))
+        ? list.filter((item) =>
+            [
+              item.name,
+              item.websiteUrl,
+              item.headOfficeEmail,
+              item.city,
+              item.countryName,
+              item.createdByName,
+              item.updatedByName,
+            ]
+              .filter(Boolean)
+              .some((value) => value!.toLowerCase().includes(search)),
+          )
         : list
 
       return jsonResponse(route, buildPagedResponse(filteredList, pageNumber, pageSize))
@@ -212,6 +245,16 @@ async function mockDivisionsApi(page: Page) {
           id,
           name: updated.name,
           isActive: updated.isActive,
+          websiteUrl: updated.websiteUrl,
+          headOfficeEmail: updated.headOfficeEmail,
+          city: updated.contactAddress?.city ?? null,
+          countryName:
+            countries.find((country) => country.id === updated.contactAddress?.countryId)?.name ??
+            null,
+          createdAt: current.createdAt,
+          createdByName: current.createdByName,
+          updatedAt: auditMetadata.updatedAt,
+          updatedByName: auditMetadata.updatedByName,
         })
       }
 
@@ -234,14 +277,26 @@ test('opens division details and saves edit changes', async ({ page }) => {
 
   await page.goto('/division-manager')
   await expect(page.getByRole('heading', { name: 'Division Manager' })).toBeVisible()
-  await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
+  await expect(header.getByRole('link', { name: 'Back to divisions' })).toHaveCount(0)
   await expect(page.getByText('EC Malta')).toBeVisible()
+  await expect(page.getByText('ecmalta.example.com')).toBeVisible()
+  await expect(page.getByText('Valletta, Malta')).toBeVisible()
+  await expect(
+    page
+      .getByLabel('Division audit information')
+      .locator('.division-card__audit-item')
+      .filter({ hasText: 'Created' })
+      .getByText('10 May 2026, 14:08 by System User'),
+  ).toBeVisible()
+  await expect(page.locator('.division-card img')).toHaveCount(0)
   await expect(page.getByText('Showing 1 of 1 divisions')).toBeVisible()
 
-  const openLink = page.getByRole('link', { name: 'Open' })
+  const openLink = page.getByRole('link', { name: 'Open details' })
   await Promise.all([page.waitForURL(/\/division-manager\/7$/), activate(openLink)])
-  await expect(header.getByRole('link', { name: 'All divisions' })).toBeVisible()
+  await expect(header.getByRole('link', { name: 'Back to divisions' })).toBeVisible()
   await expect(page.getByText('7 Main Street, Central, Valletta, VLT 1000, Malta')).toBeVisible()
+  await expect(page.getByText('Created')).toBeVisible()
+  await expect(page.getByText('Last updated')).toBeVisible()
   expect(getCountryRequests()).toBeGreaterThan(0)
 
   const editDivisionButton = page.getByRole('button', { name: 'Edit division' })
@@ -272,13 +327,23 @@ test('opens division details and saves edit changes', async ({ page }) => {
   ])
 })
 
+test('shows a details placeholder when accreditation banner is missing', async ({ page }) => {
+  await mockDivisionsApi(page, { withoutBanner: true })
+
+  await page.goto('/division-manager/7')
+
+  await expect(page.getByText('No accreditation banner uploaded')).toBeVisible()
+  await expect(page.getByText('Upload a banner when editing this division.')).toBeVisible()
+  await expect(page.locator('.division-details-hero__media img')).toHaveCount(0)
+})
+
 test('creates a division and returns to the list', async ({ page }) => {
   const { createPayloads } = await mockDivisionsApi(page)
   const header = page.getByRole('banner')
 
   await page.goto('/division-manager/create')
   await expect(page.getByRole('heading', { name: 'Create division' })).toBeVisible()
-  await expect(header.getByRole('link', { name: 'All divisions' })).toBeVisible()
+  await expect(header.getByRole('link', { name: 'Back to divisions' })).toBeVisible()
 
   await page.getByLabel('Division name').fill('EC Dublin')
   await page.getByLabel('Website URL').fill('https://dublin.example.com')
@@ -328,6 +393,33 @@ test('creates a division and returns to the list', async ({ page }) => {
   ])
 })
 
+test('clears create banner file name when removing or resetting changes', async ({ page }) => {
+  await mockDivisionsApi(page)
+  const bannerFile = {
+    name: 'malta-banner.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(sampleBannerBase64, 'base64'),
+  }
+
+  await page.goto('/division-manager/create')
+
+  const bannerInput = page.getByLabel('Upload accreditation banner')
+
+  await bannerInput.setInputFiles(bannerFile)
+  await expect(page.getByText('malta-banner.png').first()).toBeVisible()
+
+  await page.getByRole('button', { name: 'Remove banner' }).click()
+  await expect(page.getByText('malta-banner.png')).toHaveCount(0)
+  await expect(page.getByText('No file selected')).toBeVisible()
+
+  await bannerInput.setInputFiles(bannerFile)
+  await expect(page.getByText('malta-banner.png').first()).toBeVisible()
+
+  await page.getByRole('button', { name: 'Reset changes' }).click()
+  await expect(page.getByText('malta-banner.png')).toHaveCount(0)
+  await expect(page.getByText('No file selected')).toBeVisible()
+})
+
 test('uses backend search parameter for list filtering', async ({ page }) => {
   await mockDivisionsApi(page)
 
@@ -355,7 +447,7 @@ test('renders legacy products and pricing tabs on desktop and mobile', async ({
   await expect(tabsNav).toContainText('Pricing Reference Data')
   await expect(tabsNav).toContainText('Calculator')
   await expect(header.getByRole('link', { name: 'Create division' })).toHaveCount(0)
-  await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
+  await expect(header.getByRole('link', { name: 'Back to divisions' })).toHaveCount(0)
 
   const mobileContext = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -377,16 +469,16 @@ test('renders legacy products and pricing tabs on desktop and mobile', async ({
   }
 })
 
-test('uses all divisions as a contextual return link', async ({ page }) => {
+test('uses back to divisions as a contextual return link', async ({ page }) => {
   await mockDivisionsApi(page)
   const header = page.getByRole('banner')
 
   await page.goto('/division-manager/create')
 
-  const allDivisionsLink = header.getByRole('link', { name: 'All divisions' })
+  const backToDivisionsLink = header.getByRole('link', { name: 'Back to divisions' })
 
-  await expect(allDivisionsLink).toBeVisible()
-  await Promise.all([page.waitForURL(/\/division-manager$/), activate(allDivisionsLink)])
+  await expect(backToDivisionsLink).toBeVisible()
+  await Promise.all([page.waitForURL(/\/division-manager$/), activate(backToDivisionsLink)])
   await expect(page.getByRole('heading', { name: 'Division Manager' })).toBeVisible()
-  await expect(header.getByRole('link', { name: 'All divisions' })).toHaveCount(0)
+  await expect(header.getByRole('link', { name: 'Back to divisions' })).toHaveCount(0)
 })

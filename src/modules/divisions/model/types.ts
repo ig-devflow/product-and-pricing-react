@@ -28,6 +28,20 @@ export interface DivisionListItem {
   id: number;
   name: string;
   isActive: boolean;
+  websiteUrl: string;
+  headOfficeEmail: string;
+  city: string;
+  countryName: string;
+  createdAt: string;
+  createdByName: string;
+  updatedAt: string;
+  updatedByName: string;
+  websiteDisplayUrl: string;
+  locationText: string;
+  createdAtText: string;
+  createdByText: string;
+  updatedAtText: string;
+  updatedByText: string;
 }
 
 export interface DivisionListPage {
@@ -50,4 +64,12 @@ export interface DivisionDetails {
   headOfficeTelephoneNo: string;
   texts: DivisionTextContent[];
   version: string;
+  createdAt: string;
+  createdByName: string;
+  updatedAt: string;
+  updatedByName: string;
+  createdAtText: string;
+  createdByText: string;
+  updatedAtText: string;
+  updatedByText: string;
 }

@@ -1,23 +1,16 @@
-import {
-  forwardRef,
-  useId,
-  useImperativeHandle,
-  useRef,
-  useState,
-  type ChangeEvent,
-} from 'react';
-import { AppButton } from '@/shared/ui/primitives';
+import { forwardRef, useId, useImperativeHandle, useRef, useState, type ChangeEvent } from 'react'
+import { AppButton } from '@/shared/ui/primitives'
 
 export interface AppFileInputProps {
-  id?: string;
-  accept?: string;
-  disabled?: boolean;
-  buttonText?: string;
-  emptyText?: string;
-  fileName?: string;
-  describedBy?: string;
-  onSelect?: (file: File | null) => void;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  id?: string
+  accept?: string
+  disabled?: boolean
+  buttonText?: string
+  emptyText?: string
+  fileName?: string
+  describedBy?: string
+  onSelect?: (file: File | null) => void
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
 export const AppFileInput = forwardRef<HTMLInputElement, AppFileInputProps>(
@@ -28,39 +21,43 @@ export const AppFileInput = forwardRef<HTMLInputElement, AppFileInputProps>(
       disabled = false,
       buttonText = 'Choose file',
       emptyText = 'No file selected',
-      fileName = '',
+      fileName,
       describedBy,
       onSelect,
       onChange,
     },
     ref,
   ) => {
-    const fallbackId = useId();
-    const inputId = id ?? fallbackId;
-    const inputRef = useRef<HTMLInputElement>(null);
-    const [selectedFileName, setSelectedFileName] = useState('');
+    const fallbackId = useId()
+    const inputId = id ?? fallbackId
+    const inputRef = useRef<HTMLInputElement>(null)
+    const [selectedFileName, setSelectedFileName] = useState('')
+    const isFileNameControlled = fileName !== undefined
 
-    useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+    useImperativeHandle(ref, () => inputRef.current as HTMLInputElement)
 
-    const displayName = selectedFileName || fileName || emptyText;
+    const displayName = isFileNameControlled ? fileName || emptyText : selectedFileName || emptyText
 
     const openPicker = () => {
       if (disabled) {
-        return;
+        return
       }
 
-      inputRef.current?.click();
-    };
+      inputRef.current?.click()
+    }
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0] ?? null;
+      const file = event.target.files?.[0] ?? null
 
-      setSelectedFileName(file?.name ?? '');
-      onSelect?.(file);
-      onChange?.(event);
+      if (!isFileNameControlled) {
+        setSelectedFileName(file?.name ?? '')
+      }
 
-      event.target.value = '';
-    };
+      onSelect?.(file)
+      onChange?.(event)
+
+      event.target.value = ''
+    }
 
     return (
       <div className="app-file-input">
@@ -89,8 +86,8 @@ export const AppFileInput = forwardRef<HTMLInputElement, AppFileInputProps>(
           <span className="app-file-input__name">{displayName}</span>
         </div>
       </div>
-    );
+    )
   },
-);
+)
 
-AppFileInput.displayName = 'AppFileInput';
+AppFileInput.displayName = 'AppFileInput'
