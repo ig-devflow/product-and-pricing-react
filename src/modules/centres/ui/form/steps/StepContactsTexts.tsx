@@ -166,31 +166,31 @@ export const StepContactsTexts = ({ values, onChange, errors }: StepContactsText
                         onChange={(e) => updateContact(i, { name: e.target.value })}
                       />
                     </AppField>
-                    <AppField
-                      label="Email"
-                      forId={`f-c-email-${i}`}
-                      error={errors[`contacts.${i}.email`]}
-                    >
-                      <AppInput
-                        id={`f-c-email-${i}`}
-                        type="email"
-                        value={c.email}
-                        invalid={!!errors[`contacts.${i}.email`]}
-                        onChange={(e) => updateContact(i, { email: e.target.value })}
-                      />
-                    </AppField>
-                    <AppField
-                      label="Signature image"
-                      error={errors[`contacts.${i}.signatureImage`]}
-                      hint="PNG, JPEG, WebP, or SVG up to 2 MB."
-                    >
-                      <CentreImageUpload
-                        image={c.signatureImage}
-                        label="signature"
-                        onChange={(img) => updateContact(i, { signatureImage: img })}
-                      />
-                    </AppField>
                   </div>
+                  <AppField
+                    label="Email"
+                    forId={`f-c-email-${i}`}
+                    error={errors[`contacts.${i}.email`]}
+                  >
+                    <AppInput
+                      id={`f-c-email-${i}`}
+                      type="email"
+                      value={c.email}
+                      invalid={!!errors[`contacts.${i}.email`]}
+                      onChange={(e) => updateContact(i, { email: e.target.value })}
+                    />
+                  </AppField>
+                  <AppField
+                    label="Signature image"
+                    error={errors[`contacts.${i}.signatureImage`]}
+                    hint="PNG, JPEG, WebP, or SVG up to 2 MB."
+                  >
+                    <CentreImageUpload
+                      image={c.signatureImage}
+                      label="signature"
+                      onChange={(img) => updateContact(i, { signatureImage: img })}
+                    />
+                  </AppField>
                 </div>
               )
             })}

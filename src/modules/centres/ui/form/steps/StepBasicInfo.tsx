@@ -114,7 +114,7 @@ export const StepBasicInfo = ({ values, onChange, errors }: StepBasicInfoProps) 
             <AppSwitch
               id="f-active"
               checked={values.isActive}
-              onChange={(v) => onChange({ isActive: v })}
+              onChange={(e) => onChange({ isActive: e.target.checked })}
               label={values.isActive ? 'On' : 'Off'}
             />
           </div>
@@ -126,7 +126,7 @@ export const StepBasicInfo = ({ values, onChange, errors }: StepBasicInfoProps) 
             <AppSwitch
               id="f-physical"
               checked={values.isPhysicalCentre}
-              onChange={(v) => onChange({ isPhysicalCentre: v })}
+              onChange={(e) => onChange({ isPhysicalCentre: e.target.checked })}
               label={values.isPhysicalCentre ? 'Physical' : 'Online'}
             />
           </div>

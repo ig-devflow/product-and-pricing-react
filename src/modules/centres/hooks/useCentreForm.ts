@@ -18,6 +18,21 @@ export type FormErrors = Record<string, string>
 type StepKey = 'step1' | 'step2' | 'step3' | 'step4' | 'step5'
 const STEP_KEYS: StepKey[] = ['step1', 'step2', 'step3', 'step4', 'step5']
 
+const STEP_FIELD_PREFIXES: readonly string[][] = [
+  ['name', 'code', 'currencyId', 'printFormat'],
+  ['generalEmail', 'accommodationEmail', 'telephone', 'emergencyTelephone', 'transferEmergencyTelephone', 'brandColor', 'contactAddress', 'logoImage'],
+  ['schoolSponsorshipNumber', 'vatNumber', 'registrationNumber', 'vatExemptionNumber', 'chequePayableTo', 'guarantees', 'individualsRatio', 'staffingRatio', 'emptyBeds'],
+  ['beneficiaryName', 'accountNumber', 'bankName', 'iban', 'swiftCode', 'branchCode', 'abaRoutingNo', 'achAba', 'intermediaryBankName', 'intermediarySwiftCode', 'bankAddress', 'beneficiaryBankAddress', 'intermediaryBankAddress'],
+  ['contacts', 'texts'],
+]
+
+function stepHasCommittedErrors(stepIndex: number, errors: FormErrors): boolean {
+  const prefixes = STEP_FIELD_PREFIXES[stepIndex] ?? []
+  return Object.keys(errors).some((p) =>
+    prefixes.some((pre) => p === pre || p.startsWith(`${pre}.`) || p.startsWith(pre)),
+  )
+}
+
 interface WizardState {
   values: CentreFormValues
   step: number
@@ -65,54 +80,9 @@ function firstStepWithErrors(errors: FormErrors): number {
   const paths = Object.keys(errors)
   if (paths.length === 0) return -1
 
-  const stepPrefixes = [
-    ['name', 'code', 'currencyId', 'printFormat'],
-    [
-      'generalEmail',
-      'accommodationEmail',
-      'telephone',
-      'emergencyTelephone',
-      'transferEmergencyTelephone',
-      'brandColor',
-      'contactAddress',
-      'logoImage',
-    ],
-    [
-      'schoolSponsorshipNumber',
-      'vatNumber',
-      'registrationNumber',
-      'vatExemptionNumber',
-      'chequePayableTo',
-      'guarantees',
-      'individualsRatio',
-      'staffingRatio',
-      'emptyBeds',
-    ],
-    [
-      'beneficiaryName',
-      'accountNumber',
-      'bankName',
-      'iban',
-      'swiftCode',
-      'branchCode',
-      'abaRoutingNo',
-      'achAba',
-      'intermediaryBankName',
-      'intermediarySwiftCode',
-      'bankAddress',
-      'beneficiaryBankAddress',
-      'intermediaryBankAddress',
-    ],
-    ['contacts', 'texts'],
-  ]
-
-  for (let i = 0; i < stepPrefixes.length; i++) {
-    const prefixes = stepPrefixes[i]!
-    if (
-      paths.some((p) =>
-        prefixes.some((pre) => p === pre || p.startsWith(pre + '.') || p.startsWith(pre)),
-      )
-    ) {
+  for (let i = 0; i < STEP_FIELD_PREFIXES.length; i++) {
+    const prefixes = STEP_FIELD_PREFIXES[i]!
+    if (paths.some((p) => prefixes.some((pre) => p === pre || p.startsWith(`${pre}.`) || p.startsWith(pre)))) {
       return i
     }
   }
@@ -127,8 +97,8 @@ function reducer(state: WizardState, action: WizardAction): WizardState {
         [action.stepKey]: { ...state.values[action.stepKey], ...action.patch },
       }
 
-      // Re-validate all touched steps once the user has navigated past step 0
-      const shouldRevalidate = state.touchedSteps.size > 1 || Object.keys(state.errors).length > 0
+      // Only re-validate when there are already committed errors (clears them as user fixes fields)
+      const shouldRevalidate = Object.keys(state.errors).length > 0
       const newErrors = shouldRevalidate ? validateAll(newValues) : state.errors
 
       return { ...state, values: newValues, errors: newErrors, isDirty: true }
@@ -237,15 +207,15 @@ export function useCentreForm({ initialValues, onSubmit, onConflict }: UseCentre
   const stepStatus = useMemo(() => {
     return WIZARD_STEPS.map((_, i) => {
       const stepErrors = validateStep(i, state.values)
-      const hasErrors = Object.keys(stepErrors).length > 0
+      const hasSchemaErrors = Object.keys(stepErrors).length > 0
       const isTouched = state.touchedSteps.has(i)
       const isCurrent = i === state.step
       return {
-        isCompleted: !hasErrors && isTouched && !isCurrent,
-        hasError: hasErrors && isTouched,
+        isCompleted: !hasSchemaErrors && isTouched && !isCurrent,
+        hasError: stepHasCommittedErrors(i, state.errors),
       }
     })
-  }, [state.values, state.step, state.touchedSteps])
+  }, [state.values, state.step, state.touchedSteps, state.errors])
 
   return {
     values: state.values,
@@ -254,6 +224,7 @@ export function useCentreForm({ initialValues, onSubmit, onConflict }: UseCentre
     isDirty: state.isDirty,
     hasConflict: state.hasConflict,
     stepStatus,
+    touchedSteps: state.touchedSteps,
     setStepValues,
     goTo,
     onNext,

@@ -54,6 +54,7 @@ export const CentreFormWizard = ({
 
   const isEdit = mode === 'edit';
   const submitLabel = isEdit ? 'Save changes' : 'Create centre';
+  const maxVisitedStep = form.touchedSteps.size > 0 ? Math.max(...form.touchedSteps) : 0;
 
   return (
     <>
@@ -61,6 +62,8 @@ export const CentreFormWizard = ({
         currentStep={form.step}
         stepStatus={form.stepStatus}
         onStepChange={form.goTo}
+        mode={mode}
+        maxVisitedStep={maxVisitedStep}
       />
 
       {form.hasConflict ? <CentreConflictBanner /> : null}

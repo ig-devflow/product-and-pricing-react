@@ -10,9 +10,11 @@ export interface CentreStepperProps {
   currentStep: number;
   stepStatus: StepStatus[];
   onStepChange: (step: number) => void;
+  mode: 'create' | 'edit';
+  maxVisitedStep: number;
 }
 
-export const CentreStepper = ({ currentStep, stepStatus, onStepChange }: CentreStepperProps) => (
+export const CentreStepper = ({ currentStep, stepStatus, onStepChange, mode, maxVisitedStep }: CentreStepperProps) => (
   <nav
     className="stepper"
     style={{ '--stepper-cols': WIZARD_STEPS.length } as React.CSSProperties}
@@ -21,6 +23,7 @@ export const CentreStepper = ({ currentStep, stepStatus, onStepChange }: CentreS
     {WIZARD_STEPS.map((step, i) => {
       const status = stepStatus[i];
       const isCurrent = i === currentStep;
+      const isDisabled = mode === 'create' && i > maxVisitedStep;
       const className = [
         'stepper__step',
         isCurrent ? 'is-active' : '',
@@ -36,6 +39,7 @@ export const CentreStepper = ({ currentStep, stepStatus, onStepChange }: CentreS
           type="button"
           className={className}
           onClick={() => onStepChange(i)}
+          disabled={isDisabled}
           aria-current={isCurrent ? 'step' : undefined}
         >
           <span className="stepper__badge">

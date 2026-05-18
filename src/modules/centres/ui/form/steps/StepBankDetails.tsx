@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { AppField } from '@/shared/ui/controls';
 import { AppInput } from '@/shared/ui/primitives';
 import { AppSectionCard } from '@/shared/ui/patterns';
@@ -15,10 +14,6 @@ export interface StepBankDetailsProps {
 }
 
 export const StepBankDetails = ({ values, onChange, errors }: StepBankDetailsProps) => {
-  const [openBank, setOpenBank] = useState(true);
-  const [openBen, setOpenBen] = useState(true);
-  const [openInt, setOpenInt] = useState(false);
-
   const bankAddressMeta = isAddressEmpty({ ...values.bankAddress, countryId: values.bankAddress.countryId ? Number(values.bankAddress.countryId) : null })
     ? 'Empty'
     : [values.bankAddress.city, values.bankAddress.postalCode].filter(Boolean).join(' ');
@@ -70,20 +65,14 @@ export const StepBankDetails = ({ values, onChange, errors }: StepBankDetailsPro
 
       <AppSectionCard title="Addresses" description="Bank correspondence addresses. Expand each to edit.">
         <div className="accordion">
-          <CentreAccordionItem title="Bank address" meta={bankAddressMeta} defaultOpen={openBank}>
-            <div onClick={() => setOpenBank(true)}>
-              <AddressSubForm value={values.bankAddress} onChange={(v) => onChange({ bankAddress: v })} errors={errors} pathPrefix="bankAddress" idPrefix="f-b-ba" />
-            </div>
+          <CentreAccordionItem title="Bank address" meta={bankAddressMeta} defaultOpen={false}>
+            <AddressSubForm value={values.bankAddress} onChange={(v) => onChange({ bankAddress: v })} errors={errors} pathPrefix="bankAddress" idPrefix="f-b-ba" />
           </CentreAccordionItem>
-          <CentreAccordionItem title="Beneficiary bank address" meta={benAddressMeta} defaultOpen={openBen}>
-            <div onClick={() => setOpenBen(true)}>
-              <AddressSubForm value={values.beneficiaryBankAddress} onChange={(v) => onChange({ beneficiaryBankAddress: v })} errors={errors} pathPrefix="beneficiaryBankAddress" idPrefix="f-b-bba" />
-            </div>
+          <CentreAccordionItem title="Beneficiary bank address" meta={benAddressMeta} defaultOpen={false}>
+            <AddressSubForm value={values.beneficiaryBankAddress} onChange={(v) => onChange({ beneficiaryBankAddress: v })} errors={errors} pathPrefix="beneficiaryBankAddress" idPrefix="f-b-bba" />
           </CentreAccordionItem>
-          <CentreAccordionItem title="Intermediary bank address" meta={intAddressMeta} defaultOpen={openInt}>
-            <div onClick={() => setOpenInt(true)}>
-              <AddressSubForm value={values.intermediaryBankAddress} onChange={(v) => onChange({ intermediaryBankAddress: v })} errors={errors} pathPrefix="intermediaryBankAddress" idPrefix="f-b-iba" />
-            </div>
+          <CentreAccordionItem title="Intermediary bank address" meta={intAddressMeta} defaultOpen={false}>
+            <AddressSubForm value={values.intermediaryBankAddress} onChange={(v) => onChange({ intermediaryBankAddress: v })} errors={errors} pathPrefix="intermediaryBankAddress" idPrefix="f-b-iba" />
           </CentreAccordionItem>
         </div>
       </AppSectionCard>
