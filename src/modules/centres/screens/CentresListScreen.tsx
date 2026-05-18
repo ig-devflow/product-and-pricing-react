@@ -26,8 +26,10 @@ export const CentresListScreen = () => {
         canGoPrevious={page.canGoPrevious}
         canGoNext={page.canGoNext}
         isRefreshing={page.isRefreshing}
+        activeOnly={page.activeOnly}
         onSearchTermChange={page.setSearchTerm}
         onPageChange={page.setPage}
+        onActiveOnlyChange={page.setActiveOnly}
         onCreate={page.handleCreateClick}
       />
 

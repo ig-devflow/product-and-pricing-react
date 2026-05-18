@@ -2,6 +2,11 @@
    Centre module styles — BEM prefix: centre-
    ============================================================================ */
 
+/* Centre list page --------------------------------------------------------- */
+.centre-list-page {
+  align-content: start;
+}
+
 /* Centre card -------------------------------------------------------------- */
 .centre-card {
   position: relative;
@@ -137,49 +142,92 @@
 .centre-card-list__skeleton--line-short { height: 14px; width: 55%; }
 
 /* Centre list toolbar ------------------------------------------------------ */
-.centre-list-toolbar { display: grid; gap: var(--space-4); }
+.centre-list-toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(320px, 1fr) auto;
+  align-items: end;
+  gap: var(--space-6);
+  border-color: rgba(61, 115, 246, 0.22);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(61, 115, 246, 0.09), transparent 32%),
+    linear-gradient(135deg, #f5f8ff 0%, var(--color-bg-surface-soft) 100%);
+}
 
-.centre-list-toolbar__intro { display: grid; gap: var(--space-1); }
+.centre-list-toolbar__intro { display: grid; gap: var(--space-2); }
 
 .centre-list-toolbar__label {
-  font-size: var(--font-size-xs);
+  color: var(--color-brand-blue);
+  font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-bold);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  line-height: var(--line-height-tight);
   text-transform: uppercase;
-  color: var(--color-text-muted);
 }
 
 .centre-list-toolbar__text {
   margin: 0;
-  font-size: var(--font-size-sm);
   color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
 }
 
-.centre-list-toolbar__search { max-width: 420px; }
+.centre-list-toolbar__search {
+  min-width: 280px;
+  display: grid;
+  gap: var(--space-3);
+}
 
-.centre-list-toolbar__meta { display: grid; gap: var(--space-3); }
-
-.centre-list-toolbar__count-row {
+.centre-list-toolbar__filter {
   display: flex;
   align-items: center;
   gap: var(--space-3);
 }
 
+.centre-list-toolbar__filter-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  min-width: 42px;
+}
+
+/* Blue toggle track for the centre filter switch */
+.centre-list-toolbar__filter .app-switch__input:checked + .app-switch__track {
+  background: var(--color-brand-blue);
+}
+
+.centre-list-toolbar__meta {
+  display: grid;
+  justify-items: end;
+  gap: var(--space-3);
+}
+
+.centre-list-toolbar__count-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
 .centre-list-toolbar__count {
   font-size: var(--font-size-sm);
-  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
 }
 
 .centre-list-toolbar__refreshing {
   font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  font-style: italic;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-link-default);
 }
 
 .centre-list-toolbar__controls {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  justify-content: flex-end;
+  gap: var(--space-3);
   flex-wrap: wrap;
 }
 
@@ -190,10 +238,38 @@
 }
 
 .centre-list-toolbar__page {
+  min-width: 92px;
+  text-align: center;
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  font-variant-numeric: tabular-nums;
-  padding: 0 var(--space-2);
+}
+
+@media (max-width: 1100px) {
+  .centre-list-toolbar {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .centre-list-toolbar__meta,
+  .centre-list-toolbar__count-row,
+  .centre-list-toolbar__controls {
+    justify-items: start;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .centre-list-toolbar__search {
+    min-width: 0;
+  }
+
+  .centre-list-toolbar__controls {
+    width: 100%;
+  }
+
+  .centre-list-toolbar__controls > .app-button {
+    flex: 1 1 100%;
+  }
 }
 
 /* Centre details page ------------------------------------------------------- */

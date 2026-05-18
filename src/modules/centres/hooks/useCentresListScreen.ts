@@ -24,6 +24,7 @@ export const useCentresListScreen = () => {
   const debouncedSearchTerm = useDebouncedValue(searchTerm, searchDebounceMs);
   const page = parsePositiveInteger(searchParams.get('page'), defaultPage);
   const pageSize = parsePositiveInteger(searchParams.get('pageSize'), defaultPageSize);
+  const activeOnly = searchParams.get('active') === 'true';
 
   useEffect(() => {
     setSearchTerm(submittedSearchTerm);
@@ -51,6 +52,7 @@ export const useCentresListScreen = () => {
 
   const centresQuery = useCentreListQuery({
     search: submittedSearchTerm.trim() || undefined,
+    isActive: activeOnly || undefined,
     page,
     pageSize,
   });
@@ -59,6 +61,18 @@ export const useCentresListScreen = () => {
   const setPage = (nextPage: number) => {
     const nextParams = new URLSearchParams(searchParams);
     nextParams.set('page', String(Math.max(defaultPage, nextPage)));
+    nextParams.set('pageSize', String(pageSize));
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const setActiveOnly = (value: boolean) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (value) {
+      nextParams.set('active', 'true');
+    } else {
+      nextParams.delete('active');
+    }
+    nextParams.set('page', String(defaultPage));
     nextParams.set('pageSize', String(pageSize));
     setSearchParams(nextParams, { replace: true });
   };
@@ -80,6 +94,8 @@ export const useCentresListScreen = () => {
     pageHeader,
     searchTerm,
     setSearchTerm,
+    activeOnly,
+    setActiveOnly,
     centres: items,
     visibleCount: items.length,
     totalCount,

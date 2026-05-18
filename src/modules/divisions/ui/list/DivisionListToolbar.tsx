@@ -1,5 +1,5 @@
 import { AppField, AppSearchInput } from '@/shared/ui/controls';
-import { AppButton, AppSurface } from '@/shared/ui/primitives';
+import { AppButton, AppSurface, AppSwitch } from '@/shared/ui/primitives';
 
 export interface DivisionListToolbarProps {
   searchTerm: string;
@@ -10,8 +10,10 @@ export interface DivisionListToolbarProps {
   canGoPrevious: boolean;
   canGoNext: boolean;
   isRefreshing?: boolean;
+  activeOnly: boolean;
   onSearchTermChange: (value: string) => void;
   onPageChange: (page: number) => void;
+  onActiveOnlyChange: (value: boolean) => void;
   onCreate: () => void;
 }
 
@@ -24,8 +26,10 @@ export const DivisionListToolbar = ({
   canGoPrevious,
   canGoNext,
   isRefreshing = false,
+  activeOnly,
   onSearchTermChange,
   onPageChange,
+  onActiveOnlyChange,
   onCreate,
 }: DivisionListToolbarProps) => (
   <AppSurface className="app-toolbar-panel division-list-toolbar" variant="soft" padding="md">
@@ -49,6 +53,16 @@ export const DivisionListToolbar = ({
           />
         )}
       </AppField>
+
+      <div className="division-list-toolbar__filter">
+        <span className="division-list-toolbar__filter-label">Filter</span>
+        <AppSwitch
+          id="division-active-filter"
+          checked={activeOnly}
+          onChange={(e) => onActiveOnlyChange(e.target.checked)}
+          label="Active only"
+        />
+      </div>
     </div>
 
     <div className="division-list-toolbar__meta">

@@ -1,5 +1,5 @@
 import { AppField, AppSearchInput } from '@/shared/ui/controls';
-import { AppButton, AppSurface } from '@/shared/ui/primitives';
+import { AppButton, AppSurface, AppSwitch } from '@/shared/ui/primitives';
 
 export interface CentreListToolbarProps {
   searchTerm: string;
@@ -10,8 +10,10 @@ export interface CentreListToolbarProps {
   canGoPrevious: boolean;
   canGoNext: boolean;
   isRefreshing?: boolean;
+  activeOnly: boolean;
   onSearchTermChange: (value: string) => void;
   onPageChange: (page: number) => void;
+  onActiveOnlyChange: (value: boolean) => void;
   onCreate: () => void;
 }
 
@@ -24,15 +26,17 @@ export const CentreListToolbar = ({
   canGoPrevious,
   canGoNext,
   isRefreshing = false,
+  activeOnly,
   onSearchTermChange,
   onPageChange,
+  onActiveOnlyChange,
   onCreate,
 }: CentreListToolbarProps) => (
   <AppSurface className="app-toolbar-panel centre-list-toolbar" variant="soft" padding="md">
     <div className="centre-list-toolbar__intro">
       <span className="centre-list-toolbar__label">Find your match</span>
       <p className="centre-list-toolbar__text">
-        Search centre records by name or code.
+        Search centre records by name, code, or city.
       </p>
     </div>
 
@@ -49,6 +53,16 @@ export const CentreListToolbar = ({
           />
         )}
       </AppField>
+
+      <div className="centre-list-toolbar__filter">
+        <span className="centre-list-toolbar__filter-label">Filter</span>
+        <AppSwitch
+          id="centre-active-filter"
+          checked={activeOnly}
+          onChange={(e) => onActiveOnlyChange(e.target.checked)}
+          label="Active only"
+        />
+      </div>
     </div>
 
     <div className="centre-list-toolbar__meta">

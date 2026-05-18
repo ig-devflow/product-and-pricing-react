@@ -36,6 +36,23 @@
 
 .division-list-toolbar__search {
   min-width: 280px;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.division-list-toolbar__filter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.division-list-toolbar__filter-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  min-width: 42px;
 }
 
 .division-list-toolbar__meta {
