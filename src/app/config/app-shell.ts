@@ -84,21 +84,65 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
     id: 'pricelist',
     label: 'Pricelist',
     inert: true,
+    dropdownGroups: [
+      {
+        id: 'pricelist-items',
+        items: [
+          { id: 'all-pricelists', label: 'All pricelists', hint: 'Browse the full catalog' },
+          { id: 'active-year', label: 'Active year', hint: '2026 published prices' },
+          { id: 'drafts', label: 'Drafts & reviews', hint: 'Pending approval' },
+          { id: 'archive', label: 'Archive', hint: 'Historical versions' },
+        ],
+      },
+    ],
   },
   {
     id: 'products',
     label: 'Products',
     inert: true,
+    dropdownGroups: [
+      {
+        id: 'products-items',
+        items: [
+          { id: 'catalog', label: 'Catalog', hint: 'All sellable products' },
+          { id: 'categories', label: 'Categories', hint: 'Hierarchy & tags' },
+          { id: 'bundles', label: 'Bundles', hint: 'Composite packages' },
+          { id: 'lifecycle', label: 'Lifecycle states', hint: 'Active, retired, planned' },
+        ],
+      },
+    ],
   },
   {
     id: 'discounts',
     label: 'Discounts',
     inert: true,
+    dropdownGroups: [
+      {
+        id: 'discounts-items',
+        items: [
+          { id: 'volume-rules', label: 'Volume rules', hint: 'Tiered & threshold based' },
+          { id: 'promo-codes', label: 'Promo codes', hint: 'Time-boxed campaigns' },
+          { id: 'agent-rebates', label: 'Agent rebates', hint: 'Channel-specific terms' },
+          { id: 'approval-queue', label: 'Approval queue', hint: 'Awaiting sign-off' },
+        ],
+      },
+    ],
   },
   {
     id: 'agents',
     label: 'Agents',
     inert: true,
+    dropdownGroups: [
+      {
+        id: 'agents-items',
+        items: [
+          { id: 'agent-directory', label: 'Agent directory', hint: 'All partners & contacts' },
+          { id: 'commission-rules', label: 'Commission rules', hint: 'Splits & payout terms' },
+          { id: 'performance', label: 'Performance', hint: 'Volumes by period' },
+          { id: 'onboarding', label: 'Onboarding', hint: 'New-agent workflow' },
+        ],
+      },
+    ],
   },
   {
     id: 'pricing-reference-data',
@@ -144,11 +188,32 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
     id: 'new-pricing-year',
     label: 'New Pricing Year',
     inert: true,
+    dropdownGroups: [
+      {
+        id: 'npy-items',
+        items: [
+          { id: 'plan-year', label: 'Plan year', hint: 'Start a new pricing cycle' },
+          { id: 'compare-years', label: 'Compare years', hint: 'Diff against prior period' },
+          { id: 'import-previous', label: 'Import previous', hint: 'Carry forward base' },
+          { id: 'publish-year', label: 'Publish year', hint: 'Release for sales use' },
+        ],
+      },
+    ],
   },
   {
     id: 'calculator',
     label: 'Calculator',
     inert: true,
+    dropdownGroups: [
+      {
+        id: 'calc-items',
+        items: [
+          { id: 'quick-calc', label: 'Quick calc', hint: 'Single product preview' },
+          { id: 'bulk-calc', label: 'Bulk calc', hint: 'CSV in, CSV out' },
+          { id: 'saved-scenarios', label: 'Saved scenarios', hint: 'What-if analyses' },
+        ],
+      },
+    ],
   },
 ]
 
