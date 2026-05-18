@@ -21,11 +21,33 @@ export interface AppRouteHandle {
   shell?: AppShellRouteMeta
 }
 
+export interface AppShellDropdownItem {
+  id: string
+  label: string
+  hint?: string
+  to?: To
+}
+
+export interface AppShellDropdownGroup {
+  id: string
+  eyebrow?: string
+  items: AppShellDropdownItem[]
+}
+
+export interface AppShellDropdownFooter {
+  meta: string
+  actionLabel: string
+  actionTo: To
+}
+
 export interface AppShellTopTabConfig {
   id: AppShellTabId
   label: string
   to?: To | null
   inert?: boolean
+  dropdownGroups?: AppShellDropdownGroup[]
+  dropdownFooter?: AppShellDropdownFooter
+  isMegaMenu?: boolean
 }
 
 export interface AppShellFooterLinkConfig {
@@ -41,6 +63,20 @@ export const divisionManagerRouteMeta: AppShellRouteMeta = {
 export const divisionManagerContextualRouteMeta: AppShellRouteMeta = {
   ...divisionManagerRouteMeta,
   shellContextualLink: 'all-divisions',
+}
+
+export const centreManagerRouteMeta: AppShellRouteMeta = {
+  shellTab: 'pricing-reference-data',
+}
+
+export const centreManagerContextualRouteMeta: AppShellRouteMeta = {
+  ...centreManagerRouteMeta,
+  shellContextualLink: 'all-centres',
+}
+
+export const appShellContextualTargets: Record<AppShellContextualLink, To> = {
+  'all-divisions': DIVISION_MANAGER_ROUTES.list,
+  'all-centres': CENTRE_MANAGER_ROUTES.list,
 }
 
 export const appShellTopTabs: AppShellTopTabConfig[] = [
@@ -68,6 +104,41 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
     id: 'pricing-reference-data',
     label: 'Pricing Reference Data',
     inert: true,
+    isMegaMenu: true,
+    dropdownGroups: [
+      {
+        id: 'managers',
+        eyebrow: 'Managers',
+        items: [
+          {
+            id: 'division-manager',
+            label: 'Division Manager',
+            hint: 'Divisions, currencies & policy',
+            to: DIVISION_MANAGER_ROUTES.list,
+          },
+          {
+            id: 'centre-manager',
+            label: 'Centre Manager',
+            hint: 'Physical and online centres',
+            to: CENTRE_MANAGER_ROUTES.list,
+          },
+        ],
+      },
+      {
+        id: 'commercial',
+        eyebrow: 'Commercial',
+        items: [
+          { id: 'currencies', label: 'Currencies', hint: 'ISO codes & FX sources' },
+          { id: 'price-groups', label: 'Price groups', hint: 'Customer segmentation' },
+          { id: 'channels', label: 'Channels', hint: 'Direct, wholesale, partner' },
+        ],
+      },
+    ],
+    dropdownFooter: {
+      meta: 'Reference data · admin only',
+      actionLabel: 'Open full reference →',
+      actionTo: DIVISION_MANAGER_ROUTES.list,
+    },
   },
   {
     id: 'new-pricing-year',
@@ -81,20 +152,6 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
   },
 ]
 
-export const centreManagerRouteMeta: AppShellRouteMeta = {
-  shellTab: 'pricing-reference-data',
-}
-
-export const centreManagerContextualRouteMeta: AppShellRouteMeta = {
-  ...centreManagerRouteMeta,
-  shellContextualLink: 'all-centres',
-}
-
-export const appShellContextualTargets: Record<AppShellContextualLink, To> = {
-  'all-divisions': DIVISION_MANAGER_ROUTES.list,
-  'all-centres': CENTRE_MANAGER_ROUTES.list,
-}
-
 export const appShellBrand = {
   to: DIVISION_MANAGER_ROUTES.list,
   title: 'Products & Pricing',
@@ -102,9 +159,22 @@ export const appShellBrand = {
   ariaLabel: 'Products and Pricing home',
 } as const
 
+export const centreShellBrand = {
+  to: CENTRE_MANAGER_ROUTES.list,
+  title: 'Products & Pricing',
+  subtitle: 'Centre Manager',
+  ariaLabel: 'Products and Pricing home',
+} as const
+
 export const appShellHeaderCopy = {
   serviceLabel: 'Admin operations workspace',
   contextualLinkLabel: 'Back to divisions',
+  sectionsAriaLabel: 'Products and Pricing sections',
+} as const
+
+export const centreShellHeaderCopy = {
+  serviceLabel: 'Admin operations workspace',
+  contextualLinkLabel: 'Back to centres',
   sectionsAriaLabel: 'Products and Pricing sections',
 } as const
 
@@ -127,5 +197,10 @@ export const appShellFooterLinks: AppShellFooterLinkConfig[] = [
     id: 'create-division',
     label: 'Create division',
     to: DIVISION_MANAGER_ROUTES.create,
+  },
+  {
+    id: 'centre-manager',
+    label: 'Centre Manager',
+    to: CENTRE_MANAGER_ROUTES.list,
   },
 ]

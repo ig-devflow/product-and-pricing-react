@@ -4,6 +4,8 @@ import {
   appShellContextualTargets,
   appShellTopTabs,
   type AppRouteHandle,
+  type AppShellDropdownFooter,
+  type AppShellDropdownGroup,
 } from '@/app/config/app-shell';
 
 interface AppShellTopTabItem {
@@ -12,6 +14,9 @@ interface AppShellTopTabItem {
   to: To | null;
   isActive: boolean;
   inert: boolean;
+  dropdownGroups?: AppShellDropdownGroup[];
+  dropdownFooter?: AppShellDropdownFooter;
+  isMegaMenu?: boolean;
 }
 
 export interface AppShellNavigationState {
@@ -26,7 +31,7 @@ export const useAppShellNavigation = (): AppShellNavigationState => {
   return useMemo(() => {
     const shellMeta =
       [...matches]
-        .reverse()        
+        .reverse()
         .map((match) => (match.handle as AppRouteHandle | undefined)?.shell)
         .find(Boolean) ?? null;
     const activeTab = shellMeta?.shellTab ?? null;
@@ -39,6 +44,9 @@ export const useAppShellNavigation = (): AppShellNavigationState => {
         to: tab.to ?? null,
         inert: tab.inert ?? !tab.to,
         isActive: tab.id === activeTab,
+        dropdownGroups: tab.dropdownGroups,
+        dropdownFooter: tab.dropdownFooter,
+        isMegaMenu: tab.isMegaMenu,
       })),
       showAllDivisionsLink: contextualLink !== null,
       allDivisionsTarget: contextualLink
