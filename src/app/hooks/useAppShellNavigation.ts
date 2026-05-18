@@ -40,7 +40,7 @@ export const useAppShellNavigation = (): AppShellNavigationState => {
         inert: tab.inert ?? !tab.to,
         isActive: tab.id === activeTab,
       })),
-      showAllDivisionsLink: contextualLink === 'all-divisions',
+      showAllDivisionsLink: contextualLink !== null,
       allDivisionsTarget: contextualLink
         ? appShellContextualTargets[contextualLink]
         : null,

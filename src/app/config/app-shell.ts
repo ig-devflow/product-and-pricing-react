@@ -1,5 +1,5 @@
 import type { To } from 'react-router'
-import { DIVISION_MANAGER_ROUTES } from '@/app/config/routes'
+import { CENTRE_MANAGER_ROUTES, DIVISION_MANAGER_ROUTES } from '@/app/config/routes'
 
 export type AppShellTabId =
   | 'pricelist'
@@ -10,7 +10,7 @@ export type AppShellTabId =
   | 'new-pricing-year'
   | 'calculator'
 
-export type AppShellContextualLink = 'all-divisions'
+export type AppShellContextualLink = 'all-divisions' | 'all-centres'
 
 export interface AppShellRouteMeta {
   shellTab?: AppShellTabId
@@ -81,8 +81,18 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
   },
 ]
 
+export const centreManagerRouteMeta: AppShellRouteMeta = {
+  shellTab: 'pricing-reference-data',
+}
+
+export const centreManagerContextualRouteMeta: AppShellRouteMeta = {
+  ...centreManagerRouteMeta,
+  shellContextualLink: 'all-centres',
+}
+
 export const appShellContextualTargets: Record<AppShellContextualLink, To> = {
   'all-divisions': DIVISION_MANAGER_ROUTES.list,
+  'all-centres': CENTRE_MANAGER_ROUTES.list,
 }
 
 export const appShellBrand = {
