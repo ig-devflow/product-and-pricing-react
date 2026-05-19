@@ -13,15 +13,17 @@ export const CentreSectionNav = ({ sections }: CentreSectionNavProps) => {
   const [activeId, setActiveId] = useState(sections[0]?.id ?? '');
 
   useEffect(() => {
+    const OFFSET = 140;
+
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
           .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
         const target = visible[0]?.target;
         if (target?.id) setActiveId(target.id);
       },
-      { rootMargin: '-180px 0px -60% 0px', threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] },
+      { rootMargin: `-${OFFSET}px 0px -40% 0px`, threshold: 0 },
     );
 
     sections.forEach((s) => {
@@ -35,7 +37,8 @@ export const CentreSectionNav = ({ sections }: CentreSectionNavProps) => {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
-    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 160, behavior: 'smooth' });
+    const top = el.getBoundingClientRect().top + window.scrollY - 136;
+    window.scrollTo({ top, behavior: 'smooth' });
   };
 
   return (

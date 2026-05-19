@@ -251,6 +251,27 @@
 /* Centre details page ------------------------------------------------------- */
 .centre-details-page { align-content: start; }
 
+.centre-details-page__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  align-items: start;
+  gap: var(--space-6);
+}
+
+@media (max-width: 1024px) {
+  .centre-details-page__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .centre-section-nav {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    align-items: center;
+  }
+}
+
 .centre-details-hero {
   display: grid;
   grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
@@ -327,10 +348,25 @@
   flex-wrap: wrap;
 }
 
+.centre-details-hero__chips .centre-card__code {
+  align-self: center;
+}
+
 .centre-details-hero__actions {
   display: flex;
   gap: var(--space-3);
   flex-wrap: wrap;
+}
+
+/* Two-column key-value layout inside centre details sections */
+.centre-details-page .app-key-value-list {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 720px) {
+  .centre-details-page .app-key-value-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Section nav (sticky) ----------------------------------------------------- */

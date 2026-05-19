@@ -68,8 +68,8 @@ export const CentreDetailsScreen = () => {
       />
 
       <div className="centre-details-page__layout">
-        <CentreSectionNav sections={DETAIL_SECTIONS} />
         <CentreDetailsSections centre={page.centre} />
+        <CentreSectionNav sections={DETAIL_SECTIONS} />
       </div>
     </section>
   );

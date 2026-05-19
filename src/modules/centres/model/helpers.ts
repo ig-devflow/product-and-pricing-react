@@ -22,8 +22,7 @@ export function fmtRatio(v: number | null | undefined): number | string | null {
 
 export function fmtRatioSuffix(v: number | null | undefined): string | null {
   if (v == null) return null;
-  if (v >= 0 && v <= 1) return '%';
-  return null;
+  return '%';
 }
 
 export function getCentreContactTypeName(contactType: CentreContactType): string {

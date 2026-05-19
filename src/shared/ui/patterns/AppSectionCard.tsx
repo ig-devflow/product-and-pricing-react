@@ -7,6 +7,7 @@ type SectionVariant = 'default' | 'soft' | 'outlined' | 'selected';
 type SectionPadding = 'none' | 'sm' | 'md' | 'lg';
 
 export interface AppSectionCardProps {
+  id?: string;
   title?: string;
   description?: string;
   children: ReactNode;
@@ -18,6 +19,7 @@ export interface AppSectionCardProps {
 }
 
 export const AppSectionCard = ({
+  id,
   title,
   description,
   children,
@@ -28,6 +30,7 @@ export const AppSectionCard = ({
   className,
 }: AppSectionCardProps) => (
   <AppSurface
+    id={id}
     as={as}
     variant={variant}
     padding={padding}
