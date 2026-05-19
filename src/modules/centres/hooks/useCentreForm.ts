@@ -97,9 +97,15 @@ function reducer(state: WizardState, action: WizardAction): WizardState {
         [action.stepKey]: { ...state.values[action.stepKey], ...action.patch },
       }
 
-      // Only re-validate when there are already committed errors (clears them as user fixes fields)
+      // Only re-validate touched steps so unvisited steps never inherit errors
       const shouldRevalidate = Object.keys(state.errors).length > 0
-      const newErrors = shouldRevalidate ? validateAll(newValues) : state.errors
+      let newErrors = state.errors
+      if (shouldRevalidate) {
+        newErrors = {}
+        for (const stepIdx of state.touchedSteps) {
+          Object.assign(newErrors, validateStep(stepIdx, newValues))
+        }
+      }
 
       return { ...state, values: newValues, errors: newErrors, isDirty: true }
     }
@@ -212,7 +218,7 @@ export function useCentreForm({ initialValues, onSubmit, onConflict }: UseCentre
       const isCurrent = i === state.step
       return {
         isCompleted: !hasSchemaErrors && isTouched && !isCurrent,
-        hasError: stepHasCommittedErrors(i, state.errors),
+        hasError: isTouched && stepHasCommittedErrors(i, state.errors),
       }
     })
   }, [state.values, state.step, state.touchedSteps, state.errors])
