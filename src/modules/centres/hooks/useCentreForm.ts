@@ -61,8 +61,8 @@ function flattenZodIssues(issues: ZodIssue[]): FormErrors {
 }
 
 function validateStep(stepIndex: number, values: CentreFormValues): FormErrors {
-  const stepKey = STEP_KEYS[stepIndex]
-  const schema = STEP_SCHEMAS[stepIndex]
+  const stepKey = STEP_KEYS[stepIndex]!
+  const schema = STEP_SCHEMAS[stepIndex]!
   const result = schema.safeParse(values[stepKey])
   if (result.success) return {}
   return flattenZodIssues(result.error.issues)
@@ -249,6 +249,6 @@ export function useCentreForm({ initialValues, onSubmit, onConflict }: UseCentre
     reset,
     isLastStep: state.step === WIZARD_STEPS.length - 1,
     isFirstStep: state.step === 0,
-    nextStepLabel: state.step < WIZARD_STEPS.length - 1 ? WIZARD_STEPS[state.step + 1].label : null,
+    nextStepLabel: state.step < WIZARD_STEPS.length - 1 ? WIZARD_STEPS[state.step + 1]!.label : null,
   }
 }

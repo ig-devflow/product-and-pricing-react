@@ -187,7 +187,7 @@ export const centreStep5Schema = z
   .superRefine((values, ctx) => {
     const seenContactTypes = new Set<number>();
     values.contacts.forEach((c, i) => {
-      if (c.contactType !== '') {
+      if (typeof c.contactType === 'number') {
         if (seenContactTypes.has(c.contactType)) {
           ctx.addIssue({
             code: 'custom',
