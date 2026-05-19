@@ -1,5 +1,5 @@
-import { AppField, AppSearchInput } from '@/shared/ui/controls';
-import { AppButton, AppSurface } from '@/shared/ui/primitives';
+import { AppSearchInput } from '@/shared/ui/controls';
+import { AppButton, AppSurface, AppSwitch } from '@/shared/ui/primitives';
 
 export interface DivisionListToolbarProps {
   searchTerm: string;
@@ -10,8 +10,10 @@ export interface DivisionListToolbarProps {
   canGoPrevious: boolean;
   canGoNext: boolean;
   isRefreshing?: boolean;
+  activeOnly: boolean;
   onSearchTermChange: (value: string) => void;
   onPageChange: (page: number) => void;
+  onActiveOnlyChange: (value: boolean) => void;
   onCreate: () => void;
 }
 
@@ -24,8 +26,10 @@ export const DivisionListToolbar = ({
   canGoPrevious,
   canGoNext,
   isRefreshing = false,
+  activeOnly,
   onSearchTermChange,
   onPageChange,
+  onActiveOnlyChange,
   onCreate,
 }: DivisionListToolbarProps) => (
   <AppSurface className="app-toolbar-panel division-list-toolbar" variant="soft" padding="md">
@@ -36,23 +40,26 @@ export const DivisionListToolbar = ({
       </p>
     </div>
 
-    <div className="division-list-toolbar__search">
-      <AppField label="Search" forId="division-search">
-        {({ describedBy, labelId }) => (
-          <AppSearchInput
-            id="division-search"
-            value={searchTerm}
-            aria-describedby={describedBy}
-            aria-labelledby={labelId}
-            placeholder="Search divisions"
-            onValueChange={onSearchTermChange}
-          />
-        )}
-      </AppField>
-    </div>
+    <div className="division-list-toolbar__row">
+      <AppSearchInput
+        id="division-search"
+        value={searchTerm}
+        aria-label="Search divisions"
+        placeholder="Search divisions"
+        onValueChange={onSearchTermChange}
+      />
 
-    <div className="division-list-toolbar__meta">
-      <div className="division-list-toolbar__count-row">
+      <div className="division-list-toolbar__filter">
+        <span className="division-list-toolbar__filter-label">Filter</span>
+        <AppSwitch
+          id="division-active-filter"
+          checked={activeOnly}
+          onChange={(e) => onActiveOnlyChange(e.target.checked)}
+          label="Active only"
+        />
+      </div>
+
+      <div className="division-list-toolbar__meta">
         <span className="division-list-toolbar__count">
           Showing {visibleCount} of {totalCount} divisions
         </span>
@@ -60,9 +67,7 @@ export const DivisionListToolbar = ({
         {isRefreshing ? (
           <span className="division-list-toolbar__refreshing">Updating...</span>
         ) : null}
-      </div>
 
-      <div className="division-list-toolbar__controls">
         <div className="division-list-toolbar__pagination" aria-label="Division pages">
           <AppButton
             type="button"
@@ -86,11 +91,11 @@ export const DivisionListToolbar = ({
             Next
           </AppButton>
         </div>
-
-        <AppButton type="button" variant="primary" onClick={onCreate}>
-          Add division
-        </AppButton>
       </div>
+
+      <AppButton type="button" variant="primary" onClick={onCreate}>
+        Add division
+      </AppButton>
     </div>
   </AppSurface>
 );

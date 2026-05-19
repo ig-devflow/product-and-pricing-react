@@ -3,10 +3,10 @@
 }
 
 .division-list-toolbar {
-  display: grid;
-  grid-template-columns: minmax(220px, 0.7fr) minmax(320px, 1fr) auto;
-  align-items: end;
-  gap: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
   border-color: rgba(255, 122, 48, 0.24);
   background:
     radial-gradient(circle at 100% 0%, rgba(255, 122, 48, 0.12), transparent 32%),
@@ -34,21 +34,33 @@
   line-height: var(--line-height-relaxed);
 }
 
-.division-list-toolbar__search {
-  min-width: 280px;
+.division-list-toolbar__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.division-list-toolbar__filter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.division-list-toolbar__filter-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  min-width: 42px;
 }
 
 .division-list-toolbar__meta {
-  display: grid;
-  justify-items: end;
-  gap: var(--space-3);
-}
-
-.division-list-toolbar__count-row {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: var(--space-3);
+  margin-left: auto;
   flex-wrap: wrap;
 }
 
@@ -62,14 +74,6 @@
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   color: var(--color-link-default);
-}
-
-.division-list-toolbar__controls {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-3);
-  flex-wrap: wrap;
 }
 
 .division-list-toolbar__pagination {
@@ -264,16 +268,8 @@
 }
 
 @media (max-width: 1100px) {
-  .division-list-toolbar {
-    grid-template-columns: 1fr;
-    align-items: stretch;
-  }
-
-  .division-list-toolbar__meta,
-  .division-list-toolbar__count-row,
-  .division-list-toolbar__controls {
-    justify-items: start;
-    justify-content: flex-start;
+  .division-list-toolbar__meta {
+    margin-left: 0;
   }
 }
 
@@ -284,15 +280,7 @@
 }
 
 @media (max-width: 720px) {
-  .division-list-toolbar__search {
-    min-width: 0;
-  }
-
-  .division-list-toolbar__controls {
-    width: 100%;
-  }
-
-  .division-list-toolbar__controls > .app-button {
+  .division-list-toolbar__row > .app-button:last-child {
     flex: 1 1 100%;
   }
 

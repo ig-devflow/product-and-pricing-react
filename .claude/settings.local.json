@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"E:\\\\react\\\\products-and-pricing-react\" -Depth 1 -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object Name)"
+    ]
+  }
+}
