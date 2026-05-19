@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from 'react'
+import { useCallback, useMemo, useReducer, useRef } from 'react'
 import type { ZodIssue } from 'zod'
 import type { CentreFormValues } from '../model/form.types'
 import { STEP_SCHEMAS } from '../ui/form/schema'
@@ -150,6 +150,11 @@ export function useCentreForm({ initialValues, onSubmit, onConflict }: UseCentre
     hasConflict: false,
   }))
 
+  // Guards against a browser race condition where React's synchronous flush during onClick
+  // replaces the "Next" button with the Submit button at the same DOM position, causing the
+  // browser to fire a click on Submit immediately after navigation.
+  const pendingNavigationRef = useRef(false)
+
   const setStepValues = useCallback(
     <K extends StepKey>(stepKey: K, patch: Partial<CentreFormValues[K]>) => {
       dispatch({
@@ -163,6 +168,8 @@ export function useCentreForm({ initialValues, onSubmit, onConflict }: UseCentre
 
   const goTo = useCallback((nextStep: number) => {
     if (nextStep < 0 || nextStep >= WIZARD_STEPS.length) return
+    pendingNavigationRef.current = true
+    requestAnimationFrame(() => { pendingNavigationRef.current = false })
     dispatch({ type: 'SET_STEP', step: nextStep })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
@@ -173,6 +180,8 @@ export function useCentreForm({ initialValues, onSubmit, onConflict }: UseCentre
       dispatch({ type: 'SET_ERRORS', errors: { ...state.errors, ...stepErrors } })
       return
     }
+    pendingNavigationRef.current = true
+    requestAnimationFrame(() => { pendingNavigationRef.current = false })
     dispatch({ type: 'SET_STEP', step: state.step + 1 })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [state.step, state.values, state.errors])
@@ -184,6 +193,7 @@ export function useCentreForm({ initialValues, onSubmit, onConflict }: UseCentre
   const handleSubmit = useCallback(
     async (e?: React.FormEvent) => {
       e?.preventDefault?.()
+      if (pendingNavigationRef.current) return
       const allErrors = validateAll(state.values)
       if (Object.keys(allErrors).length > 0) {
         dispatch({ type: 'SET_ERRORS', errors: allErrors })
