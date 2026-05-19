@@ -103,6 +103,8 @@ export function mapCentreListItemFromDto(dto: CentreListItemDto): CentreListItem
     isPhysicalCentre: dto.isPhysicalCentre,
     city: dto.city ?? '',
     countryId: dto.countryId,
+    brandColor: dto.brandColor ?? '',
+    telephone: dto.telephone ?? '',
     createdAt: dto.createdAt ?? '',
     createdByName: dto.createdByName ?? '',
     updatedAt: dto.updatedAt ?? '',

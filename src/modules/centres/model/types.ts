@@ -140,6 +140,8 @@ export interface CentreListItem {
   isPhysicalCentre: boolean;
   city: string;
   countryId: number;
+  brandColor: string;
+  telephone: string;
   createdAt: string;
   createdByName: string;
   updatedAt: string;

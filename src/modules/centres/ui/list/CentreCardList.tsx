@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import type { To } from 'react-router';
 import { AppAsyncState } from '@/shared/ui/data-display';
 import { AppSurface } from '@/shared/ui/primitives';
@@ -9,7 +10,6 @@ export interface CentreCardListProps {
   items: CentreListItem[];
   countries: CountryReferenceDto[];
   getDetailsHref: (centreId: number) => To;
-  getEditHref: (centreId: number) => To;
   isLoading: boolean;
   errorMessage?: string;
   emptyMessage?: string;
@@ -19,18 +19,43 @@ export interface CentreCardListProps {
 
 const skeletonItems = Array.from({ length: 6 }, (_, index) => index);
 
+interface CountryGroup {
+  countryCode: string;
+  countryName: string;
+  items: CentreListItem[];
+}
+
 export const CentreCardList = ({
   items,
   countries,
   getDetailsHref,
-  getEditHref,
   isLoading,
   errorMessage = '',
   emptyMessage = 'No items found.',
   onRetry,
   onCreate,
 }: CentreCardListProps) => {
-  const countryMap = new Map(countries.map((c) => [c.id, c.name]));
+  const countryMap = useMemo(
+    () => new Map(countries.map((c) => [c.id, { name: c.name, code: c.code }])),
+    [countries],
+  );
+
+  const grouped = useMemo(() => {
+    const map = new Map<number, CountryGroup>();
+    for (const centre of items) {
+      const { countryId } = centre;
+      if (!map.has(countryId)) {
+        const country = countryMap.get(countryId);
+        map.set(countryId, { countryCode: country?.code ?? '', countryName: country?.name ?? '', items: [] });
+      }
+      map.get(countryId)!.items.push(centre);
+    }
+    return Array.from(map.values()).sort((a, b) => {
+      if (!a.countryName && b.countryName) return 1;
+      if (a.countryName && !b.countryName) return -1;
+      return a.countryName.localeCompare(b.countryName);
+    });
+  }, [items, countryMap]);
 
   return (
     <div className="centre-card-list">
@@ -68,17 +93,29 @@ export const CentreCardList = ({
           surfaceVariant="outlined"
         />
       ) : (
-        <div className="centre-card-list__items">
-          {items.map((centre) => (
-            <CentreCard
-              key={centre.id}
-              centre={centre}
-              countryName={countryMap.get(centre.countryId) ?? ''}
-              detailsHref={getDetailsHref(centre.id)}
-              editHref={getEditHref(centre.id)}
-            />
-          ))}
-        </div>
+        grouped.map((group) => (
+          <div key={group.countryName || '__no_country__'} className="centre-country-group">
+            <div className="centre-country-group__heading">
+              {group.countryCode ? (
+                <span className="centre-country-group__code">{group.countryCode}</span>
+              ) : null}
+              <span className="centre-country-group__name">
+                {group.countryName || 'No country'}
+              </span>
+              <span className="centre-country-group__count">{group.items.length}</span>
+            </div>
+            <div className="centre-card-list__items">
+              {group.items.map((centre) => (
+                <CentreCard
+                  key={centre.id}
+                  centre={centre}
+                  countryName={group.countryName}
+                  detailsHref={getDetailsHref(centre.id)}
+                />
+              ))}
+            </div>
+          </div>
+        ))
       )}
     </div>
   );

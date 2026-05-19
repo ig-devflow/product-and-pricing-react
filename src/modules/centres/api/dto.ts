@@ -111,6 +111,8 @@ export interface CentreListItemDto {
   isPhysicalCentre: boolean
   city: string | null
   countryId: number
+  brandColor: string | null
+  telephone: string | null
   createdAt: string
   createdByName: string | null
   updatedAt: string

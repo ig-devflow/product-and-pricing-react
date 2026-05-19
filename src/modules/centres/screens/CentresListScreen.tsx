@@ -37,7 +37,6 @@ export const CentresListScreen = () => {
         items={page.centres}
         countries={countriesQuery.data ?? []}
         getDetailsHref={(id) => CENTRE_MANAGER_ROUTES.details(id)}
-        getEditHref={(id) => CENTRE_MANAGER_ROUTES.edit(id)}
         isLoading={page.isLoading}
         errorMessage={page.errorMessage}
         emptyMessage={page.emptyMessage}
