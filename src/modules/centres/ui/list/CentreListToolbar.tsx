@@ -1,4 +1,4 @@
-import { AppField, AppSearchInput } from '@/shared/ui/controls';
+import { AppSearchInput } from '@/shared/ui/controls';
 import { AppButton, AppSurface, AppSwitch } from '@/shared/ui/primitives';
 
 export interface CentreListToolbarProps {
@@ -40,19 +40,14 @@ export const CentreListToolbar = ({
       </p>
     </div>
 
-    <div className="centre-list-toolbar__search">
-      <AppField label="Search" forId="centre-search">
-        {({ describedBy, labelId }) => (
-          <AppSearchInput
-            id="centre-search"
-            value={searchTerm}
-            aria-describedby={describedBy}
-            aria-labelledby={labelId}
-            placeholder="Search centres"
-            onValueChange={onSearchTermChange}
-          />
-        )}
-      </AppField>
+    <div className="centre-list-toolbar__row">
+      <AppSearchInput
+        id="centre-search"
+        value={searchTerm}
+        aria-label="Search centres"
+        placeholder="Search centres"
+        onValueChange={onSearchTermChange}
+      />
 
       <div className="centre-list-toolbar__filter">
         <span className="centre-list-toolbar__filter-label">Filter</span>
@@ -63,19 +58,15 @@ export const CentreListToolbar = ({
           label="Active only"
         />
       </div>
-    </div>
 
-    <div className="centre-list-toolbar__meta">
-      <div className="centre-list-toolbar__count-row">
+      <div className="centre-list-toolbar__meta">
         <span className="centre-list-toolbar__count">
           Showing {visibleCount} of {totalCount} centres
         </span>
         {isRefreshing ? (
           <span className="centre-list-toolbar__refreshing">Updating...</span>
         ) : null}
-      </div>
 
-      <div className="centre-list-toolbar__controls">
         <div className="centre-list-toolbar__pagination" aria-label="Centre pages">
           <AppButton
             type="button"
@@ -99,11 +90,11 @@ export const CentreListToolbar = ({
             Next
           </AppButton>
         </div>
-
-        <AppButton type="button" variant="primary" onClick={onCreate}>
-          Add centre
-        </AppButton>
       </div>
+
+      <AppButton type="button" variant="primary" onClick={onCreate}>
+        Add centre
+      </AppButton>
     </div>
   </AppSurface>
 );

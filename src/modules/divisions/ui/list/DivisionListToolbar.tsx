@@ -1,4 +1,4 @@
-import { AppField, AppSearchInput } from '@/shared/ui/controls';
+import { AppSearchInput } from '@/shared/ui/controls';
 import { AppButton, AppSurface, AppSwitch } from '@/shared/ui/primitives';
 
 export interface DivisionListToolbarProps {
@@ -40,19 +40,14 @@ export const DivisionListToolbar = ({
       </p>
     </div>
 
-    <div className="division-list-toolbar__search">
-      <AppField label="Search" forId="division-search">
-        {({ describedBy, labelId }) => (
-          <AppSearchInput
-            id="division-search"
-            value={searchTerm}
-            aria-describedby={describedBy}
-            aria-labelledby={labelId}
-            placeholder="Search divisions"
-            onValueChange={onSearchTermChange}
-          />
-        )}
-      </AppField>
+    <div className="division-list-toolbar__row">
+      <AppSearchInput
+        id="division-search"
+        value={searchTerm}
+        aria-label="Search divisions"
+        placeholder="Search divisions"
+        onValueChange={onSearchTermChange}
+      />
 
       <div className="division-list-toolbar__filter">
         <span className="division-list-toolbar__filter-label">Filter</span>
@@ -63,10 +58,8 @@ export const DivisionListToolbar = ({
           label="Active only"
         />
       </div>
-    </div>
 
-    <div className="division-list-toolbar__meta">
-      <div className="division-list-toolbar__count-row">
+      <div className="division-list-toolbar__meta">
         <span className="division-list-toolbar__count">
           Showing {visibleCount} of {totalCount} divisions
         </span>
@@ -74,9 +67,7 @@ export const DivisionListToolbar = ({
         {isRefreshing ? (
           <span className="division-list-toolbar__refreshing">Updating...</span>
         ) : null}
-      </div>
 
-      <div className="division-list-toolbar__controls">
         <div className="division-list-toolbar__pagination" aria-label="Division pages">
           <AppButton
             type="button"
@@ -100,11 +91,11 @@ export const DivisionListToolbar = ({
             Next
           </AppButton>
         </div>
-
-        <AppButton type="button" variant="primary" onClick={onCreate}>
-          Add division
-        </AppButton>
       </div>
+
+      <AppButton type="button" variant="primary" onClick={onCreate}>
+        Add division
+      </AppButton>
     </div>
   </AppSurface>
 );
