@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { To } from 'react-router';
 import { AppAsyncState } from '@/shared/ui/data-display';
 import { AppSurface } from '@/shared/ui/primitives';
@@ -20,9 +20,16 @@ export interface CentreCardListProps {
 const skeletonItems = Array.from({ length: 6 }, (_, index) => index);
 
 interface CountryGroup {
+  id: number;
   countryCode: string;
   countryName: string;
   items: CentreListItem[];
+}
+
+function countryCodeToFlag(code: string): string {
+  if (!code || code.length !== 2) return '🌐';
+  const offset = 0x1F1E6 - 65;
+  return [...code.toUpperCase()].map((c) => String.fromCodePoint(c.charCodeAt(0) + offset)).join('');
 }
 
 export const CentreCardList = ({
@@ -35,6 +42,8 @@ export const CentreCardList = ({
   onRetry,
   onCreate,
 }: CentreCardListProps) => {
+  const [expanded, setExpanded] = useState<Set<number>>(() => new Set());
+
   const countryMap = useMemo(
     () => new Map(countries.map((c) => [c.id, { name: c.name, code: c.code }])),
     [countries],
@@ -46,7 +55,12 @@ export const CentreCardList = ({
       const { countryId } = centre;
       if (!map.has(countryId)) {
         const country = countryMap.get(countryId);
-        map.set(countryId, { countryCode: country?.code ?? '', countryName: country?.name ?? '', items: [] });
+        map.set(countryId, {
+          id: countryId,
+          countryCode: country?.code ?? '',
+          countryName: country?.name ?? '',
+          items: [],
+        });
       }
       map.get(countryId)!.items.push(centre);
     }
@@ -56,6 +70,18 @@ export const CentreCardList = ({
       return a.countryName.localeCompare(b.countryName);
     });
   }, [items, countryMap]);
+
+  const toggleGroup = (id: number) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="centre-card-list">
@@ -93,29 +119,44 @@ export const CentreCardList = ({
           surfaceVariant="outlined"
         />
       ) : (
-        grouped.map((group) => (
-          <div key={group.countryName || '__no_country__'} className="centre-country-group">
-            <div className="centre-country-group__heading">
-              {group.countryCode ? (
-                <span className="centre-country-group__code">{group.countryCode}</span>
+        grouped.map((group) => {
+          const isExpanded = expanded.has(group.id);
+          return (
+            <div
+              key={group.id}
+              className={`centre-country-group${isExpanded ? '' : ' centre-country-group--collapsed'}`}
+            >
+              <button
+                type="button"
+                className="centre-country-group__header"
+                onClick={() => toggleGroup(group.id)}
+                aria-expanded={isExpanded}
+              >
+                <span className="centre-country-group__flag" aria-hidden="true">
+                  {countryCodeToFlag(group.countryCode)}
+                </span>
+                <h2 className="centre-country-group__name">
+                  {group.countryName || 'Country not set'}
+                </h2>
+                <span className="centre-country-group__count">{group.items.length}</span>
+                <span className="centre-country-group__chevron" aria-hidden="true" />
+              </button>
+
+              {isExpanded ? (
+                <div className="centre-country-group__body">
+                  {group.items.map((centre) => (
+                    <CentreCard
+                      key={centre.id}
+                      centre={centre}
+                      countryName={group.countryName}
+                      detailsHref={getDetailsHref(centre.id)}
+                    />
+                  ))}
+                </div>
               ) : null}
-              <span className="centre-country-group__name">
-                {group.countryName || 'No country'}
-              </span>
-              <span className="centre-country-group__count">{group.items.length}</span>
             </div>
-            <div className="centre-card-list__items">
-              {group.items.map((centre) => (
-                <CentreCard
-                  key={centre.id}
-                  centre={centre}
-                  countryName={group.countryName}
-                  detailsHref={getDetailsHref(centre.id)}
-                />
-              ))}
-            </div>
-          </div>
-        ))
+          );
+        })
       )}
     </div>
   );
