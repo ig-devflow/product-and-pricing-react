@@ -26,6 +26,7 @@ export interface AppShellDropdownItem {
   label: string
   hint?: string
   to?: To
+  badge?: string
 }
 
 export interface AppShellDropdownGroup {
@@ -36,8 +37,8 @@ export interface AppShellDropdownGroup {
 
 export interface AppShellDropdownFooter {
   meta: string
-  actionLabel: string
-  actionTo: To
+  actionLabel?: string
+  actionTo?: To
 }
 
 export interface AppShellTopTabConfig {
@@ -133,18 +134,37 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
   {
     id: 'products',
     label: 'Products',
+    isMegaMenu: true,
     dropdownGroups: [
       {
         id: 'products-items',
+        eyebrow: 'Products',
         items: [
-          { id: 'courses', label: 'Courses', hint: 'Language course definitions', to: PRODUCT_MANAGER_ROUTES.courses.list },
-          { id: 'accommodations', label: 'Accommodations', hint: 'Properties & rooms', to: PRODUCT_MANAGER_ROUTES.accommodations.list },
-          { id: 'addons', label: 'Add-ons', hint: 'Optional extras', to: PRODUCT_MANAGER_ROUTES.addons.list },
-          { id: 'transfers', label: 'Transfers', hint: 'Airport & transport', to: PRODUCT_MANAGER_ROUTES.transfers.list },
-          { id: 'packages', label: 'Packages', hint: 'Bundled product sets', to: PRODUCT_MANAGER_ROUTES.packages.list },
+          { id: 'courses', label: 'Courses', hint: 'Language & exam tuition', to: PRODUCT_MANAGER_ROUTES.courses.list, badge: 'orange' },
+          { id: 'accommodations', label: 'Accommodation', hint: 'Properties & their rooms', to: PRODUCT_MANAGER_ROUTES.accommodations.list },
+          { id: 'addons', label: 'Add-ons', hint: 'Extras, exams, activities, insurance', to: PRODUCT_MANAGER_ROUTES.addons.list },
+          { id: 'transfers', label: 'Transfers', hint: 'Airport & port transfers', to: PRODUCT_MANAGER_ROUTES.transfers.list },
+        ],
+      },
+      {
+        id: 'bundles-items',
+        eyebrow: 'Bundles',
+        items: [
+          { id: 'packages', label: 'Packages', hint: 'Bundles of other products', to: PRODUCT_MANAGER_ROUTES.packages.list },
+        ],
+      },
+      {
+        id: 'fees-items',
+        eyebrow: 'Fees',
+        items: [
+          { id: 'fee', label: 'Fee', hint: 'Coming soon' },
+          { id: 'cancellation-fee', label: 'Cancellation fee', hint: 'Coming soon' },
         ],
       },
     ],
+    dropdownFooter: {
+      meta: 'Sellable catalog · Fees are charges, not products',
+    },
   },
   {
     id: 'discounts',

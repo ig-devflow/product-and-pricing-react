@@ -4,27 +4,38 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AppSurface } from '@/shared/ui/primitives';
 import type { CourseFormValues } from '@/modules/products/courses/model/form.types';
 import { courseFormSchema } from './schema';
-import { GeneralSection } from './sections';
-import { ProductFormActions } from '@/modules/products/shared/ui/ProductFormActions';
+import {
+  BasicsSection,
+  ClassificationSection,
+  CategorisationSection,
+  FinanceSection,
+} from './sections';
+
+const SECTIONS = [
+  { id: 'section-basics', label: 'Basics' },
+  { id: 'section-classification', label: 'Classification' },
+  { id: 'section-categorisation', label: 'Categorisation' },
+  { id: 'section-finance', label: 'Finance & availability' },
+];
 
 export interface CourseFormProps {
+  id?: string;
   mode?: 'create' | 'edit';
   defaultValues: CourseFormValues;
-  submitLabel?: string;
-  isSubmitting?: boolean;
   errorMessage?: string | null;
+  divisionId: number;
+  divisionName: string;
   onSubmit: (values: CourseFormValues) => Promise<void> | void;
-  onCancel?: () => void;
 }
 
 export const CourseForm = ({
+  id = 'course-form',
   mode = 'create',
   defaultValues,
-  submitLabel,
-  isSubmitting = false,
   errorMessage,
+  divisionId,
+  divisionName,
   onSubmit,
-  onCancel,
 }: CourseFormProps) => {
   const methods = useForm<CourseFormValues>({
     resolver: zodResolver(courseFormSchema),
@@ -32,40 +43,55 @@ export const CourseForm = ({
     mode: 'onBlur',
   });
 
-  const resetKey = useMemo(() => (mode === 'edit' ? `edit` : 'create'), [mode]);
+  const resetKey = useMemo(() => (mode === 'edit' ? 'edit' : 'create'), [mode]);
   const defaultValuesRef = useRef(defaultValues);
   useEffect(() => { defaultValuesRef.current = defaultValues; }, [defaultValues]);
   useEffect(() => { methods.reset(defaultValuesRef.current); }, [methods, resetKey]);
 
   return (
     <FormProvider {...methods}>
-      <form className="product-form" onSubmit={methods.handleSubmit(onSubmit)}>
-        <AppSurface className="app-section product-form__notice" variant="soft" padding="md">
-          <h2 className="app-section__title">Course setup</h2>
-          <p className="app-section__text">
-            Use this form to manage course details, scheduling, and status.
-          </p>
-        </AppSurface>
+      <form
+        id={id}
+        className="product-form"
+        onSubmit={methods.handleSubmit(onSubmit)}
+        noValidate
+      >
+        <div className="product-form__body">
+          <div className="product-form__sections">
+            <BasicsSection divisionName={divisionName} />
+            <ClassificationSection />
+            <CategorisationSection divisionId={divisionId} />
+            <FinanceSection />
 
-        <div className="product-form__main">
-          <GeneralSection />
+            {errorMessage ? (
+              <AppSurface className="product-form__error" padding="md">
+                <h2 className="product-form__error-title">Save failed</h2>
+                <p className="product-form__error-text">{errorMessage}</p>
+              </AppSurface>
+            ) : null}
+          </div>
 
-          {errorMessage ? (
-            <AppSurface className="product-form__error" padding="md">
-              <h2 className="product-form__error-title">Save failed</h2>
-              <p className="product-form__error-text">{errorMessage}</p>
-            </AppSurface>
-          ) : null}
-
-          <ProductFormActions
-            mode={mode}
-            entityLabel="course"
-            submitLabel={submitLabel}
-            isSubmitting={isSubmitting}
-            canReset={methods.formState.isDirty}
-            onCancel={onCancel ?? (() => {})}
-            onReset={() => methods.reset(defaultValues)}
-          />
+          <aside className="product-form__nav-sidebar">
+            <nav className="product-form-section-nav" aria-label="Form sections">
+              <p className="product-form-section-nav__label">Sections</p>
+              <ul className="product-form-section-nav__list">
+                {SECTIONS.map((section) => (
+                  <li key={section.id}>
+                    <a
+                      href={`#${section.id}`}
+                      className="product-form-section-nav__link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }}
+                    >
+                      {section.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </aside>
         </div>
       </form>
     </FormProvider>

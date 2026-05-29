@@ -41,9 +41,28 @@ export const handlers = [
   http.get('/api/v1/reference-data/content-templates', ({ request }) => {
     const url = new URL(request.url);
     const scope = getNumericSearchParam(url, 'scope');
-
     return HttpResponse.json(referenceDataFixtures.getContentTemplates(scope));
   }),
+
+  http.get('/api/v1/reference-data/course-languages', () =>
+    HttpResponse.json(referenceDataFixtures.getCourseLanguages()),
+  ),
+
+  http.get('/api/v1/reference-data/course-intensities', () =>
+    HttpResponse.json(referenceDataFixtures.getCourseIntensities()),
+  ),
+
+  http.get('/api/v1/reference-data/unit-types', () =>
+    HttpResponse.json(referenceDataFixtures.getUnitTypes()),
+  ),
+
+  http.get('/api/v1/divisions/:divisionId/account-categories', () =>
+    HttpResponse.json(referenceDataFixtures.getAccountCategories()),
+  ),
+
+  http.get('/api/v1/divisions/:divisionId/product-categories', () =>
+    HttpResponse.json(referenceDataFixtures.getProductCategories()),
+  ),
 
   http.get('/api/v1/divisions', ({ request }) => {
     const url = new URL(request.url);
@@ -87,7 +106,7 @@ export const handlers = [
   }),
 
   // ─── Courses ────────────────────────────────────────────────────────────────
-  http.get('/api/v1/products/courses', ({ request }) => {
+  http.get('/api/v1/divisions/:divisionId/courses', ({ request }) => {
     const url = new URL(request.url);
     return HttpResponse.json(courseFixtures.getList({
       search: url.searchParams.get('search') ?? undefined,
@@ -95,16 +114,16 @@ export const handlers = [
       pageSize: getNumericSearchParam(url, 'pageSize'),
     }));
   }),
-  http.get('/api/v1/products/courses/:id', ({ params }) => {
+  http.get('/api/v1/courses/:id', ({ params }) => {
     const item = courseFixtures.getById(Number(params.id));
     return item ? HttpResponse.json(item) : HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
-  http.post('/api/v1/products/courses', async ({ request }) => {
+  http.post('/api/v1/divisions/:divisionId/courses', async ({ request }) => {
     const payload = (await request.json()) as CreateCourseRequestDto;
     const created = courseFixtures.create(payload);
     return HttpResponse.json({ id: created.id }, { status: 201 });
   }),
-  http.put('/api/v1/products/courses/:id', async ({ params, request }) => {
+  http.put('/api/v1/courses/:id', async ({ params, request }) => {
     const payload = (await request.json()) as UpdateCourseRequestDto;
     const updated = courseFixtures.update(Number(params.id), payload);
     return updated ? new HttpResponse(null, { status: 204 }) : HttpResponse.json({ message: 'Not found' }, { status: 404 });

@@ -7,6 +7,13 @@ export const referenceDataQueryKeys = {
   audiences: () => [...referenceDataQueryKeys.all, 'audiences'] as const,
   contentTemplates: (scope?: ContentTemplateScopeDto) =>
     [...referenceDataQueryKeys.all, 'content-templates', scope ?? null] as const,
+  courseLanguages: () => [...referenceDataQueryKeys.all, 'course-languages'] as const,
+  courseIntensities: () => [...referenceDataQueryKeys.all, 'course-intensities'] as const,
+  unitTypes: () => [...referenceDataQueryKeys.all, 'unit-types'] as const,
+  accountCategories: (divisionId: number) =>
+    [...referenceDataQueryKeys.all, 'account-categories', divisionId] as const,
+  productCategories: (divisionId: number) =>
+    [...referenceDataQueryKeys.all, 'product-categories', divisionId] as const,
 };
 
 export const referenceDataStaleTime = 5 * 60 * 1000;

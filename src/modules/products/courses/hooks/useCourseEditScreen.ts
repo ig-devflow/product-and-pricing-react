@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { PRODUCT_MANAGER_ROUTES } from '@/app/config/routes';
+import { useDivisionContext } from '@/app/context/DivisionContext';
 import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
 import { buildResourcePageState } from '@/shared/lib/resource/buildResourcePageState';
 import type { CourseFormValues } from '../model/form.types';
@@ -16,6 +17,7 @@ import { useCourseRouteId } from './useCourseRouteId';
 
 export const useCourseEditScreen = () => {
   const navigate = useNavigate();
+  const { divisionId, divisionName } = useDivisionContext();
   const courseId = useCourseRouteId();
   const courseQuery = useCourseDetailsQuery(courseId);
   const updateMutation = useUpdateCourseMutation();
@@ -42,6 +44,8 @@ export const useCourseEditScreen = () => {
     isSaving: updateMutation.isPending,
     saveErrorMessage: getApiErrorMessage(updateMutation.error, 'Failed to save course.'),
     initialValues: defaultValues,
+    divisionId,
+    divisionName,
     onSubmit: async (values: CourseFormValues) => {
       if (courseId === null || !pageState.data) return;
       await updateMutation.mutateAsync({

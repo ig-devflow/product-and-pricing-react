@@ -34,7 +34,6 @@ export const CourseDetailsScreen = () => {
         productType="course"
         name={page.details.name}
         isActive={page.details.isActive}
-        description={page.details.description || undefined}
         onBack={page.handleBack}
         onEdit={page.openEditPage}
       />

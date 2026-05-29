@@ -36,3 +36,28 @@ export interface ReferenceDataNameItem {
   id: number;
   name: string;
 }
+
+export interface CourseLanguageReferenceDto {
+  id: number;
+  name: string;
+}
+
+export interface CourseIntensityReferenceDto {
+  id: number;
+  name: string;
+}
+
+export interface UnitTypeReferenceDto {
+  id: number;
+  name: string;
+}
+
+export interface AccountCategoryListItemDto {
+  id: number;
+  name: string;
+}
+
+export interface ProductCategoryListItemDto {
+  id: number;
+  name: string;
+}

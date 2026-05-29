@@ -32,6 +32,7 @@ export interface AppShellHeaderProps {
   sectionsAriaLabel?: string;
   brandMark: ReactNode;
   showContextualLink?: boolean;
+  subNav?: ReactNode;
 }
 
 interface TabDropdownMenuProps {
@@ -59,39 +60,51 @@ const TabDropdownMenu = ({ groups, footer, isMegaMenu }: TabDropdownMenuProps) =
           {group.eyebrow ? (
             <p className="app-shell-header__dropdown-eyebrow">{group.eyebrow}</p>
           ) : null}
-          {group.items.map((item) =>
-            item.to ? (
+          {group.items.map((item) => {
+            const labelContent = (
+              <>
+                <span className="app-shell-header__dropdown-label">
+                  {item.label}
+                  {item.badge ? (
+                    <span
+                      className={`app-shell-header__dropdown-badge app-shell-header__dropdown-badge--${item.badge}`}
+                      aria-hidden="true"
+                    />
+                  ) : null}
+                </span>
+                {item.hint ? (
+                  <span className="app-shell-header__dropdown-hint">{item.hint}</span>
+                ) : null}
+              </>
+            );
+            return item.to ? (
               <Link
                 key={item.id}
                 to={item.to}
                 className="app-shell-header__dropdown-link"
               >
-                <span className="app-shell-header__dropdown-label">{item.label}</span>
-                {item.hint ? (
-                  <span className="app-shell-header__dropdown-hint">{item.hint}</span>
-                ) : null}
+                {labelContent}
               </Link>
             ) : (
               <div
                 key={item.id}
                 className="app-shell-header__dropdown-link app-shell-header__dropdown-link--inert"
               >
-                <span className="app-shell-header__dropdown-label">{item.label}</span>
-                {item.hint ? (
-                  <span className="app-shell-header__dropdown-hint">{item.hint}</span>
-                ) : null}
+                {labelContent}
               </div>
-            ),
-          )}
+            );
+          })}
         </div>
       ))}
     </div>
     {footer ? (
       <div className="app-shell-header__dropdown-footer">
         <span className="app-shell-header__dropdown-footer-meta">{footer.meta}</span>
-        <Link to={footer.actionTo} className="app-shell-header__dropdown-footer-action">
-          {footer.actionLabel}
-        </Link>
+        {footer.actionTo && footer.actionLabel ? (
+          <Link to={footer.actionTo} className="app-shell-header__dropdown-footer-action">
+            {footer.actionLabel}
+          </Link>
+        ) : null}
       </div>
     ) : null}
   </div>
@@ -104,6 +117,7 @@ export const AppShellHeader = ({
   sectionsAriaLabel,
   brandMark,
   showContextualLink,
+  subNav,
 }: AppShellHeaderProps) => {
   const resolvedShowContextualLink =
     showContextualLink ?? navigation.showAllDivisionsLink;
@@ -174,6 +188,11 @@ export const AppShellHeader = ({
           </nav>
         </div>
       </div>
+      {subNav ? (
+        <div className="app-shell-header__subnav">
+          {subNav}
+        </div>
+      ) : null}
     </header>
   );
 };
