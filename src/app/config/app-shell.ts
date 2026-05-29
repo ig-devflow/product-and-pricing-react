@@ -1,5 +1,5 @@
 import type { To } from 'react-router'
-import { CENTRE_MANAGER_ROUTES, DIVISION_MANAGER_ROUTES } from '@/app/config/routes'
+import { CENTRE_MANAGER_ROUTES, DIVISION_MANAGER_ROUTES, PRODUCT_MANAGER_ROUTES } from '@/app/config/routes'
 
 export type AppShellTabId =
   | 'pricelist'
@@ -10,7 +10,7 @@ export type AppShellTabId =
   | 'new-pricing-year'
   | 'calculator'
 
-export type AppShellContextualLink = 'all-divisions' | 'all-centres'
+export type AppShellContextualLink = 'all-divisions' | 'all-centres' | 'all-courses' | 'all-accommodations' | 'all-addons' | 'all-transfers' | 'all-packages'
 
 export interface AppShellRouteMeta {
   shellTab?: AppShellTabId
@@ -74,9 +74,43 @@ export const centreManagerContextualRouteMeta: AppShellRouteMeta = {
   shellContextualLink: 'all-centres',
 }
 
+export const productManagerRouteMeta: AppShellRouteMeta = {
+  shellTab: 'products',
+}
+
+export const productManagerCourseContextualRouteMeta: AppShellRouteMeta = {
+  ...productManagerRouteMeta,
+  shellContextualLink: 'all-courses',
+}
+
+export const productManagerAccommodationContextualRouteMeta: AppShellRouteMeta = {
+  ...productManagerRouteMeta,
+  shellContextualLink: 'all-accommodations',
+}
+
+export const productManagerAddonContextualRouteMeta: AppShellRouteMeta = {
+  ...productManagerRouteMeta,
+  shellContextualLink: 'all-addons',
+}
+
+export const productManagerTransferContextualRouteMeta: AppShellRouteMeta = {
+  ...productManagerRouteMeta,
+  shellContextualLink: 'all-transfers',
+}
+
+export const productManagerPackageContextualRouteMeta: AppShellRouteMeta = {
+  ...productManagerRouteMeta,
+  shellContextualLink: 'all-packages',
+}
+
 export const appShellContextualTargets: Record<AppShellContextualLink, To> = {
   'all-divisions': DIVISION_MANAGER_ROUTES.list,
   'all-centres': CENTRE_MANAGER_ROUTES.list,
+  'all-courses': PRODUCT_MANAGER_ROUTES.courses.list,
+  'all-accommodations': PRODUCT_MANAGER_ROUTES.accommodations.list,
+  'all-addons': PRODUCT_MANAGER_ROUTES.addons.list,
+  'all-transfers': PRODUCT_MANAGER_ROUTES.transfers.list,
+  'all-packages': PRODUCT_MANAGER_ROUTES.packages.list,
 }
 
 export const appShellTopTabs: AppShellTopTabConfig[] = [
@@ -99,15 +133,15 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
   {
     id: 'products',
     label: 'Products',
-    inert: true,
     dropdownGroups: [
       {
         id: 'products-items',
         items: [
-          { id: 'catalog', label: 'Catalog', hint: 'All sellable products' },
-          { id: 'categories', label: 'Categories', hint: 'Hierarchy & tags' },
-          { id: 'bundles', label: 'Bundles', hint: 'Composite packages' },
-          { id: 'lifecycle', label: 'Lifecycle states', hint: 'Active, retired, planned' },
+          { id: 'courses', label: 'Courses', hint: 'Language course definitions', to: PRODUCT_MANAGER_ROUTES.courses.list },
+          { id: 'accommodations', label: 'Accommodations', hint: 'Properties & rooms', to: PRODUCT_MANAGER_ROUTES.accommodations.list },
+          { id: 'addons', label: 'Add-ons', hint: 'Optional extras', to: PRODUCT_MANAGER_ROUTES.addons.list },
+          { id: 'transfers', label: 'Transfers', hint: 'Airport & transport', to: PRODUCT_MANAGER_ROUTES.transfers.list },
+          { id: 'packages', label: 'Packages', hint: 'Bundled product sets', to: PRODUCT_MANAGER_ROUTES.packages.list },
         ],
       },
     ],
@@ -216,6 +250,19 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
     ],
   },
 ]
+
+export const productManagerShellBrand = {
+  to: PRODUCT_MANAGER_ROUTES.courses.list,
+  title: 'Products & Pricing',
+  subtitle: 'Product Manager',
+  ariaLabel: 'Products and Pricing home',
+} as const
+
+export const productManagerShellHeaderCopy = {
+  serviceLabel: 'Admin operations workspace',
+  contextualLinkLabel: 'Back to products',
+  sectionsAriaLabel: 'Products and Pricing sections',
+} as const
 
 export const appShellBrand = {
   to: DIVISION_MANAGER_ROUTES.list,

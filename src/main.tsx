@@ -8,6 +8,7 @@ import { APP_CONFIG } from '@/shared/config/env'
 import '@/app/styles/index.css'
 import '@/modules/divisions/styles/index.css'
 import '@/modules/centres/styles/centres.css'
+import '@/modules/products/styles/products.css'
 
 const unregisterMockServiceWorker = async () => {
   if (!('serviceWorker' in navigator)) {
