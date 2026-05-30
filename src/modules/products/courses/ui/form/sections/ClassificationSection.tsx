@@ -31,7 +31,7 @@ export const ClassificationSection = () => {
     <AppSectionCard
       id="section-classification"
       title="Classification"
-      description="How the course is taught and the booking window it accepts."
+      description="Language, intensity, pricing unit, and minimum booking duration."
     >
       <AppFormGrid>
         <AppField label="Course language" forId="course-language" error={errors.courseLanguageId?.message} required>
@@ -98,7 +98,7 @@ export const ClassificationSection = () => {
           )}
         </AppField>
 
-        <AppField label="Minimum weeks" forId="course-min-weeks" error={errors.minimumWeeks?.message} hint="Optional — leave blank if no minimum.">
+        <AppField label="Minimum weeks" forId="course-min-weeks" error={errors.minimumWeeks?.message} hint="Optional — minimum number of weeks for a booking.">
           {({ describedBy, labelId }) => (
             <AppInput
               id="course-min-weeks"

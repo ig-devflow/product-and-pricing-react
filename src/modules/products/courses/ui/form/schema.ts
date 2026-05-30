@@ -30,5 +30,5 @@ export const courseFormSchema = z.object({
   minimumWeeks: z.union([z.number().int().min(1, 'Must be at least 1'), z.literal('')]),
   generalLedgerCode: z.string().max(50, 'Max 50 characters'),
   costCentreCode: z.string().max(50, 'Max 50 characters'),
-  closurePolicy: z.string().max(2000, 'Max 2000 characters'),
+  closurePolicy: z.string(),
 });

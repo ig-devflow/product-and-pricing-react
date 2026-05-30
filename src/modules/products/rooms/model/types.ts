@@ -34,7 +34,7 @@ export interface RoomDetails extends AuditFields {
   roomDetails: RoomDetails_;
   accountCategoryId: number;
   productCategoryId: number;
-  generalLedgerCode: string;
-  costCentreCode: string;
-  closurePolicy: string;
+  generalLedgerCode: string | null;
+  costCentreCode: string | null;
+  closurePolicy: string | null;
 }

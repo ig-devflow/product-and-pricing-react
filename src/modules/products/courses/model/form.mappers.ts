@@ -33,6 +33,6 @@ export function mapCourseDetailsToFormValues(details: CourseDetails): CourseForm
     minimumWeeks: details.minimumWeeks ?? '',
     generalLedgerCode: details.generalLedgerCode,
     costCentreCode: details.costCentreCode,
-    closurePolicy: details.closurePolicy,
+    closurePolicy: details.closurePolicy ?? '',
   };
 }

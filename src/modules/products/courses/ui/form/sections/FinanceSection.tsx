@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import type { CourseFormValues } from '@/modules/products/courses/model/form.types';
 import { AppField } from '@/shared/ui/controls';
 import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns';
-import { AppInput, AppTextarea } from '@/shared/ui/primitives';
+import { AppInput } from '@/shared/ui/primitives';
 
 export const FinanceSection = () => {
   const {
@@ -14,7 +14,7 @@ export const FinanceSection = () => {
     <AppSectionCard
       id="section-finance"
       title="Finance & availability"
-      description="Ledger codes and booking closure rules."
+      description="GL code, cost centre, and the date when bookings close."
     >
       <AppFormGrid>
         <AppField label="General ledger code" forId="course-gl-code" error={errors.generalLedgerCode?.message} hint="Optional — used for financial reporting.">
@@ -42,21 +42,20 @@ export const FinanceSection = () => {
             />
           )}
         </AppField>
-      </AppFormGrid>
 
-      <AppField label="Closure policy" forId="course-closure-policy" error={errors.closurePolicy?.message} hint="Optional — describes how booking closures are handled.">
-        {({ describedBy, labelId }) => (
-          <AppTextarea
-            id="course-closure-policy"
-            rows={4}
-            invalid={Boolean(errors.closurePolicy?.message)}
-            describedBy={describedBy}
-            labelledBy={labelId}
-            placeholder="Describe the closure policy…"
-            {...register('closurePolicy')}
-          />
-        )}
-      </AppField>
+        <AppField label="Closure date" forId="course-closure-date" error={errors.closurePolicy?.message} hint="Optional — last date on which bookings can be made.">
+          {({ describedBy, labelId }) => (
+            <AppInput
+              id="course-closure-date"
+              type="date"
+              invalid={Boolean(errors.closurePolicy?.message)}
+              describedBy={describedBy}
+              labelledBy={labelId}
+              {...register('closurePolicy')}
+            />
+          )}
+        </AppField>
+      </AppFormGrid>
     </AppSectionCard>
   );
 };

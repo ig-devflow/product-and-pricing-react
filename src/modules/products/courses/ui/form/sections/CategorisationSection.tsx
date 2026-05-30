@@ -32,7 +32,7 @@ export const CategorisationSection = ({ divisionId }: CategorisationSectionProps
     <AppSectionCard
       id="section-categorisation"
       title="Categorisation"
-      description="How the course is categorised for reporting and accounts."
+      description="Product and account categories, and the eligible student age range."
     >
       <AppFormGrid>
         <AppField label="Product category" forId="course-product-cat" error={errors.productCategoryId?.message} required>

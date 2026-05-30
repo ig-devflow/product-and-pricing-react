@@ -433,7 +433,7 @@
 
 .product-form__nav-sidebar {
   position: sticky;
-  top: var(--space-6);
+  top: var(--app-shell-summary-sticky-top);
 }
 
 /* Section navigation sidebar */
@@ -521,6 +521,38 @@
   margin: 0;
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
+}
+
+/* Components section (package items list) */
+.product-form-components {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.product-form-components__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: var(--space-3);
+  align-items: end;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface-soft);
+}
+
+.product-form-components__remove {
+  padding-bottom: 2px;
+}
+
+.product-form-components__empty {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.product-form-components__add {
+  margin-top: var(--space-1);
 }
 
 .product-form-section__toggle-row {

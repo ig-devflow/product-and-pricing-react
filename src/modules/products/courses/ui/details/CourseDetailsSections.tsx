@@ -33,7 +33,7 @@ export const CourseDetailsSections = ({ course }: CourseDetailsSectionsProps) =>
 
   return (
     <div className="app-stack app-stack--lg">
-      <AppSectionCard title="Basics" description="Division and operational status.">
+      <AppSectionCard title="Basics" description="Name and current availability status.">
         <div className="product-details-sections__grid">
           <AppKeyValueList>
             <div className="app-key-value-list__row">
@@ -44,7 +44,7 @@ export const CourseDetailsSections = ({ course }: CourseDetailsSectionsProps) =>
         </div>
       </AppSectionCard>
 
-      <AppSectionCard title="Classification" description="How the course is taught.">
+      <AppSectionCard title="Classification" description="Language, intensity, and pricing.">
         <div className="product-details-sections__grid">
           <AppKeyValueList>
             <div className="app-key-value-list__row">
@@ -85,7 +85,7 @@ export const CourseDetailsSections = ({ course }: CourseDetailsSectionsProps) =>
         </div>
       </AppSectionCard>
 
-      <AppSectionCard title="Categorisation" description="Reporting and account categories.">
+      <AppSectionCard title="Categorisation" description="Categories and student age range.">
         <div className="product-details-sections__grid">
           <AppKeyValueList>
             <div className="app-key-value-list__row">
@@ -121,10 +121,17 @@ export const CourseDetailsSections = ({ course }: CourseDetailsSectionsProps) =>
                 </div>
               </AppKeyValueList>
             ) : null}
+            {course.closurePolicy ? (
+              <AppKeyValueList>
+                <div className="app-key-value-list__row">
+                  <dt className="app-key-value-list__label">Closure date</dt>
+                  <dd className="app-key-value-list__value">
+                    {new Date(course.closurePolicy).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </dd>
+                </div>
+              </AppKeyValueList>
+            ) : null}
           </div>
-          {course.closurePolicy ? (
-            <p className="product-details-sections__copy">{course.closurePolicy}</p>
-          ) : null}
         </AppSectionCard>
       ) : null}
     </div>

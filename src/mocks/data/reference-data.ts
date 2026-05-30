@@ -1,6 +1,11 @@
 import {
   ContentTemplateScopeDto,
   type AccountCategoryListItemDto,
+  type AccommodationBathroomTypeReferenceDto,
+  type AccommodationBoardTypeReferenceDto,
+  type AccommodationRoomGradeReferenceDto,
+  type AccommodationRoomTypeReferenceDto,
+  type AccommodationTypeReferenceDto,
   type AudienceReferenceDto,
   type ContentTemplateReferenceDto,
   type CountryReferenceDto,
@@ -8,6 +13,8 @@ import {
   type CourseLanguageReferenceDto,
   type CurrencyReferenceDto,
   type ProductCategoryListItemDto,
+  type TransferPortReferenceDto,
+  type TransferTypeReferenceDto,
   type UnitTypeReferenceDto,
 } from '@/shared/api/reference-data/types';
 
@@ -65,6 +72,51 @@ const productCategories = [
   { id: 3, name: 'Junior Programme' },
 ] satisfies ProductCategoryListItemDto[];
 
+const accommodationTypes = [
+  { id: 1, name: 'Residence' },
+  { id: 2, name: 'Host Family' },
+  { id: 3, name: 'Apartment' },
+] satisfies AccommodationTypeReferenceDto[];
+
+const accommodationRoomTypes = [
+  { id: 1, name: 'Single' },
+  { id: 2, name: 'Twin' },
+  { id: 3, name: 'Double' },
+  { id: 4, name: 'Triple' },
+] satisfies AccommodationRoomTypeReferenceDto[];
+
+const accommodationBathroomTypes = [
+  { id: 1, name: 'Private' },
+  { id: 2, name: 'Shared' },
+  { id: 3, name: 'En-suite' },
+] satisfies AccommodationBathroomTypeReferenceDto[];
+
+const accommodationBoardTypes = [
+  { id: 1, name: 'Self-catering' },
+  { id: 2, name: 'Bed & Breakfast' },
+  { id: 3, name: 'Half Board' },
+  { id: 4, name: 'Full Board' },
+] satisfies AccommodationBoardTypeReferenceDto[];
+
+const accommodationRoomGrades = [
+  { id: 1, name: 'Standard' },
+  { id: 2, name: 'Superior' },
+  { id: 3, name: 'Deluxe' },
+] satisfies AccommodationRoomGradeReferenceDto[];
+
+const transferTypes = [
+  { id: 1, name: 'Airport Transfer' },
+  { id: 2, name: 'Train Station Transfer' },
+  { id: 3, name: 'Port Transfer' },
+] satisfies TransferTypeReferenceDto[];
+
+const transferPorts = [
+  { id: 1, name: 'Malta International Airport' },
+  { id: 2, name: 'Dublin Airport' },
+  { id: 3, name: 'London Heathrow' },
+  { id: 4, name: 'Cork Airport' },
+] satisfies TransferPortReferenceDto[];
+
 export const referenceDataFixtures = {
   getCountries: () => countries,
   getCurrencies: () => currencies,
@@ -76,4 +128,11 @@ export const referenceDataFixtures = {
   getUnitTypes: () => unitTypes,
   getAccountCategories: () => accountCategories,
   getProductCategories: () => productCategories,
+  getAccommodationTypes: () => accommodationTypes,
+  getAccommodationRoomTypes: () => accommodationRoomTypes,
+  getAccommodationBathroomTypes: () => accommodationBathroomTypes,
+  getAccommodationBoardTypes: () => accommodationBoardTypes,
+  getAccommodationRoomGrades: () => accommodationRoomGrades,
+  getTransferTypes: () => transferTypes,
+  getTransferPorts: () => transferPorts,
 };

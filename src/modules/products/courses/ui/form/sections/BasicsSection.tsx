@@ -29,20 +29,9 @@ export const BasicsSection = ({ divisionName }: BasicsSectionProps) => {
     <AppSectionCard
       id="section-basics"
       title="Basics"
-      description="Division, course name, and operational status."
+      description="Name and current availability status of the course."
     >
-      <AppFormGrid>
-        <AppField
-          label="Division"
-          forId="course-division"
-          hint="Set by the division switcher at the top of the workspace."
-        >
-          <div id="course-division" className="product-form-locked-field">
-            <span className="product-form-locked-field__icon"><LockIcon /></span>
-            <span>{divisionName}</span>
-          </div>
-        </AppField>
-
+      <AppFormGrid columns={1}>
         <AppField label="Course name" forId="course-name" error={errors.name?.message} required>
           {({ describedBy, labelId }) => (
             <AppInput
@@ -54,6 +43,17 @@ export const BasicsSection = ({ divisionName }: BasicsSectionProps) => {
               {...register('name')}
             />
           )}
+        </AppField>
+
+        <AppField
+          label="Division"
+          forId="course-division"
+          hint="Determined by the division selected at the top of the workspace."
+        >
+          <div id="course-division" className="product-form-locked-field">
+            <span className="product-form-locked-field__icon"><LockIcon /></span>
+            <span>{divisionName}</span>
+          </div>
         </AppField>
       </AppFormGrid>
 

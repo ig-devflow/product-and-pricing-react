@@ -3,7 +3,7 @@ import type {
   RoomListItemDto,
   PagedResultDto,
 } from '@/modules/products/rooms/api/dto';
-import { buildProductAuditFields, toTrimmedString } from '@/modules/products/shared/model/formatters';
+import { buildProductAuditFields } from '@/modules/products/shared/model/formatters';
 import type { RoomDetails, RoomListItem, RoomListPage } from './types';
 
 export function mapRoomListItemDto(dto: RoomListItemDto): RoomListItem {
@@ -44,9 +44,9 @@ export function mapRoomDetailsDto(dto: RoomDetailsDto): RoomDetails {
     },
     accountCategoryId: dto.accountCategoryId,
     productCategoryId: dto.productCategoryId,
-    generalLedgerCode: toTrimmedString(dto.generalLedgerCode),
-    costCentreCode: toTrimmedString(dto.costCentreCode),
-    closurePolicy: toTrimmedString(dto.closurePolicy),
+    generalLedgerCode: dto.generalLedgerCode ?? null,
+    costCentreCode: dto.costCentreCode ?? null,
+    closurePolicy: dto.closurePolicy ?? null,
     ...buildProductAuditFields(dto),
   };
 }

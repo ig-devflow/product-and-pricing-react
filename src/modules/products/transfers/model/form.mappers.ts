@@ -24,13 +24,13 @@ export function mapTransferDetailsToFormValues(details: TransferDetails): Transf
     unitTypeId: details.unitTypeId,
     transferTypeId: details.transferTypeId,
     transferPortId: details.transferPortId,
-    timeFrom: details.timeFrom,
-    timeTo: details.timeTo,
+    timeFrom: details.timeFrom ?? '',
+    timeTo: details.timeTo ?? '',
     isActive: details.isActive,
     accountCategoryId: details.accountCategoryId,
     productCategoryId: details.productCategoryId,
-    generalLedgerCode: details.generalLedgerCode,
-    costCentreCode: details.costCentreCode,
-    closurePolicy: details.closurePolicy,
+    generalLedgerCode: details.generalLedgerCode ?? '',
+    costCentreCode: details.costCentreCode ?? '',
+    closurePolicy: details.closurePolicy ?? '',
   };
 }

@@ -64,6 +64,34 @@ export const handlers = [
     HttpResponse.json(referenceDataFixtures.getProductCategories()),
   ),
 
+  http.get('/api/v1/reference-data/accommodation-types', () =>
+    HttpResponse.json(referenceDataFixtures.getAccommodationTypes()),
+  ),
+
+  http.get('/api/v1/reference-data/accommodation-room-types', () =>
+    HttpResponse.json(referenceDataFixtures.getAccommodationRoomTypes()),
+  ),
+
+  http.get('/api/v1/reference-data/accommodation-bathroom-types', () =>
+    HttpResponse.json(referenceDataFixtures.getAccommodationBathroomTypes()),
+  ),
+
+  http.get('/api/v1/reference-data/accommodation-board-types', () =>
+    HttpResponse.json(referenceDataFixtures.getAccommodationBoardTypes()),
+  ),
+
+  http.get('/api/v1/reference-data/accommodation-room-grades', () =>
+    HttpResponse.json(referenceDataFixtures.getAccommodationRoomGrades()),
+  ),
+
+  http.get('/api/v1/reference-data/transfer-types', () =>
+    HttpResponse.json(referenceDataFixtures.getTransferTypes()),
+  ),
+
+  http.get('/api/v1/reference-data/transfer-ports', () =>
+    HttpResponse.json(referenceDataFixtures.getTransferPorts()),
+  ),
+
   http.get('/api/v1/divisions', ({ request }) => {
     const url = new URL(request.url);
 
@@ -130,7 +158,7 @@ export const handlers = [
   }),
 
   // ─── Accommodations ──────────────────────────────────────────────────────────
-  http.get('/api/v1/products/accommodations', ({ request }) => {
+  http.get('/api/v1/accommodations', ({ request }) => {
     const url = new URL(request.url);
     return HttpResponse.json(accommodationFixtures.getList({
       search: url.searchParams.get('search') ?? undefined,
@@ -138,48 +166,48 @@ export const handlers = [
       pageSize: getNumericSearchParam(url, 'pageSize'),
     }));
   }),
-  http.get('/api/v1/products/accommodations/:id', ({ params }) => {
+  http.get('/api/v1/accommodations/:id', ({ params }) => {
     const item = accommodationFixtures.getById(Number(params.id));
     return item ? HttpResponse.json(item) : HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
-  http.post('/api/v1/products/accommodations', async ({ request }) => {
+  http.post('/api/v1/accommodations', async ({ request }) => {
     const payload = (await request.json()) as CreateAccommodationRequestDto;
     const created = accommodationFixtures.create(payload);
     return HttpResponse.json({ id: created.id }, { status: 201 });
   }),
-  http.put('/api/v1/products/accommodations/:id', async ({ params, request }) => {
+  http.put('/api/v1/accommodations/:id', async ({ params, request }) => {
     const payload = (await request.json()) as UpdateAccommodationRequestDto;
     const updated = accommodationFixtures.update(Number(params.id), payload);
     return updated ? new HttpResponse(null, { status: 204 }) : HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
 
   // ─── Rooms ───────────────────────────────────────────────────────────────────
-  http.get('/api/v1/products/rooms', ({ request }) => {
+  http.get('/api/v1/divisions/:divisionId/accommodations/:accommodationId/rooms', ({ params, request }) => {
     const url = new URL(request.url);
     return HttpResponse.json(roomFixtures.getList({
-      accommodationId: getNumericSearchParam(url, 'accommodationId'),
+      accommodationId: Number(params.accommodationId),
       search: url.searchParams.get('search') ?? undefined,
       page: getNumericSearchParam(url, 'page'),
       pageSize: getNumericSearchParam(url, 'pageSize'),
     }));
   }),
-  http.get('/api/v1/products/rooms/:id', ({ params }) => {
+  http.get('/api/v1/accommodation-rooms/:id', ({ params }) => {
     const item = roomFixtures.getById(Number(params.id));
     return item ? HttpResponse.json(item) : HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
-  http.post('/api/v1/products/rooms', async ({ request }) => {
+  http.post('/api/v1/divisions/:divisionId/accommodations/:accommodationId/rooms', async ({ params, request }) => {
     const payload = (await request.json()) as CreateRoomRequestDto;
-    const created = roomFixtures.create(payload);
+    const created = roomFixtures.create(payload, Number(params.accommodationId), Number(params.divisionId));
     return HttpResponse.json({ id: created.id }, { status: 201 });
   }),
-  http.put('/api/v1/products/rooms/:id', async ({ params, request }) => {
+  http.put('/api/v1/accommodation-rooms/:id', async ({ params, request }) => {
     const payload = (await request.json()) as UpdateRoomRequestDto;
     const updated = roomFixtures.update(Number(params.id), payload);
     return updated ? new HttpResponse(null, { status: 204 }) : HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
 
   // ─── Add-ons ─────────────────────────────────────────────────────────────────
-  http.get('/api/v1/products/addons', ({ request }) => {
+  http.get('/api/v1/divisions/:divisionId/add-ons', ({ request }) => {
     const url = new URL(request.url);
     return HttpResponse.json(addonFixtures.getList({
       search: url.searchParams.get('search') ?? undefined,
@@ -187,23 +215,23 @@ export const handlers = [
       pageSize: getNumericSearchParam(url, 'pageSize'),
     }));
   }),
-  http.get('/api/v1/products/addons/:id', ({ params }) => {
+  http.get('/api/v1/add-ons/:id', ({ params }) => {
     const item = addonFixtures.getById(Number(params.id));
     return item ? HttpResponse.json(item) : HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
-  http.post('/api/v1/products/addons', async ({ request }) => {
+  http.post('/api/v1/divisions/:divisionId/add-ons', async ({ params, request }) => {
     const payload = (await request.json()) as CreateAddOnRequestDto;
-    const created = addonFixtures.create(payload);
+    const created = addonFixtures.create(Number(params.divisionId), payload);
     return HttpResponse.json({ id: created.id }, { status: 201 });
   }),
-  http.put('/api/v1/products/addons/:id', async ({ params, request }) => {
+  http.put('/api/v1/add-ons/:id', async ({ params, request }) => {
     const payload = (await request.json()) as UpdateAddOnRequestDto;
     const updated = addonFixtures.update(Number(params.id), payload);
     return updated ? new HttpResponse(null, { status: 204 }) : HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
 
   // ─── Transfers ───────────────────────────────────────────────────────────────
-  http.get('/api/v1/products/transfers', ({ request }) => {
+  http.get('/api/v1/divisions/:divisionId/transfers', ({ request }) => {
     const url = new URL(request.url);
     return HttpResponse.json(transferFixtures.getList({
       search: url.searchParams.get('search') ?? undefined,
@@ -211,23 +239,23 @@ export const handlers = [
       pageSize: getNumericSearchParam(url, 'pageSize'),
     }));
   }),
-  http.get('/api/v1/products/transfers/:id', ({ params }) => {
+  http.get('/api/v1/transfers/:id', ({ params }) => {
     const item = transferFixtures.getById(Number(params.id));
     return item ? HttpResponse.json(item) : HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
-  http.post('/api/v1/products/transfers', async ({ request }) => {
+  http.post('/api/v1/divisions/:divisionId/transfers', async ({ params, request }) => {
     const payload = (await request.json()) as CreateTransferRequestDto;
-    const created = transferFixtures.create(payload);
+    const created = transferFixtures.create(Number(params.divisionId), payload);
     return HttpResponse.json({ id: created.id }, { status: 201 });
   }),
-  http.put('/api/v1/products/transfers/:id', async ({ params, request }) => {
+  http.put('/api/v1/transfers/:id', async ({ params, request }) => {
     const payload = (await request.json()) as UpdateTransferRequestDto;
     const updated = transferFixtures.update(Number(params.id), payload);
     return updated ? new HttpResponse(null, { status: 204 }) : HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
 
   // ─── Packages ────────────────────────────────────────────────────────────────
-  http.get('/api/v1/products/packages', ({ request }) => {
+  http.get('/api/v1/divisions/:divisionId/packages', ({ request }) => {
     const url = new URL(request.url);
     return HttpResponse.json(packageFixtures.getList({
       search: url.searchParams.get('search') ?? undefined,
@@ -235,16 +263,16 @@ export const handlers = [
       pageSize: getNumericSearchParam(url, 'pageSize'),
     }));
   }),
-  http.get('/api/v1/products/packages/:id', ({ params }) => {
+  http.get('/api/v1/packages/:id', ({ params }) => {
     const item = packageFixtures.getById(Number(params.id));
     return item ? HttpResponse.json(item) : HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
-  http.post('/api/v1/products/packages', async ({ request }) => {
+  http.post('/api/v1/divisions/:divisionId/packages', async ({ params, request }) => {
     const payload = (await request.json()) as CreatePackageRequestDto;
-    const created = packageFixtures.create(payload);
+    const created = packageFixtures.create(Number(params.divisionId), payload);
     return HttpResponse.json({ id: created.id }, { status: 201 });
   }),
-  http.put('/api/v1/products/packages/:id', async ({ params, request }) => {
+  http.put('/api/v1/packages/:id', async ({ params, request }) => {
     const payload = (await request.json()) as UpdatePackageRequestDto;
     const updated = packageFixtures.update(Number(params.id), payload);
     return updated ? new HttpResponse(null, { status: 204 }) : HttpResponse.json({ message: 'Not found' }, { status: 404 });

@@ -1,6 +1,11 @@
 import { httpClient } from '@/shared/api/http/http-client';
 import type {
   AccountCategoryListItemDto,
+  AccommodationBathroomTypeReferenceDto,
+  AccommodationBoardTypeReferenceDto,
+  AccommodationRoomGradeReferenceDto,
+  AccommodationRoomTypeReferenceDto,
+  AccommodationTypeReferenceDto,
   AudienceReferenceDto,
   ContentTemplateReferenceDto,
   ContentTemplateScopeDto,
@@ -9,6 +14,8 @@ import type {
   CourseLanguageReferenceDto,
   CurrencyReferenceDto,
   ProductCategoryListItemDto,
+  TransferPortReferenceDto,
+  TransferTypeReferenceDto,
   UnitTypeReferenceDto,
 } from './types';
 
@@ -68,5 +75,47 @@ export async function getAccountCategories(divisionId: number): Promise<AccountC
 export async function getProductCategories(divisionId: number): Promise<ProductCategoryListItemDto[]> {
   return httpClient.get<ProductCategoryListItemDto[]>(
     `/api/v1/divisions/${divisionId}/product-categories`,
+  );
+}
+
+export async function getAccommodationTypes(): Promise<AccommodationTypeReferenceDto[]> {
+  return httpClient.get<AccommodationTypeReferenceDto[]>(
+    `${REFERENCE_DATA_BASE_PATH}/accommodation-types`,
+  );
+}
+
+export async function getAccommodationRoomTypes(): Promise<AccommodationRoomTypeReferenceDto[]> {
+  return httpClient.get<AccommodationRoomTypeReferenceDto[]>(
+    `${REFERENCE_DATA_BASE_PATH}/accommodation-room-types`,
+  );
+}
+
+export async function getAccommodationBathroomTypes(): Promise<AccommodationBathroomTypeReferenceDto[]> {
+  return httpClient.get<AccommodationBathroomTypeReferenceDto[]>(
+    `${REFERENCE_DATA_BASE_PATH}/accommodation-bathroom-types`,
+  );
+}
+
+export async function getAccommodationBoardTypes(): Promise<AccommodationBoardTypeReferenceDto[]> {
+  return httpClient.get<AccommodationBoardTypeReferenceDto[]>(
+    `${REFERENCE_DATA_BASE_PATH}/accommodation-board-types`,
+  );
+}
+
+export async function getAccommodationRoomGrades(): Promise<AccommodationRoomGradeReferenceDto[]> {
+  return httpClient.get<AccommodationRoomGradeReferenceDto[]>(
+    `${REFERENCE_DATA_BASE_PATH}/accommodation-room-grades`,
+  );
+}
+
+export async function getTransferTypes(): Promise<TransferTypeReferenceDto[]> {
+  return httpClient.get<TransferTypeReferenceDto[]>(
+    `${REFERENCE_DATA_BASE_PATH}/transfer-types`,
+  );
+}
+
+export async function getTransferPorts(): Promise<TransferPortReferenceDto[]> {
+  return httpClient.get<TransferPortReferenceDto[]>(
+    `${REFERENCE_DATA_BASE_PATH}/transfer-ports`,
   );
 }

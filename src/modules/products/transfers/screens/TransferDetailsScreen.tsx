@@ -1,7 +1,8 @@
-import { AppAsyncState, AppKeyValueList } from '@/shared/ui/data-display';
-import { AppPageHeader, AppSectionCard } from '@/shared/ui/patterns';
+import { AppAsyncState } from '@/shared/ui/data-display';
+import { AppPageHeader } from '@/shared/ui/patterns';
 import { useTransferDetailsScreen } from '@/modules/products/transfers/hooks/useTransferDetailsScreen';
 import { ProductDetailsHero, ProductReadonlySummary } from '@/modules/products/shared/ui';
+import { TransferDetailsSections } from '../ui/details/TransferDetailsSections';
 
 export const TransferDetailsScreen = () => {
   const page = useTransferDetailsScreen();
@@ -33,21 +34,11 @@ export const TransferDetailsScreen = () => {
         productType="transfer"
         name={page.details.name}
         isActive={page.details.isActive}
-        description={page.details.description || undefined}
         onBack={page.handleBack}
         onEdit={page.openEditPage}
       />
       <div className="app-split product-details-page__layout">
-        <AppSectionCard title="Details">
-          <div className="product-details-sections__grid">
-            <AppKeyValueList>
-              <div className="app-key-value-list__row">
-                <dt className="app-key-value-list__label">Division</dt>
-                <dd className="app-key-value-list__value">{page.details.divisionName || 'Not set'}</dd>
-              </div>
-            </AppKeyValueList>
-          </div>
-        </AppSectionCard>
+        <TransferDetailsSections transfer={page.details} />
         <ProductReadonlySummary title="Transfer summary" isActive={page.details.isActive} audit={page.details} />
       </div>
     </section>

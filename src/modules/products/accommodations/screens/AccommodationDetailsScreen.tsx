@@ -1,13 +1,18 @@
-import { AppAsyncState } from '@/shared/ui/data-display';
-import { AppKeyValueList } from '@/shared/ui/data-display';
-import { AppPageHeader } from '@/shared/ui/patterns';
-import { AppSectionCard } from '@/shared/ui/patterns';
+import { AppAsyncState, AppKeyValueList } from '@/shared/ui/data-display';
+import { AppPageHeader, AppSectionCard } from '@/shared/ui/patterns';
 import { AppButton } from '@/shared/ui/primitives';
 import { useAccommodationDetailsScreen } from '@/modules/products/accommodations/hooks/useAccommodationDetailsScreen';
 import { ProductDetailsHero, ProductReadonlySummary } from '@/modules/products/shared/ui';
+import { useAccommodationTypesQuery } from '@/shared/queries/useAccommodationTypesQuery';
+
+function findName(items: { id: number; name: string }[] | undefined, id: number | null | undefined): string {
+  if (!items || id == null) return '—';
+  return items.find((x) => x.id === id)?.name ?? String(id);
+}
 
 export const AccommodationDetailsScreen = () => {
   const page = useAccommodationDetailsScreen();
+  const typesQuery = useAccommodationTypesQuery();
 
   if (page.isLoading) {
     return (
@@ -29,25 +34,69 @@ export const AccommodationDetailsScreen = () => {
     );
   }
 
+  const { details } = page;
+  const typeName = findName(typesQuery.data, details.accommodationTypeId);
+
   return (
     <section className="app-page product-details-page">
       <AppPageHeader eyebrow={page.pageHeader.eyebrow} title={page.pageHeader.title} subtitle={page.pageHeader.subtitle} />
       <ProductDetailsHero
         productType="accommodation"
-        name={page.details.name}
-        isActive={page.details.isActive}
-        description={page.details.description || undefined}
+        name={details.name}
+        isActive={details.isActive}
         onBack={page.handleBack}
         onEdit={page.openEditPage}
       />
       <div className="app-split product-details-page__layout">
         <div className="app-stack app-stack--lg">
-          <AppSectionCard title="Details" description="Accommodation property information.">
+          <AppSectionCard title="Basics" description="Name, type, and availability.">
             <div className="product-details-sections__grid">
               <AppKeyValueList>
                 <div className="app-key-value-list__row">
-                  <dt className="app-key-value-list__label">Room count</dt>
-                  <dd className="app-key-value-list__value">{page.details.roomCount}</dd>
+                  <dt className="app-key-value-list__label">Accommodation type</dt>
+                  <dd className="app-key-value-list__value">{typeName}</dd>
+                </div>
+              </AppKeyValueList>
+            </div>
+          </AppSectionCard>
+
+          <AppSectionCard title="Booking rules" description="Minimum stay and student age range.">
+            <div className="product-details-sections__grid">
+              <AppKeyValueList>
+                <div className="app-key-value-list__row">
+                  <dt className="app-key-value-list__label">Minimum stay</dt>
+                  <dd className="app-key-value-list__value">
+                    {details.minimumStayInWeeks} {details.minimumStayInWeeks === 1 ? 'week' : 'weeks'}
+                  </dd>
+                </div>
+              </AppKeyValueList>
+              <AppKeyValueList>
+                <div className="app-key-value-list__row">
+                  <dt className="app-key-value-list__label">Age range</dt>
+                  <dd className="app-key-value-list__value">
+                    {details.minimumAge != null && details.maximumAge != null
+                      ? `${details.minimumAge}–${details.maximumAge}`
+                      : details.minimumAge != null
+                        ? `${details.minimumAge}+`
+                        : '—'}
+                  </dd>
+                </div>
+              </AppKeyValueList>
+            </div>
+          </AppSectionCard>
+
+          <AppSectionCard title="Commitment" description="Accepted booking commitment types.">
+            <div className="product-details-sections__grid">
+              <AppKeyValueList>
+                <div className="app-key-value-list__row">
+                  <dt className="app-key-value-list__label">Committed</dt>
+                  <dd className="app-key-value-list__value">{details.isCommitted ? 'Yes' : 'No'}</dd>
+                </div>
+              </AppKeyValueList>
+              <AppKeyValueList>
+                <div className="app-key-value-list__row">
+                  <dt className="app-key-value-list__label">Non-committed</dt>
+                  <dd className="app-key-value-list__value">{details.isNonCommitted ? 'Yes' : 'No'}</dd>
                 </div>
               </AppKeyValueList>
             </div>
@@ -62,14 +111,12 @@ export const AccommodationDetailsScreen = () => {
               </AppButton>
             }
           >
-            {page.details.roomCount === 0 ? (
-              <p className="product-details-sections__empty-copy">No rooms have been added yet.</p>
-            ) : (
-              <p className="product-details-sections__empty-copy">This accommodation has {page.details.roomCount} room(s). Navigate to individual rooms via their detail pages.</p>
-            )}
+            <p className="product-details-sections__empty-copy">
+              Navigate to individual rooms from the rooms list.
+            </p>
           </AppSectionCard>
         </div>
-        <ProductReadonlySummary title="Accommodation summary" isActive={page.details.isActive} audit={page.details} />
+        <ProductReadonlySummary title="Accommodation summary" isActive={details.isActive} audit={details} />
       </div>
     </section>
   );

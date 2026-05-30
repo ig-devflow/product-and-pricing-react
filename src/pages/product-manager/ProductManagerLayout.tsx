@@ -82,15 +82,17 @@ const ProductManagerLayout = () => {
   const isOnRooms = Boolean(useMatch(`${PRODUCT_MANAGER_ROUTES.accommodations.list}/*`));
 
   return (
-    <div className="app-shell">
+    <div className="app-shell app-shell--with-subnav">
       <AppShellHeader
         navigation={navigation}
         brandMark={<AppBrandMark {...productManagerShellBrand} />}
         serviceLabel={productManagerShellHeaderCopy.serviceLabel}
         contextualLinkLabel={productManagerShellHeaderCopy.contextualLinkLabel}
         sectionsAriaLabel={productManagerShellHeaderCopy.sectionsAriaLabel}
-        subNav={<ProductSubNav isOnRooms={isOnRooms} />}
       />
+      <div className="app-shell-subnav-bar">
+        <ProductSubNav isOnRooms={isOnRooms} />
+      </div>
       <main className="app-shell__main product-manager-content">
         <DivisionProvider>
           <Outlet />

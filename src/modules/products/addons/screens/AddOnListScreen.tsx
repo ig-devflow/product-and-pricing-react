@@ -1,7 +1,16 @@
 import { PRODUCT_MANAGER_ROUTES } from '@/app/config/routes';
 import { AppPageHeader } from '@/shared/ui/patterns';
 import { useAddOnListScreen } from '@/modules/products/addons/hooks/useAddOnListScreen';
+import { AddOnType } from '@/modules/products/addons/api/dto';
 import { ProductCard, ProductCardList, ProductListToolbar } from '@/modules/products/shared/ui';
+
+const ADD_ON_TYPE_LABELS: Record<AddOnType, string> = {
+  [AddOnType.OneToOneCourse]: 'One-to-one course',
+  [AddOnType.Exam]: 'Exam',
+  [AddOnType.Activity]: 'Activity',
+  [AddOnType.Insurance]: 'Insurance',
+  [AddOnType.Generic]: 'Generic',
+};
 
 export const AddOnListScreen = () => {
   const page = useAddOnListScreen();
@@ -41,7 +50,7 @@ export const AddOnListScreen = () => {
             productType="addon"
             name={addon.name}
             isActive={addon.isActive}
-            facts={[{ key: 'division', label: 'Division', value: addon.divisionName || 'Not set' }]}
+            facts={[{ key: 'type', label: 'Type', value: ADD_ON_TYPE_LABELS[addon.addOnType] ?? 'Unknown' }]}
             audit={addon}
             detailsHref={PRODUCT_MANAGER_ROUTES.addons.details(addon.id)}
             editHref={PRODUCT_MANAGER_ROUTES.addons.edit(addon.id)}

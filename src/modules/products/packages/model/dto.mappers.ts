@@ -3,7 +3,7 @@ import type {
   PackageListItemDto,
   PagedResultDto,
 } from '@/modules/products/packages/api/dto';
-import { buildProductAuditFields, toTrimmedString } from '@/modules/products/shared/model/formatters';
+import { buildProductAuditFields } from '@/modules/products/shared/model/formatters';
 import type { PackageDetails, PackageListItem, PackageListPage } from './types';
 
 export function mapPackageListItemDto(dto: PackageListItemDto): PackageListItem {
@@ -12,7 +12,7 @@ export function mapPackageListItemDto(dto: PackageListItemDto): PackageListItem 
     name: dto.name ?? '',
     divisionName: dto.divisionName ?? '',
     isActive: dto.isActive,
-    description: toTrimmedString(dto.description),
+    description: dto.description ?? null,
     commission: dto.commission,
     ...buildProductAuditFields({ ...dto, version: '' }),
   };
@@ -34,16 +34,16 @@ export function mapPackageDetailsDto(dto: PackageDetailsDto): PackageDetails {
     unitTypeId: dto.unitTypeId,
     name: dto.name ?? '',
     isActive: dto.isActive,
-    description: toTrimmedString(dto.description),
+    description: dto.description ?? null,
     commission: dto.commission,
     ageFrom: dto.ageFrom,
     ageTo: dto.ageTo,
     minimumWeeks: dto.minimumWeeks,
     accountCategoryId: dto.accountCategoryId,
     productCategoryId: dto.productCategoryId,
-    generalLedgerCode: toTrimmedString(dto.generalLedgerCode),
-    costCentreCode: toTrimmedString(dto.costCentreCode),
-    closurePolicy: toTrimmedString(dto.closurePolicy),
+    generalLedgerCode: dto.generalLedgerCode ?? null,
+    costCentreCode: dto.costCentreCode ?? null,
+    closurePolicy: dto.closurePolicy ?? null,
     items: dto.items ?? [],
     ...buildProductAuditFields(dto),
   };

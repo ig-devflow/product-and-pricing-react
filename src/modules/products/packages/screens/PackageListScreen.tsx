@@ -42,7 +42,7 @@ export const PackageListScreen = () => {
             name={pkg.name}
             isActive={pkg.isActive}
             facts={[
-              { key: 'components', label: 'Components', value: String(pkg.componentCount) },
+              { key: 'commission', label: 'Commission', value: `${pkg.commission}%` },
               { key: 'division', label: 'Division', value: pkg.divisionName || 'Not set' },
             ]}
             audit={pkg}

@@ -17,7 +17,7 @@ export function mapRoomFormValuesToCreateDto(values: RoomFormValues): CreateRoom
     productCategoryId: values.productCategoryId ?? 0,
     generalLedgerCode: values.generalLedgerCode.trim() || null,
     costCentreCode: values.costCentreCode.trim() || null,
-    closurePolicy: values.closurePolicy.trim() || null,
+    closurePolicy: values.closurePolicy || null,
   };
 }
 

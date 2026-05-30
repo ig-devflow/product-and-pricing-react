@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { PRODUCT_MANAGER_ROUTES } from '@/app/config/routes';
+import { useDivisionContext } from '@/app/context/DivisionContext';
 import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
 import { buildResourcePageState } from '@/shared/lib/resource/buildResourcePageState';
 import type { TransferFormValues } from '../model/form.types';
@@ -16,6 +17,7 @@ import { useTransferRouteId } from './useTransferRouteId';
 
 export const useTransferEditScreen = () => {
   const navigate = useNavigate();
+  const { divisionId, divisionName } = useDivisionContext();
   const transferId = useTransferRouteId();
   const query = useTransferDetailsQuery(transferId);
   const updateMutation = useUpdateTransferMutation();
@@ -35,6 +37,8 @@ export const useTransferEditScreen = () => {
     pageHeader: transferPageHeaders.edit,
     submitLabel: 'Save changes',
     transferId,
+    divisionId,
+    divisionName,
     details: pageState.data,
     detailsQuery: query,
     isLoading: pageState.isLoading,

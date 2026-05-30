@@ -3,7 +3,7 @@ import type {
   AddOnListItemDto,
   PagedResultDto,
 } from '@/modules/products/addons/api/dto';
-import { buildProductAuditFields, toTrimmedString } from '@/modules/products/shared/model/formatters';
+import { buildProductAuditFields } from '@/modules/products/shared/model/formatters';
 import type { AddOnDetails, AddOnListItem, AddOnListPage } from './types';
 
 export function mapAddOnListItemDto(dto: AddOnListItemDto): AddOnListItem {
@@ -39,9 +39,9 @@ export function mapAddOnDetailsDto(dto: AddOnDetailsDto): AddOnDetails {
     oneToOneLessonsPerWeek: dto.oneToOneLessonsPerWeek,
     accountCategoryId: dto.accountCategoryId,
     productCategoryId: dto.productCategoryId,
-    generalLedgerCode: toTrimmedString(dto.generalLedgerCode),
-    costCentreCode: toTrimmedString(dto.costCentreCode),
-    closurePolicy: toTrimmedString(dto.closurePolicy),
+    generalLedgerCode: dto.generalLedgerCode ?? null,
+    costCentreCode: dto.costCentreCode ?? null,
+    closurePolicy: dto.closurePolicy ?? null,
     ...buildProductAuditFields(dto),
   };
 }

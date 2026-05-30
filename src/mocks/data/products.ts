@@ -16,11 +16,12 @@ import type {
   CreateRoomRequestDto,
   UpdateRoomRequestDto,
 } from '@/modules/products/rooms/api/dto';
-import type {
-  AddOnDetailsDto,
-  AddOnListItemDto,
-  CreateAddOnRequestDto,
-  UpdateAddOnRequestDto,
+import {
+  type AddOnDetailsDto,
+  type AddOnListItemDto,
+  type CreateAddOnRequestDto,
+  type UpdateAddOnRequestDto,
+  AddOnType,
 } from '@/modules/products/addons/api/dto';
 import type {
   TransferDetailsDto,
@@ -210,9 +211,13 @@ const initialAccommodationDetails = new Map<number, AccommodationDetailsDto>([
     {
       id: 1,
       name: 'Residence Malta',
+      accommodationTypeId: 1,
       isActive: true,
-      description: 'On-site student residence in Valletta.',
-      roomCount: 2,
+      minimumStayInWeeks: 1,
+      minimumAge: 16,
+      maximumAge: null,
+      isCommitted: true,
+      isNonCommitted: false,
       version: versionToken,
       createdAt,
       createdByName,
@@ -225,9 +230,13 @@ const initialAccommodationDetails = new Map<number, AccommodationDetailsDto>([
     {
       id: 2,
       name: 'Host Family',
+      accommodationTypeId: 2,
       isActive: true,
-      description: 'Stay with a local family for an immersive experience.',
-      roomCount: 1,
+      minimumStayInWeeks: 2,
+      minimumAge: null,
+      maximumAge: null,
+      isCommitted: true,
+      isNonCommitted: true,
       version: versionToken,
       createdAt,
       createdByName,
@@ -242,8 +251,8 @@ let accommodationList: AccommodationListItemDto[] = Array.from(
 ).map((d) => ({
   id: d.id,
   name: d.name,
+  accommodationTypeName: d.accommodationTypeId === 1 ? 'Residence' : 'Host Family',
   isActive: d.isActive,
-  roomCount: d.roomCount,
   createdAt: d.createdAt,
   createdByName: d.createdByName,
   updatedAt: d.updatedAt,
@@ -263,8 +272,8 @@ export const accommodationFixtures = {
     const detail: AccommodationDetailsDto = {
       ...payload,
       id,
-      description: payload.description ?? '',
-      roomCount: 0,
+      minimumAge: payload.ageFrom ?? null,
+      maximumAge: payload.ageTo ?? null,
       version: versionToken,
       createdAt,
       createdByName,
@@ -272,13 +281,21 @@ export const accommodationFixtures = {
       updatedByName: '',
     };
     accommodationDetails.set(id, detail);
-    accommodationList = [{ id, name: payload.name, isActive: payload.isActive, roomCount: 0, createdAt, createdByName, updatedAt: '', updatedByName: '' }, ...accommodationList];
+    accommodationList = [{ id, name: payload.name, accommodationTypeName: '', isActive: payload.isActive, createdAt, createdByName, updatedAt: '', updatedByName: '' }, ...accommodationList];
     return detail;
   },
   update: (id: number, payload: UpdateAccommodationRequestDto) => {
     const existing = accommodationDetails.get(id);
     if (!existing) return null;
-    const updated: AccommodationDetailsDto = { ...existing, ...payload, id, updatedAt, updatedByName };
+    const updated: AccommodationDetailsDto = {
+      ...existing,
+      ...payload,
+      id,
+      minimumAge: payload.ageFrom ?? null,
+      maximumAge: payload.ageTo ?? null,
+      updatedAt,
+      updatedByName,
+    };
     accommodationDetails.set(id, updated);
     accommodationList = accommodationList.map((a) =>
       a.id === id ? { ...a, name: payload.name, isActive: payload.isActive, updatedAt, updatedByName } : a,
@@ -295,13 +312,17 @@ const initialRoomDetails = new Map<number, RoomDetailsDto>([
     {
       id: 1,
       name: 'Single Standard',
-      isActive: true,
       accommodationId: 1,
-      accommodationName: 'Residence Malta',
       divisionId: 7,
-      divisionName: 'EC Malta',
-      maxOccupancy: 1,
-      description: 'A standard single room in the residence.',
+      unitTypeId: 1,
+      isActive: true,
+      occupyRoom: true,
+      roomDetails: { roomTypeId: 1, boardTypeId: 1, bathroomTypeId: 2, roomGradeId: 1 },
+      accountCategoryId: 2,
+      productCategoryId: 2,
+      generalLedgerCode: '5001-RS',
+      costCentreCode: 'CC-MLT',
+      closurePolicy: null,
       version: versionToken,
       createdAt,
       createdByName,
@@ -314,13 +335,17 @@ const initialRoomDetails = new Map<number, RoomDetailsDto>([
     {
       id: 2,
       name: 'Twin Shared',
-      isActive: true,
       accommodationId: 1,
-      accommodationName: 'Residence Malta',
       divisionId: 7,
-      divisionName: 'EC Malta',
-      maxOccupancy: 2,
-      description: 'A twin room shared with another student.',
+      unitTypeId: 1,
+      isActive: true,
+      occupyRoom: true,
+      roomDetails: { roomTypeId: 2, boardTypeId: 1, bathroomTypeId: 2, roomGradeId: 1 },
+      accountCategoryId: 2,
+      productCategoryId: 2,
+      generalLedgerCode: '5002-RS',
+      costCentreCode: 'CC-MLT',
+      closurePolicy: null,
       version: versionToken,
       createdAt,
       createdByName,
@@ -333,13 +358,17 @@ const initialRoomDetails = new Map<number, RoomDetailsDto>([
     {
       id: 3,
       name: 'Host Room',
-      isActive: true,
       accommodationId: 2,
-      accommodationName: 'Host Family',
       divisionId: 7,
-      divisionName: 'EC Malta',
-      maxOccupancy: 1,
-      description: 'Private room in a host family home.',
+      unitTypeId: 1,
+      isActive: true,
+      occupyRoom: true,
+      roomDetails: { roomTypeId: 1, boardTypeId: 3, bathroomTypeId: 1, roomGradeId: 2 },
+      accountCategoryId: 2,
+      productCategoryId: 2,
+      generalLedgerCode: null,
+      costCentreCode: null,
+      closurePolicy: null,
       version: versionToken,
       createdAt,
       createdByName,
@@ -352,12 +381,10 @@ const initialRoomDetails = new Map<number, RoomDetailsDto>([
 let roomList: RoomListItemDto[] = Array.from(initialRoomDetails.values()).map((d) => ({
   id: d.id,
   name: d.name,
+  accommodationName: d.accommodationId === 1 ? 'Residence Malta' : 'Host Family',
+  divisionName: 'EC Malta',
   isActive: d.isActive,
-  accommodationId: d.accommodationId,
-  accommodationName: d.accommodationName,
-  divisionId: d.divisionId,
-  divisionName: d.divisionName,
-  maxOccupancy: d.maxOccupancy,
+  occupyRoom: d.occupyRoom,
   createdAt: d.createdAt,
   createdByName: d.createdByName,
   updatedAt: d.updatedAt,
@@ -370,21 +397,26 @@ export const roomFixtures = {
   getList: (params: { accommodationId?: number; search?: string; page?: number; pageSize?: number } = {}) => {
     let items = roomList;
     if (params.accommodationId) {
-      items = items.filter((r) => r.accommodationId === params.accommodationId);
+      const accId = params.accommodationId;
+      const matchingIds = new Set(
+        Array.from(roomDetails.values())
+          .filter((r) => r.accommodationId === accId)
+          .map((r) => r.id),
+      );
+      items = items.filter((r) => matchingIds.has(r.id));
     }
     const filtered = filterBySearch(items, params.search ?? '');
     return pagedResult(filtered, params.page ?? 1, params.pageSize ?? 4);
   },
   getById: (id: number) => roomDetails.get(id) ?? null,
-  create: (payload: CreateRoomRequestDto) => {
+  create: (payload: CreateRoomRequestDto, accommodationId: number, divisionId: number) => {
     const id = Math.max(0, ...roomList.map((r) => r.id)) + 1;
-    const accName = accommodationFixtures.getById(payload.accommodationId)?.name ?? '';
+    const accName = accommodationFixtures.getById(accommodationId)?.name ?? '';
     const detail: RoomDetailsDto = {
       ...payload,
       id,
-      accommodationName: accName,
-      divisionName: 'EC Malta',
-      description: payload.description ?? '',
+      accommodationId,
+      divisionId,
       version: versionToken,
       createdAt,
       createdByName,
@@ -392,16 +424,16 @@ export const roomFixtures = {
       updatedByName: '',
     };
     roomDetails.set(id, detail);
-    roomList = [{ id, name: payload.name, isActive: payload.isActive, accommodationId: payload.accommodationId, accommodationName: accName, divisionId: payload.divisionId, divisionName: 'EC Malta', maxOccupancy: payload.maxOccupancy, createdAt, createdByName, updatedAt: '', updatedByName: '' }, ...roomList];
+    roomList = [{ id, name: payload.name, accommodationName: accName, divisionName: 'EC Malta', isActive: payload.isActive, occupyRoom: payload.occupyRoom, createdAt, createdByName, updatedAt: '', updatedByName: '' }, ...roomList];
     return detail;
   },
   update: (id: number, payload: UpdateRoomRequestDto) => {
     const existing = roomDetails.get(id);
     if (!existing) return null;
-    const updated: RoomDetailsDto = { ...existing, ...payload, id, accommodationName: existing.accommodationName, divisionName: existing.divisionName, updatedAt, updatedByName };
+    const updated: RoomDetailsDto = { ...existing, ...payload, id, accommodationId: existing.accommodationId, divisionId: existing.divisionId, updatedAt, updatedByName };
     roomDetails.set(id, updated);
     roomList = roomList.map((r) =>
-      r.id === id ? { ...r, name: payload.name, isActive: payload.isActive, maxOccupancy: payload.maxOccupancy, updatedAt, updatedByName } : r,
+      r.id === id ? { ...r, name: payload.name, isActive: payload.isActive, occupyRoom: payload.occupyRoom, updatedAt, updatedByName } : r,
     );
     return updated;
   },
@@ -417,8 +449,16 @@ const initialAddonDetails = new Map<number, AddOnDetailsDto>([
       name: 'Airport Pickup',
       isActive: true,
       divisionId: 7,
-      divisionName: 'EC Malta',
-      description: 'Private driver pickup from Malta International Airport.',
+      unitTypeId: 1,
+      addOnType: AddOnType.Activity,
+      ageFrom: null,
+      ageTo: null,
+      oneToOneLessonsPerWeek: null,
+      accountCategoryId: 2,
+      productCategoryId: 2,
+      generalLedgerCode: null,
+      costCentreCode: null,
+      closurePolicy: null,
       version: versionToken,
       createdAt,
       createdByName,
@@ -433,8 +473,16 @@ const initialAddonDetails = new Map<number, AddOnDetailsDto>([
       name: 'Meals Package',
       isActive: true,
       divisionId: 7,
-      divisionName: 'EC Malta',
-      description: 'Full board meal package at the school cafeteria.',
+      unitTypeId: 2,
+      addOnType: AddOnType.Generic,
+      ageFrom: 16,
+      ageTo: null,
+      oneToOneLessonsPerWeek: null,
+      accountCategoryId: 1,
+      productCategoryId: 1,
+      generalLedgerCode: 'GL-MEALS',
+      costCentreCode: null,
+      closurePolicy: null,
       version: versionToken,
       createdAt,
       createdByName,
@@ -448,8 +496,8 @@ let addonList: AddOnListItemDto[] = Array.from(initialAddonDetails.values()).map
   id: d.id,
   name: d.name,
   isActive: d.isActive,
-  divisionId: d.divisionId,
-  divisionName: d.divisionName,
+  divisionName: 'EC Malta',
+  addOnType: d.addOnType,
   createdAt: d.createdAt,
   createdByName: d.createdByName,
   updatedAt: d.updatedAt,
@@ -465,19 +513,19 @@ export const addonFixtures = {
   },
   getById: (id: number) => addonDetails.get(id) ?? null,
   getAll: () => addonList,
-  create: (payload: CreateAddOnRequestDto) => {
+  create: (divisionId: number, payload: CreateAddOnRequestDto) => {
     const id = Math.max(0, ...addonList.map((a) => a.id)) + 1;
-    const detail: AddOnDetailsDto = { ...payload, id, divisionName: 'EC Malta', description: payload.description ?? '', version: versionToken, createdAt, createdByName, updatedAt: '', updatedByName: '' };
+    const detail: AddOnDetailsDto = { ...payload, id, divisionId, version: versionToken, createdAt, createdByName, updatedAt: '', updatedByName: '' };
     addonDetails.set(id, detail);
-    addonList = [{ id, name: payload.name, isActive: payload.isActive, divisionId: payload.divisionId, divisionName: 'EC Malta', createdAt, createdByName, updatedAt: '', updatedByName: '' }, ...addonList];
+    addonList = [{ id, name: payload.name, isActive: payload.isActive, divisionName: 'EC Malta', addOnType: payload.addOnType, createdAt, createdByName, updatedAt: '', updatedByName: '' }, ...addonList];
     return detail;
   },
   update: (id: number, payload: UpdateAddOnRequestDto) => {
     const existing = addonDetails.get(id);
     if (!existing) return null;
-    const updated: AddOnDetailsDto = { ...existing, ...payload, id, divisionName: existing.divisionName, updatedAt, updatedByName };
+    const updated: AddOnDetailsDto = { ...existing, ...payload, id, updatedAt, updatedByName };
     addonDetails.set(id, updated);
-    addonList = addonList.map((a) => a.id === id ? { ...a, name: payload.name, isActive: payload.isActive, updatedAt, updatedByName } : a);
+    addonList = addonList.map((a) => a.id === id ? { ...a, name: payload.name, isActive: payload.isActive, addOnType: payload.addOnType, updatedAt, updatedByName } : a);
     return updated;
   },
 };
@@ -492,8 +540,16 @@ const initialTransferDetails = new Map<number, TransferDetailsDto>([
       name: 'Standard Airport Transfer',
       isActive: true,
       divisionId: 7,
-      divisionName: 'EC Malta',
-      description: 'Shared shuttle service between airport and school.',
+      unitTypeId: 3,
+      transferTypeId: 1,
+      transferPortId: 1,
+      timeFrom: '09:00',
+      timeTo: '09:45',
+      accountCategoryId: 3,
+      productCategoryId: 2,
+      generalLedgerCode: '4010-TR',
+      costCentreCode: 'CC-MLT',
+      closurePolicy: null,
       version: versionToken,
       createdAt,
       createdByName,
@@ -508,8 +564,16 @@ const initialTransferDetails = new Map<number, TransferDetailsDto>([
       name: 'Private Airport Transfer',
       isActive: true,
       divisionId: 7,
-      divisionName: 'EC Malta',
-      description: 'Private car service for individual travellers.',
+      unitTypeId: 3,
+      transferTypeId: 1,
+      transferPortId: 1,
+      timeFrom: null,
+      timeTo: null,
+      accountCategoryId: 3,
+      productCategoryId: 2,
+      generalLedgerCode: null,
+      costCentreCode: null,
+      closurePolicy: null,
       version: versionToken,
       createdAt,
       createdByName,
@@ -523,8 +587,9 @@ let transferList: TransferListItemDto[] = Array.from(initialTransferDetails.valu
   id: d.id,
   name: d.name,
   isActive: d.isActive,
-  divisionId: d.divisionId,
-  divisionName: d.divisionName,
+  divisionName: 'EC Malta',
+  transferTypeId: d.transferTypeId,
+  transferPortId: d.transferPortId,
   createdAt: d.createdAt,
   createdByName: d.createdByName,
   updatedAt: d.updatedAt,
@@ -540,19 +605,19 @@ export const transferFixtures = {
   },
   getById: (id: number) => transferDetails.get(id) ?? null,
   getAll: () => transferList,
-  create: (payload: CreateTransferRequestDto) => {
+  create: (divisionId: number, payload: CreateTransferRequestDto) => {
     const id = Math.max(0, ...transferList.map((t) => t.id)) + 1;
-    const detail: TransferDetailsDto = { ...payload, id, divisionName: 'EC Malta', description: payload.description ?? '', version: versionToken, createdAt, createdByName, updatedAt: '', updatedByName: '' };
+    const detail: TransferDetailsDto = { ...payload, id, divisionId, version: versionToken, createdAt, createdByName, updatedAt: '', updatedByName: '' };
     transferDetails.set(id, detail);
-    transferList = [{ id, name: payload.name, isActive: payload.isActive, divisionId: payload.divisionId, divisionName: 'EC Malta', createdAt, createdByName, updatedAt: '', updatedByName: '' }, ...transferList];
+    transferList = [{ id, name: payload.name, isActive: payload.isActive, divisionName: 'EC Malta', transferTypeId: payload.transferTypeId, transferPortId: payload.transferPortId, createdAt, createdByName, updatedAt: '', updatedByName: '' }, ...transferList];
     return detail;
   },
   update: (id: number, payload: UpdateTransferRequestDto) => {
     const existing = transferDetails.get(id);
     if (!existing) return null;
-    const updated: TransferDetailsDto = { ...existing, ...payload, id, divisionName: existing.divisionName, updatedAt, updatedByName };
+    const updated: TransferDetailsDto = { ...existing, ...payload, id, updatedAt, updatedByName };
     transferDetails.set(id, updated);
-    transferList = transferList.map((t) => t.id === id ? { ...t, name: payload.name, isActive: payload.isActive, updatedAt, updatedByName } : t);
+    transferList = transferList.map((t) => t.id === id ? { ...t, name: payload.name, isActive: payload.isActive, transferTypeId: payload.transferTypeId, transferPortId: payload.transferPortId, updatedAt, updatedByName } : t);
     return updated;
   },
 };
@@ -566,21 +631,22 @@ const initialPackageDetails = new Map<number, PackageDetailsDto>([
       id: 1,
       name: 'Standard Package',
       isActive: true,
-      divisionId: 7,
-      divisionName: 'EC Malta',
+      divisionId: 1,
+      unitTypeId: 1,
       description: 'General English + Residence + Standard Transfer.',
-      components: {
-        courseId: 1,
-        courseName: 'General English',
-        accommodationId: 1,
-        accommodationName: 'Residence Malta',
-        roomId: 1,
-        roomName: 'Single Standard',
-        addonIds: [],
-        addonNames: [],
-        transferIds: [1],
-        transferNames: ['Standard Airport Transfer'],
-      },
+      commission: 10,
+      ageFrom: 16,
+      ageTo: 99,
+      minimumWeeks: 2,
+      accountCategoryId: 1,
+      productCategoryId: 1,
+      generalLedgerCode: '4001-PKG',
+      costCentreCode: 'CC-PKG',
+      closurePolicy: null,
+      items: [
+        { productKind: 1, productId: 1, priceBreakdown: 0 },
+        { productKind: 4, productId: 1, priceBreakdown: 0 },
+      ],
       version: versionToken,
       createdAt,
       createdByName,
@@ -594,13 +660,9 @@ let packageList: PackageListItemDto[] = Array.from(initialPackageDetails.values(
   id: d.id,
   name: d.name,
   isActive: d.isActive,
-  divisionId: d.divisionId,
-  divisionName: d.divisionName,
-  componentCount:
-    (d.components.courseId ? 1 : 0) +
-    (d.components.accommodationId ? 1 : 0) +
-    d.components.addonIds.length +
-    d.components.transferIds.length,
+  divisionName: 'EC Malta',
+  description: d.description,
+  commission: d.commission,
   createdAt: d.createdAt,
   createdByName: d.createdByName,
   updatedAt: d.updatedAt,
@@ -609,55 +671,18 @@ let packageList: PackageListItemDto[] = Array.from(initialPackageDetails.values(
 
 let packageDetails = new Map(initialPackageDetails);
 
-function resolvePackageComponent(payload: CreatePackageRequestDto) {
-  const courseName = payload.courseId
-    ? (courseFixtures.getById(payload.courseId)?.name ?? null)
-    : null;
-  const accName = payload.accommodationId
-    ? (accommodationFixtures.getById(payload.accommodationId)?.name ?? null)
-    : null;
-  const roomName = payload.roomId ? (roomFixtures.getById(payload.roomId)?.name ?? null) : null;
-  const addonNames = payload.addonIds
-    .map((id) => addonFixtures.getById(id)?.name ?? '')
-    .filter(Boolean);
-  const transferNames = payload.transferIds
-    .map((id) => transferFixtures.getById(id)?.name ?? '')
-    .filter(Boolean);
-
-  return {
-    courseId: payload.courseId,
-    courseName,
-    accommodationId: payload.accommodationId,
-    accommodationName: accName,
-    roomId: payload.roomId,
-    roomName,
-    addonIds: payload.addonIds,
-    addonNames,
-    transferIds: payload.transferIds,
-    transferNames,
-  };
-}
-
 export const packageFixtures = {
   getList: (params: { search?: string; page?: number; pageSize?: number } = {}) => {
     const filtered = filterBySearch(packageList, params.search ?? '');
     return pagedResult(filtered, params.page ?? 1, params.pageSize ?? 4);
   },
   getById: (id: number) => packageDetails.get(id) ?? null,
-  create: (payload: CreatePackageRequestDto) => {
+  create: (divisionId: number, payload: CreatePackageRequestDto) => {
     const id = Math.max(0, ...packageList.map((p) => p.id)) + 1;
-    const components = resolvePackageComponent(payload);
-    const componentCount =
-      (components.courseId ? 1 : 0) +
-      (components.accommodationId ? 1 : 0) +
-      components.addonIds.length +
-      components.transferIds.length;
     const detail: PackageDetailsDto = {
       ...payload,
       id,
-      divisionName: 'EC Malta',
-      description: payload.description ?? '',
-      components,
+      divisionId,
       version: versionToken,
       createdAt,
       createdByName,
@@ -665,16 +690,29 @@ export const packageFixtures = {
       updatedByName: '',
     };
     packageDetails.set(id, detail);
-    packageList = [{ id, name: payload.name, isActive: payload.isActive, divisionId: payload.divisionId, divisionName: 'EC Malta', componentCount, createdAt, createdByName, updatedAt: '', updatedByName: '' }, ...packageList];
+    packageList = [{
+      id,
+      name: payload.name,
+      isActive: payload.isActive,
+      divisionName: 'EC Malta',
+      description: payload.description,
+      commission: payload.commission,
+      createdAt,
+      createdByName,
+      updatedAt: '',
+      updatedByName: '',
+    }, ...packageList];
     return detail;
   },
   update: (id: number, payload: UpdatePackageRequestDto) => {
     const existing = packageDetails.get(id);
     if (!existing) return null;
-    const components = resolvePackageComponent(payload);
-    const updated: PackageDetailsDto = { ...existing, ...payload, id, divisionName: existing.divisionName, components, updatedAt, updatedByName };
+    const updated: PackageDetailsDto = { ...existing, ...payload, id, divisionId: existing.divisionId, updatedAt, updatedByName };
     packageDetails.set(id, updated);
-    packageList = packageList.map((p) => p.id === id ? { ...p, name: payload.name, isActive: payload.isActive, updatedAt, updatedByName } : p);
+    packageList = packageList.map((p) => p.id === id
+      ? { ...p, name: payload.name, isActive: payload.isActive, description: payload.description, commission: payload.commission, updatedAt, updatedByName }
+      : p
+    );
     return updated;
   },
 };

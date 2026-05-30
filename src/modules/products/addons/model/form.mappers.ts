@@ -29,8 +29,8 @@ export function mapAddOnDetailsToFormValues(details: AddOnDetails): AddOnFormVal
     ageFrom: details.ageFrom ?? '',
     ageTo: details.ageTo ?? '',
     oneToOneLessonsPerWeek: details.oneToOneLessonsPerWeek ?? '',
-    generalLedgerCode: details.generalLedgerCode,
-    costCentreCode: details.costCentreCode,
-    closurePolicy: details.closurePolicy,
+    generalLedgerCode: details.generalLedgerCode ?? '',
+    costCentreCode: details.costCentreCode ?? '',
+    closurePolicy: details.closurePolicy ?? '',
   };
 }

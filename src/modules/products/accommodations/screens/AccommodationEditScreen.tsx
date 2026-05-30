@@ -1,5 +1,6 @@
 import { AppAsyncState } from '@/shared/ui/data-display';
 import { AppPageHeader } from '@/shared/ui/patterns';
+import { AppButton } from '@/shared/ui/primitives';
 import { useAccommodationEditScreen } from '@/modules/products/accommodations/hooks/useAccommodationEditScreen';
 import { AccommodationForm } from '../ui/form';
 
@@ -28,15 +29,38 @@ export const AccommodationEditScreen = () => {
 
   return (
     <section className="app-page product-form-page">
-      <AppPageHeader eyebrow={page.pageHeader.eyebrow} title={page.pageHeader.title} subtitle={page.pageHeader.subtitle} />
+      <AppPageHeader
+        eyebrow={page.pageHeader.eyebrow}
+        title={page.pageHeader.title}
+        subtitle={page.pageHeader.subtitle}
+        actions={
+          <>
+            <AppButton
+              type="button"
+              variant="secondary"
+              disabled={page.isSaving}
+              onClick={page.onCancel}
+            >
+              Cancel
+            </AppButton>
+            <AppButton
+              type="submit"
+              form="accommodation-form"
+              variant="primary"
+              loading={page.isSaving}
+              disabled={page.isSaving}
+            >
+              {page.isSaving ? 'Saving…' : page.submitLabel}
+            </AppButton>
+          </>
+        }
+      />
       <AccommodationForm
+        id="accommodation-form"
         mode="edit"
         defaultValues={page.initialValues}
-        submitLabel={page.submitLabel}
-        isSubmitting={page.isSaving}
         errorMessage={page.saveErrorMessage}
         onSubmit={page.onSubmit}
-        onCancel={page.onCancel}
       />
     </section>
   );

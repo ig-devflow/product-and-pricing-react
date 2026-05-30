@@ -31,5 +31,5 @@ export interface CourseDetails extends AuditFields {
   productCategoryId: number;
   generalLedgerCode: string;
   costCentreCode: string;
-  closurePolicy: string;
+  closurePolicy: string | null;
 }

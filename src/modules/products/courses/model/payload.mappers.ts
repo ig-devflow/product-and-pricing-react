@@ -19,7 +19,7 @@ export function mapCourseFormValuesToCreateDto(values: CourseFormValues): Create
     minimumWeeks: toOptionalInt(values.minimumWeeks),
     generalLedgerCode: values.generalLedgerCode.trim() || null,
     costCentreCode: values.costCentreCode.trim() || null,
-    closurePolicy: values.closurePolicy.trim() || null,
+    closurePolicy: values.closurePolicy || null,
   };
 }
 

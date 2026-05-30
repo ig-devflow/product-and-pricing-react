@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { PRODUCT_MANAGER_ROUTES } from '@/app/config/routes';
+import { useDivisionContext } from '@/app/context/DivisionContext';
 import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
 import { useDebouncedValue } from '@/shared/hooks';
 import { addonPageHeaders } from '../config/pageHeaders';
@@ -17,6 +18,7 @@ function parsePositiveInt(value: string | null, fallback: number): number {
 
 export const useAddOnListScreen = () => {
   const navigate = useNavigate();
+  const { divisionId } = useDivisionContext();
   const [searchParams, setSearchParams] = useSearchParams();
   const submittedSearch = searchParams.get('search') ?? '';
   const [searchTerm, setSearchTerm] = useState(submittedSearch);
@@ -37,7 +39,7 @@ export const useAddOnListScreen = () => {
     setSearchParams(next, { replace: true });
   }, [debouncedSearch, pageSize, searchParams, setSearchParams, submittedSearch]);
 
-  const query = useAddOnListQuery({
+  const query = useAddOnListQuery(divisionId, {
     search: submittedSearch.trim() || undefined,
     isActive: activeOnly || undefined,
     page,

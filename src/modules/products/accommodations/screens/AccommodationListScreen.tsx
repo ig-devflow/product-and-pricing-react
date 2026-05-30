@@ -43,7 +43,7 @@ export const AccommodationListScreen = () => {
             productType="accommodation"
             name={acc.name}
             isActive={acc.isActive}
-            facts={[{ key: 'rooms', label: 'Rooms', value: String(acc.roomCount) }]}
+            facts={[{ key: 'type', label: 'Type', value: acc.accommodationTypeName }]}
             audit={acc}
             detailsHref={PRODUCT_MANAGER_ROUTES.accommodations.details(acc.id)}
             editHref={PRODUCT_MANAGER_ROUTES.accommodations.edit(acc.id)}

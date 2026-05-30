@@ -22,13 +22,13 @@ export interface TransferDetails extends AuditFields {
   unitTypeId: number;
   transferTypeId: number;
   transferPortId: number;
-  timeFrom: string;
-  timeTo: string;
+  timeFrom: string | null;
+  timeTo: string | null;
   name: string;
   isActive: boolean;
   accountCategoryId: number;
   productCategoryId: number;
-  generalLedgerCode: string;
-  costCentreCode: string;
-  closurePolicy: string;
+  generalLedgerCode: string | null;
+  costCentreCode: string | null;
+  closurePolicy: string | null;
 }

@@ -1,32 +1,41 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AppSurface, AppInput, AppSwitch, AppTextarea } from '@/shared/ui/primitives';
-import { AppField } from '@/shared/ui/controls';
-import { AppFormGrid, AppSectionCard } from '@/shared/ui/patterns';
-import { AppPill } from '@/shared/ui/data-display';
+import { AppSurface } from '@/shared/ui/primitives';
 import type { TransferFormValues } from '@/modules/products/transfers/model/form.types';
 import { transferFormSchema } from './schema';
-import { ProductFormActions } from '@/modules/products/shared/ui/ProductFormActions';
+import {
+  BasicsSection,
+  ClassificationSection,
+  CategorisationSection,
+  FinanceSection,
+} from './sections';
+
+const SECTIONS = [
+  { id: 'section-basics', label: 'Basics' },
+  { id: 'section-classification', label: 'Classification' },
+  { id: 'section-categorisation', label: 'Categorisation' },
+  { id: 'section-finance', label: 'Finance & availability' },
+];
 
 export interface TransferFormProps {
+  id?: string;
   mode?: 'create' | 'edit';
   defaultValues: TransferFormValues;
-  submitLabel?: string;
-  isSubmitting?: boolean;
   errorMessage?: string | null;
+  divisionId: number;
+  divisionName: string;
   onSubmit: (values: TransferFormValues) => Promise<void> | void;
-  onCancel?: () => void;
 }
 
 export const TransferForm = ({
+  id = 'transfer-form',
   mode = 'create',
   defaultValues,
-  submitLabel,
-  isSubmitting = false,
   errorMessage,
+  divisionId,
+  divisionName,
   onSubmit,
-  onCancel,
 }: TransferFormProps) => {
   const methods = useForm<TransferFormValues>({
     resolver: zodResolver(transferFormSchema),
@@ -39,64 +48,50 @@ export const TransferForm = ({
   useEffect(() => { defaultValuesRef.current = defaultValues; }, [defaultValues]);
   useEffect(() => { methods.reset(defaultValuesRef.current); }, [methods, resetKey]);
 
-  const { register, control, formState: { errors, isDirty }, watch } = methods;
-  const isActive = watch('isActive');
-
   return (
     <FormProvider {...methods}>
-      <form className="product-form" onSubmit={methods.handleSubmit(onSubmit)}>
-        <AppSurface className="app-section product-form__notice" variant="soft" padding="md">
-          <h2 className="app-section__title">Transfer setup</h2>
-          <p className="app-section__text">Manage transfer service details.</p>
-        </AppSurface>
+      <form
+        id={id}
+        className="product-form"
+        onSubmit={methods.handleSubmit(onSubmit)}
+        noValidate
+      >
+        <div className="product-form__body">
+          <div className="product-form__sections">
+            <BasicsSection divisionName={divisionName} />
+            <ClassificationSection />
+            <CategorisationSection divisionId={divisionId} />
+            <FinanceSection />
 
-        <div className="product-form__main">
-          <AppSectionCard
-            title="General"
-            description="Transfer identity and description."
-            actions={<AppPill variant={isActive ? 'success' : 'neutral'}>{isActive ? 'Active' : 'Inactive'}</AppPill>}
-          >
-            <AppFormGrid>
-              <AppField label="Name" forId="transfer-name" error={errors.name?.message} required>
-                {({ describedBy, labelId }) => (
-                  <AppInput id="transfer-name" invalid={Boolean(errors.name?.message)} describedBy={describedBy} labelledBy={labelId} placeholder="e.g. Standard Airport Transfer" {...register('name')} />
-                )}
-              </AppField>
-            </AppFormGrid>
+            {errorMessage ? (
+              <AppSurface className="product-form__error" padding="md">
+                <h2 className="product-form__error-title">Save failed</h2>
+                <p className="product-form__error-text">{errorMessage}</p>
+              </AppSurface>
+            ) : null}
+          </div>
 
-            <AppField label="Description" forId="transfer-description" error={errors.description?.message}>
-              {({ describedBy, labelId }) => (
-                <AppTextarea id="transfer-description" rows={4} invalid={Boolean(errors.description?.message)} describedBy={describedBy} labelledBy={labelId} placeholder="Brief description…" {...register('description')} />
-              )}
-            </AppField>
-
-            <div className="product-form-section__toggle-row">
-              <div className="product-form-section__toggle-copy">
-                <span className="product-form-section__toggle-title">Status</span>
-                <span className="product-form-section__toggle-text">Disable without removing data.</span>
-              </div>
-              <Controller name="isActive" control={control} render={({ field }) => (
-                <AppSwitch checked={Boolean(field.value)} label={field.value ? 'Active' : 'Inactive'} onChange={(e) => field.onChange(e.target.checked)} />
-              )} />
-            </div>
-          </AppSectionCard>
-
-          {errorMessage ? (
-            <AppSurface className="product-form__error" padding="md">
-              <h2 className="product-form__error-title">Save failed</h2>
-              <p className="product-form__error-text">{errorMessage}</p>
-            </AppSurface>
-          ) : null}
-
-          <ProductFormActions
-            mode={mode}
-            entityLabel="transfer"
-            submitLabel={submitLabel}
-            isSubmitting={isSubmitting}
-            canReset={isDirty}
-            onCancel={onCancel ?? (() => {})}
-            onReset={() => methods.reset(defaultValues)}
-          />
+          <aside className="product-form__nav-sidebar">
+            <nav className="product-form-section-nav" aria-label="Form sections">
+              <p className="product-form-section-nav__label">Sections</p>
+              <ul className="product-form-section-nav__list">
+                {SECTIONS.map((section) => (
+                  <li key={section.id}>
+                    <a
+                      href={`#${section.id}`}
+                      className="product-form-section-nav__link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }}
+                    >
+                      {section.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </aside>
         </div>
       </form>
     </FormProvider>

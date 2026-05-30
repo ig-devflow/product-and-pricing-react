@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { PRODUCT_MANAGER_ROUTES } from '@/app/config/routes';
+import { useDivisionContext } from '@/app/context/DivisionContext';
 import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
 import { buildResourcePageState } from '@/shared/lib/resource/buildResourcePageState';
 import type { PackageFormValues } from '../model/form.types';
@@ -16,6 +17,7 @@ import { usePackageRouteId } from './usePackageRouteId';
 
 export const usePackageEditScreen = () => {
   const navigate = useNavigate();
+  const { divisionId, divisionName } = useDivisionContext();
   const packageId = usePackageRouteId();
   const query = usePackageDetailsQuery(packageId);
   const updateMutation = useUpdatePackageMutation();
@@ -35,6 +37,8 @@ export const usePackageEditScreen = () => {
     pageHeader: packagePageHeaders.edit,
     submitLabel: 'Save changes',
     packageId,
+    divisionId,
+    divisionName,
     details: pageState.data,
     detailsQuery: query,
     isLoading: pageState.isLoading,

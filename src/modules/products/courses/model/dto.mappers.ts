@@ -43,7 +43,7 @@ export function mapCourseDetailsDto(dto: CourseDetailsDto): CourseDetails {
     productCategoryId: dto.productCategoryId,
     generalLedgerCode: toTrimmedString(dto.generalLedgerCode),
     costCentreCode: toTrimmedString(dto.costCentreCode),
-    closurePolicy: toTrimmedString(dto.closurePolicy),
+    closurePolicy: dto.closurePolicy ?? null,
     ...buildProductAuditFields(dto),
   };
 }

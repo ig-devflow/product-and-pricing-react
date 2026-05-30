@@ -78,6 +78,17 @@
   background: var(--color-bg-surface);
 }
 
+/* Standalone (non-sticky) subnav bar rendered outside the sticky header */
+.app-shell-subnav-bar {
+  border-bottom: 1px solid var(--color-shell-border);
+  background: var(--color-bg-surface);
+}
+
+/* Override grid to accommodate the extra subnav row */
+.app-shell--with-subnav {
+  grid-template-rows: auto auto 1fr auto;
+}
+
 .product-subnav__inner {
   display: flex;
   align-items: center;

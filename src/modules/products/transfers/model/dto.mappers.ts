@@ -3,7 +3,7 @@ import type {
   TransferListItemDto,
   PagedResultDto,
 } from '@/modules/products/transfers/api/dto';
-import { buildProductAuditFields, toTrimmedString } from '@/modules/products/shared/model/formatters';
+import { buildProductAuditFields } from '@/modules/products/shared/model/formatters';
 import type { TransferDetails, TransferListItem, TransferListPage } from './types';
 
 export function mapTransferListItemDto(dto: TransferListItemDto): TransferListItem {
@@ -34,15 +34,15 @@ export function mapTransferDetailsDto(dto: TransferDetailsDto): TransferDetails 
     unitTypeId: dto.unitTypeId,
     transferTypeId: dto.transferTypeId,
     transferPortId: dto.transferPortId,
-    timeFrom: toTrimmedString(dto.timeFrom),
-    timeTo: toTrimmedString(dto.timeTo),
+    timeFrom: dto.timeFrom ?? null,
+    timeTo: dto.timeTo ?? null,
     name: dto.name ?? '',
     isActive: dto.isActive,
     accountCategoryId: dto.accountCategoryId,
     productCategoryId: dto.productCategoryId,
-    generalLedgerCode: toTrimmedString(dto.generalLedgerCode),
-    costCentreCode: toTrimmedString(dto.costCentreCode),
-    closurePolicy: toTrimmedString(dto.closurePolicy),
+    generalLedgerCode: dto.generalLedgerCode ?? null,
+    costCentreCode: dto.costCentreCode ?? null,
+    closurePolicy: dto.closurePolicy ?? null,
     ...buildProductAuditFields(dto),
   };
 }
