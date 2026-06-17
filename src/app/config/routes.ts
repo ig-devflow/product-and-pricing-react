@@ -25,6 +25,24 @@ export const CENTRE_MANAGER_ROUTES = {
 
 const pm = APP_ROUTES.productManager;
 
+const cm = '/categories-manager';
+
+export const CATEGORIES_MANAGER_ROUTES = {
+  root: cm,
+  accountCategories: {
+    list: `${cm}/account-categories`,
+    create: `${cm}/account-categories/create`,
+    details: (id: string | number) => `${cm}/account-categories/${id}`,
+    edit: (id: string | number) => `${cm}/account-categories/${id}/edit`,
+  },
+  productCategories: {
+    list: `${cm}/product-categories`,
+    create: `${cm}/product-categories/create`,
+    details: (id: string | number) => `${cm}/product-categories/${id}`,
+    edit: (id: string | number) => `${cm}/product-categories/${id}/edit`,
+  },
+} as const;
+
 export const PRODUCT_MANAGER_ROUTES = {
   root: pm,
   courses: {

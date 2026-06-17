@@ -1,3 +1,8 @@
+export interface DivisionOptionDto {
+  id: number;
+  name: string;
+}
+
 export const ContentFormatDto = {
   None: 0,
   PlainText: 1,

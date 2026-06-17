@@ -1,5 +1,5 @@
 import type { To } from 'react-router'
-import { CENTRE_MANAGER_ROUTES, DIVISION_MANAGER_ROUTES, PRODUCT_MANAGER_ROUTES } from '@/app/config/routes'
+import { CATEGORIES_MANAGER_ROUTES, CENTRE_MANAGER_ROUTES, DIVISION_MANAGER_ROUTES, PRODUCT_MANAGER_ROUTES } from '@/app/config/routes'
 
 export type AppShellTabId =
   | 'pricelist'
@@ -10,7 +10,7 @@ export type AppShellTabId =
   | 'new-pricing-year'
   | 'calculator'
 
-export type AppShellContextualLink = 'all-divisions' | 'all-centres' | 'all-courses' | 'all-accommodations' | 'all-addons' | 'all-transfers' | 'all-packages'
+export type AppShellContextualLink = 'all-divisions' | 'all-centres' | 'all-courses' | 'all-accommodations' | 'all-addons' | 'all-transfers' | 'all-packages' | 'all-account-categories' | 'all-product-categories'
 
 export interface AppShellRouteMeta {
   shellTab?: AppShellTabId
@@ -104,6 +104,20 @@ export const productManagerPackageContextualRouteMeta: AppShellRouteMeta = {
   shellContextualLink: 'all-packages',
 }
 
+export const categoriesManagerRouteMeta: AppShellRouteMeta = {
+  shellTab: 'pricing-reference-data',
+}
+
+export const categoriesManagerAccountContextualRouteMeta: AppShellRouteMeta = {
+  ...categoriesManagerRouteMeta,
+  shellContextualLink: 'all-account-categories',
+}
+
+export const categoriesManagerProductContextualRouteMeta: AppShellRouteMeta = {
+  ...categoriesManagerRouteMeta,
+  shellContextualLink: 'all-product-categories',
+}
+
 export const appShellContextualTargets: Record<AppShellContextualLink, To> = {
   'all-divisions': DIVISION_MANAGER_ROUTES.list,
   'all-centres': CENTRE_MANAGER_ROUTES.list,
@@ -112,6 +126,8 @@ export const appShellContextualTargets: Record<AppShellContextualLink, To> = {
   'all-addons': PRODUCT_MANAGER_ROUTES.addons.list,
   'all-transfers': PRODUCT_MANAGER_ROUTES.transfers.list,
   'all-packages': PRODUCT_MANAGER_ROUTES.packages.list,
+  'all-account-categories': CATEGORIES_MANAGER_ROUTES.accountCategories.list,
+  'all-product-categories': CATEGORIES_MANAGER_ROUTES.productCategories.list,
 }
 
 export const appShellTopTabs: AppShellTopTabConfig[] = [
@@ -204,6 +220,24 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
     inert: true,
     isMegaMenu: true,
     dropdownGroups: [
+      {
+        id: 'categories',
+        eyebrow: 'Categories',
+        items: [
+          {
+            id: 'account-categories',
+            label: 'Account categories',
+            hint: 'Revenue posting to finance',
+            to: CATEGORIES_MANAGER_ROUTES.accountCategories.list,
+          },
+          {
+            id: 'product-categories',
+            label: 'Product categories',
+            hint: 'Catalog & reporting groups',
+            to: CATEGORIES_MANAGER_ROUTES.productCategories.list,
+          },
+        ],
+      },
       {
         id: 'managers',
         eyebrow: 'Managers',
@@ -317,6 +351,19 @@ export const appShellFooterCopy = {
   metaTitle: 'Product',
   metaDescription: 'Admin shell for operational workflows.',
   copyrightLabel: 'Products & Pricing. Internal product interface.',
+} as const
+
+export const categoriesManagerShellBrand = {
+  to: CATEGORIES_MANAGER_ROUTES.accountCategories.list,
+  title: 'Products & Pricing',
+  subtitle: 'Reference Data',
+  ariaLabel: 'Products and Pricing home',
+} as const
+
+export const categoriesManagerShellHeaderCopy = {
+  serviceLabel: 'Admin operations workspace',
+  contextualLinkLabel: 'Back to categories',
+  sectionsAriaLabel: 'Products and Pricing sections',
 } as const
 
 export const appShellFooterLinks: AppShellFooterLinkConfig[] = [

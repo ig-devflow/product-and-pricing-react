@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { PRODUCT_MANAGER_ROUTES } from '@/app/config/routes';
-import { useDivisionContext } from '@/app/context/DivisionContext';
 import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
 import { buildResourcePageState } from '@/shared/lib/resource/buildResourcePageState';
+import { useDivisionOptionsQuery } from '@/modules/divisions/queries/useDivisionOptionsQuery';
 import type { PackageFormValues } from '../model/form.types';
 import {
   createEmptyPackageFormValues,
@@ -17,7 +17,7 @@ import { usePackageRouteId } from './usePackageRouteId';
 
 export const usePackageEditScreen = () => {
   const navigate = useNavigate();
-  const { divisionId, divisionName } = useDivisionContext();
+  const optionsQuery = useDivisionOptionsQuery();
   const packageId = usePackageRouteId();
   const query = usePackageDetailsQuery(packageId);
   const updateMutation = useUpdatePackageMutation();
@@ -32,6 +32,9 @@ export const usePackageEditScreen = () => {
     () => pageState.data ? mapPackageDetailsToFormValues(pageState.data) : createEmptyPackageFormValues(),
     [pageState.data],
   );
+
+  const divisionId = pageState.data?.divisionId ?? 0;
+  const divisionName = optionsQuery.data?.find((o) => o.id === divisionId)?.name ?? '';
 
   return {
     pageHeader: packagePageHeaders.edit,

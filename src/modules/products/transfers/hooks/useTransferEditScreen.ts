@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { PRODUCT_MANAGER_ROUTES } from '@/app/config/routes';
-import { useDivisionContext } from '@/app/context/DivisionContext';
 import { getApiErrorMessage } from '@/shared/lib/errors/getApiErrorMessage';
 import { buildResourcePageState } from '@/shared/lib/resource/buildResourcePageState';
+import { useDivisionOptionsQuery } from '@/modules/divisions/queries/useDivisionOptionsQuery';
 import type { TransferFormValues } from '../model/form.types';
 import {
   createEmptyTransferFormValues,
@@ -17,7 +17,7 @@ import { useTransferRouteId } from './useTransferRouteId';
 
 export const useTransferEditScreen = () => {
   const navigate = useNavigate();
-  const { divisionId, divisionName } = useDivisionContext();
+  const optionsQuery = useDivisionOptionsQuery();
   const transferId = useTransferRouteId();
   const query = useTransferDetailsQuery(transferId);
   const updateMutation = useUpdateTransferMutation();
@@ -32,6 +32,9 @@ export const useTransferEditScreen = () => {
     () => pageState.data ? mapTransferDetailsToFormValues(pageState.data) : createEmptyTransferFormValues(),
     [pageState.data],
   );
+
+  const divisionId = pageState.data?.divisionId ?? 0;
+  const divisionName = optionsQuery.data?.find((o) => o.id === divisionId)?.name ?? '';
 
   return {
     pageHeader: transferPageHeaders.edit,

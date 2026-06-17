@@ -39,8 +39,22 @@ import {
   PackageCreatePage,
   PackageEditPage,
 } from '@/pages/product-manager';
+import {
+  CategoriesManagerLayout,
+  AccountCategoryListPage,
+  AccountCategoryDetailsPage,
+  AccountCategoryCreatePage,
+  AccountCategoryEditPage,
+  ProductCategoryListPage,
+  ProductCategoryDetailsPage,
+  ProductCategoryCreatePage,
+  ProductCategoryEditPage,
+} from '@/pages/categories-manager';
 import { NotFoundPage } from '@/pages/not-found';
 import {
+  categoriesManagerAccountContextualRouteMeta,
+  categoriesManagerProductContextualRouteMeta,
+  categoriesManagerRouteMeta,
   centreManagerContextualRouteMeta,
   centreManagerRouteMeta,
   divisionManagerContextualRouteMeta,
@@ -48,7 +62,7 @@ import {
   productManagerRouteMeta,
   type AppRouteHandle,
 } from '@/app/config/app-shell';
-import { APP_ROUTES, CENTRE_MANAGER_ROUTES, DIVISION_MANAGER_ROUTES, PRODUCT_MANAGER_ROUTES } from '@/app/config/routes';
+import { APP_ROUTES, CATEGORIES_MANAGER_ROUTES, CENTRE_MANAGER_ROUTES, DIVISION_MANAGER_ROUTES, PRODUCT_MANAGER_ROUTES } from '@/app/config/routes';
 
 export const appRoutes: RouteObject[] = [
   {
@@ -252,6 +266,59 @@ export const appRoutes: RouteObject[] = [
         path: 'packages/:packageId/edit',
         element: <PackageEditPage />,
         handle: { shell: productManagerRouteMeta } satisfies AppRouteHandle,
+      },
+    ],
+  },
+  // ─── Categories Manager ───────────────────────────────────────────────────
+  {
+    path: CATEGORIES_MANAGER_ROUTES.root,
+    element: <CategoriesManagerLayout />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to={CATEGORIES_MANAGER_ROUTES.accountCategories.list} replace />,
+      },
+      // Account categories
+      {
+        path: 'account-categories',
+        element: <AccountCategoryListPage />,
+        handle: { shell: categoriesManagerRouteMeta } satisfies AppRouteHandle,
+      },
+      {
+        path: 'account-categories/create',
+        element: <AccountCategoryCreatePage />,
+        handle: { shell: categoriesManagerAccountContextualRouteMeta } satisfies AppRouteHandle,
+      },
+      {
+        path: 'account-categories/:id',
+        element: <AccountCategoryDetailsPage />,
+        handle: { shell: categoriesManagerAccountContextualRouteMeta } satisfies AppRouteHandle,
+      },
+      {
+        path: 'account-categories/:id/edit',
+        element: <AccountCategoryEditPage />,
+        handle: { shell: categoriesManagerAccountContextualRouteMeta } satisfies AppRouteHandle,
+      },
+      // Product categories
+      {
+        path: 'product-categories',
+        element: <ProductCategoryListPage />,
+        handle: { shell: categoriesManagerRouteMeta } satisfies AppRouteHandle,
+      },
+      {
+        path: 'product-categories/create',
+        element: <ProductCategoryCreatePage />,
+        handle: { shell: categoriesManagerProductContextualRouteMeta } satisfies AppRouteHandle,
+      },
+      {
+        path: 'product-categories/:id',
+        element: <ProductCategoryDetailsPage />,
+        handle: { shell: categoriesManagerProductContextualRouteMeta } satisfies AppRouteHandle,
+      },
+      {
+        path: 'product-categories/:id/edit',
+        element: <ProductCategoryEditPage />,
+        handle: { shell: categoriesManagerProductContextualRouteMeta } satisfies AppRouteHandle,
       },
     ],
   },
