@@ -10,6 +10,7 @@ import { useAppShellNavigation } from '@/app/hooks/useAppShellNavigation';
 import { AppBrandMark, AppShellFooter, AppShellHeader } from '@/app/layout';
 import { DivisionProvider } from '@/app/context/DivisionContext';
 import { ProductTypeIcon, type ProductType } from '@/modules/products/shared/ui/ProductTypeIcon';
+import { DivisionDropdown } from './DivisionDropdown';
 
 interface ProductNavItem {
   to: string;
@@ -32,12 +33,6 @@ const DivisionIcon = () => (
   </svg>
 );
 
-const ChevronDownIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-    <path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
 interface ProductSubNavProps {
   isOnRooms: boolean;
 }
@@ -49,10 +44,7 @@ const ProductSubNav = ({ isOnRooms }: ProductSubNavProps) => (
         <DivisionIcon />
       </span>
       <span className="product-subnav__division-label">Division</span>
-      <button type="button" className="product-subnav__division-btn">
-        <span>EC Adult · ADL</span>
-        <ChevronDownIcon />
-      </button>
+      <DivisionDropdown />
     </div>
     <nav className="product-subnav__tabs" aria-label="Product types">
       {productNavItems.map((item) => {
@@ -82,31 +74,31 @@ const ProductManagerLayout = () => {
   const isOnRooms = Boolean(useMatch(`${PRODUCT_MANAGER_ROUTES.accommodations.list}/*`));
 
   return (
-    <div className="app-shell app-shell--with-subnav">
-      <AppShellHeader
-        navigation={navigation}
-        brandMark={<AppBrandMark {...productManagerShellBrand} />}
-        serviceLabel={productManagerShellHeaderCopy.serviceLabel}
-        contextualLinkLabel={productManagerShellHeaderCopy.contextualLinkLabel}
-        sectionsAriaLabel={productManagerShellHeaderCopy.sectionsAriaLabel}
-      />
-      <div className="app-shell-subnav-bar">
-        <ProductSubNav isOnRooms={isOnRooms} />
-      </div>
-      <main className="app-shell__main product-manager-content">
-        <DivisionProvider>
+    <DivisionProvider>
+      <div className="app-shell app-shell--with-subnav">
+        <AppShellHeader
+          navigation={navigation}
+          brandMark={<AppBrandMark {...productManagerShellBrand} />}
+          serviceLabel={productManagerShellHeaderCopy.serviceLabel}
+          contextualLinkLabel={productManagerShellHeaderCopy.contextualLinkLabel}
+          sectionsAriaLabel={productManagerShellHeaderCopy.sectionsAriaLabel}
+        />
+        <div className="app-shell-subnav-bar">
+          <ProductSubNav isOnRooms={isOnRooms} />
+        </div>
+        <main className="app-shell__main product-manager-content">
           <Outlet />
-        </DivisionProvider>
-      </main>
-      <AppShellFooter
-        links={appShellFooterLinks}
-        title={appShellFooterCopy.title}
-        description={appShellFooterCopy.description}
-        metaTitle={appShellFooterCopy.metaTitle}
-        metaDescription={appShellFooterCopy.metaDescription}
-        copyrightLabel={appShellFooterCopy.copyrightLabel}
-      />
-    </div>
+        </main>
+        <AppShellFooter
+          links={appShellFooterLinks}
+          title={appShellFooterCopy.title}
+          description={appShellFooterCopy.description}
+          metaTitle={appShellFooterCopy.metaTitle}
+          metaDescription={appShellFooterCopy.metaDescription}
+          copyrightLabel={appShellFooterCopy.copyrightLabel}
+        />
+      </div>
+    </DivisionProvider>
   );
 };
 

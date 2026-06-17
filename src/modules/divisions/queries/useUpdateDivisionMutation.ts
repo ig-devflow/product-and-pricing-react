@@ -19,9 +19,8 @@ export const useUpdateDivisionMutation = () => {
     onSuccess: async ({ divisionId }) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: divisionQueryKeys.lists() }),
-        queryClient.invalidateQueries({
-          queryKey: divisionQueryKeys.detail(divisionId),
-        }),
+        queryClient.invalidateQueries({ queryKey: divisionQueryKeys.detail(divisionId) }),
+        queryClient.invalidateQueries({ queryKey: divisionQueryKeys.options() }),
       ]);
     },
   });

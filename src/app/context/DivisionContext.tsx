@@ -7,14 +7,14 @@ interface DivisionContextValue {
 }
 
 const DivisionContext = createContext<DivisionContextValue>({
-  divisionId: 1,
-  divisionName: 'EC Adult · ADL',
+  divisionId: 0,
+  divisionName: '',
   setDivision: () => {},
 });
 
 export const DivisionProvider = ({ children }: { children: ReactNode }) => {
-  const [divisionId, setDivisionId] = useState(1);
-  const [divisionName, setDivisionName] = useState('EC Adult · ADL');
+  const [divisionId, setDivisionId] = useState(0);
+  const [divisionName, setDivisionName] = useState('');
 
   const setDivision = (id: number, name: string) => {
     setDivisionId(id);

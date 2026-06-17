@@ -4,6 +4,7 @@ import type {
   CreateDivisionResponseDto,
   DivisionDetailsDto,
   DivisionListItemDto,
+  DivisionOptionDto,
   PagedResultDto,
   UpdateDivisionRequestDto,
 } from './dto';
@@ -15,6 +16,10 @@ export interface GetDivisionsParams {
   isActive?: boolean;
   page?: number;
   pageSize?: number;
+}
+
+export async function getDivisionOptions(): Promise<DivisionOptionDto[]> {
+  return httpClient.get<DivisionOptionDto[]>(`${DIVISIONS_BASE_PATH}/options`);
 }
 
 export async function getDivisions(
