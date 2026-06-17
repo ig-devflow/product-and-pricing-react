@@ -128,7 +128,7 @@ function buildCentreRequestBase(values: CentreFormValues) {
     name: values.step1.name.trim(),
     code: values.step1.code.trim(),
     currencyId: Number(values.step1.currencyId),
-    printFormat: values.step1.printFormat === '' ? 0 : Number(values.step1.printFormat),
+    printFormatId: values.step1.printFormatId === '' ? 0 : Number(values.step1.printFormatId),
     isActive: values.step1.isActive,
     isPhysicalCentre: values.step1.isPhysicalCentre,
     contactInfo: mapContactInfoToDto(values.step2),

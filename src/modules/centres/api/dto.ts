@@ -87,7 +87,7 @@ export interface CentreDetailsDto {
   name: string
   code: string
   currencyId: number
-  printFormat: number
+  printFormatId: number
   isActive: boolean
   isPhysicalCentre: boolean
   contactInfo: CentreContactInfoDto
@@ -193,7 +193,7 @@ export interface CreateCentreRequestDto {
   name: string
   code: string
   currencyId: number
-  printFormat: number
+  printFormatId: number
   isActive: boolean
   isPhysicalCentre: boolean
   contactInfo: CentreContactInfoRequestDto

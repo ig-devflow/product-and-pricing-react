@@ -2,7 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(Get-ChildItem -Path \"E:\\\\react\\\\products-and-pricing-react\" -Depth 1 -ErrorAction SilentlyContinue)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem -Path \"e:\\\\react\\\\products-and-pricing-react\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(npm run *)",
+      "Bash(node -e \"const { z } = require\\('zod'\\); console.log\\(z.string\\(\\).min\\(1\\).parse\\('x'\\)\\)\")",
+      "Bash(npx oxlint *)",
+      "Bash(npx tsc *)",
+      "Bash(ls \"e:\\\\react\")",
+      "Read(//e/react/**)",
+      "Bash(ls e:/)",
+      "Read(//e//**)"
     ]
   }
 }

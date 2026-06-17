@@ -1,5 +1,5 @@
 import type { To } from 'react-router'
-import { CENTRE_MANAGER_ROUTES, DIVISION_MANAGER_ROUTES } from '@/app/config/routes'
+import { CENTRE_MANAGER_ROUTES, DIVISION_MANAGER_ROUTES, PRODUCT_MANAGER_ROUTES } from '@/app/config/routes'
 
 export type AppShellTabId =
   | 'pricelist'
@@ -10,7 +10,7 @@ export type AppShellTabId =
   | 'new-pricing-year'
   | 'calculator'
 
-export type AppShellContextualLink = 'all-divisions' | 'all-centres'
+export type AppShellContextualLink = 'all-divisions' | 'all-centres' | 'all-courses' | 'all-accommodations' | 'all-addons' | 'all-transfers' | 'all-packages'
 
 export interface AppShellRouteMeta {
   shellTab?: AppShellTabId
@@ -26,6 +26,7 @@ export interface AppShellDropdownItem {
   label: string
   hint?: string
   to?: To
+  badge?: string
 }
 
 export interface AppShellDropdownGroup {
@@ -36,8 +37,8 @@ export interface AppShellDropdownGroup {
 
 export interface AppShellDropdownFooter {
   meta: string
-  actionLabel: string
-  actionTo: To
+  actionLabel?: string
+  actionTo?: To
 }
 
 export interface AppShellTopTabConfig {
@@ -74,9 +75,43 @@ export const centreManagerContextualRouteMeta: AppShellRouteMeta = {
   shellContextualLink: 'all-centres',
 }
 
+export const productManagerRouteMeta: AppShellRouteMeta = {
+  shellTab: 'products',
+}
+
+export const productManagerCourseContextualRouteMeta: AppShellRouteMeta = {
+  ...productManagerRouteMeta,
+  shellContextualLink: 'all-courses',
+}
+
+export const productManagerAccommodationContextualRouteMeta: AppShellRouteMeta = {
+  ...productManagerRouteMeta,
+  shellContextualLink: 'all-accommodations',
+}
+
+export const productManagerAddonContextualRouteMeta: AppShellRouteMeta = {
+  ...productManagerRouteMeta,
+  shellContextualLink: 'all-addons',
+}
+
+export const productManagerTransferContextualRouteMeta: AppShellRouteMeta = {
+  ...productManagerRouteMeta,
+  shellContextualLink: 'all-transfers',
+}
+
+export const productManagerPackageContextualRouteMeta: AppShellRouteMeta = {
+  ...productManagerRouteMeta,
+  shellContextualLink: 'all-packages',
+}
+
 export const appShellContextualTargets: Record<AppShellContextualLink, To> = {
   'all-divisions': DIVISION_MANAGER_ROUTES.list,
   'all-centres': CENTRE_MANAGER_ROUTES.list,
+  'all-courses': PRODUCT_MANAGER_ROUTES.courses.list,
+  'all-accommodations': PRODUCT_MANAGER_ROUTES.accommodations.list,
+  'all-addons': PRODUCT_MANAGER_ROUTES.addons.list,
+  'all-transfers': PRODUCT_MANAGER_ROUTES.transfers.list,
+  'all-packages': PRODUCT_MANAGER_ROUTES.packages.list,
 }
 
 export const appShellTopTabs: AppShellTopTabConfig[] = [
@@ -99,18 +134,37 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
   {
     id: 'products',
     label: 'Products',
-    inert: true,
+    isMegaMenu: true,
     dropdownGroups: [
       {
         id: 'products-items',
+        eyebrow: 'Products',
         items: [
-          { id: 'catalog', label: 'Catalog', hint: 'All sellable products' },
-          { id: 'categories', label: 'Categories', hint: 'Hierarchy & tags' },
-          { id: 'bundles', label: 'Bundles', hint: 'Composite packages' },
-          { id: 'lifecycle', label: 'Lifecycle states', hint: 'Active, retired, planned' },
+          { id: 'courses', label: 'Courses', hint: 'Language & exam tuition', to: PRODUCT_MANAGER_ROUTES.courses.list, badge: 'orange' },
+          { id: 'accommodations', label: 'Accommodation', hint: 'Properties & their rooms', to: PRODUCT_MANAGER_ROUTES.accommodations.list },
+          { id: 'addons', label: 'Add-ons', hint: 'Extras, exams, activities, insurance', to: PRODUCT_MANAGER_ROUTES.addons.list },
+          { id: 'transfers', label: 'Transfers', hint: 'Airport & port transfers', to: PRODUCT_MANAGER_ROUTES.transfers.list },
+        ],
+      },
+      {
+        id: 'bundles-items',
+        eyebrow: 'Bundles',
+        items: [
+          { id: 'packages', label: 'Packages', hint: 'Bundles of other products', to: PRODUCT_MANAGER_ROUTES.packages.list },
+        ],
+      },
+      {
+        id: 'fees-items',
+        eyebrow: 'Fees',
+        items: [
+          { id: 'fee', label: 'Fee', hint: 'Coming soon' },
+          { id: 'cancellation-fee', label: 'Cancellation fee', hint: 'Coming soon' },
         ],
       },
     ],
+    dropdownFooter: {
+      meta: 'Sellable catalog · Fees are charges, not products',
+    },
   },
   {
     id: 'discounts',
@@ -216,6 +270,19 @@ export const appShellTopTabs: AppShellTopTabConfig[] = [
     ],
   },
 ]
+
+export const productManagerShellBrand = {
+  to: PRODUCT_MANAGER_ROUTES.courses.list,
+  title: 'Products & Pricing',
+  subtitle: 'Product Manager',
+  ariaLabel: 'Products and Pricing home',
+} as const
+
+export const productManagerShellHeaderCopy = {
+  serviceLabel: 'Admin operations workspace',
+  contextualLinkLabel: 'Back to products',
+  sectionsAriaLabel: 'Products and Pricing sections',
+} as const
 
 export const appShellBrand = {
   to: DIVISION_MANAGER_ROUTES.list,

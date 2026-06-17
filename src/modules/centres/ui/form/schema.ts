@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { ContentFormat } from '@/modules/divisions/model/content-format';
-import { PrintFormat } from '@/modules/centres/model/types';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TEL_RE = /^\+?[0-9\s\-().]{7,20}$/;
@@ -55,8 +54,8 @@ export const centreStep1Schema = z.object({
     .min(1, 'Centre code is required.')
     .max(200, 'Centre code must be 200 characters or fewer.'),
   currencyId: z.string().min(1, 'Pick a currency.'),
-  printFormat: z
-    .union([z.literal(PrintFormat.A4), z.literal(PrintFormat.Letter), z.literal('')])
+  printFormatId: z
+    .union([z.number().int().positive(), z.literal('')])
     .refine((v) => v !== '', { message: 'Pick a print format.' }),
   isActive: z.boolean(),
   isPhysicalCentre: z.boolean(),

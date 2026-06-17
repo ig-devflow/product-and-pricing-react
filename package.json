@@ -13,7 +13,7 @@
     "build-only": "vite build",
     "type-check": "tsc -b",
     "lint": "run-s lint:*",
-    "lint:oxlint": "oxlint . --fix",
+    "lint:oxlint": "oxlint . --fix --ignore-pattern .claude --ignore-pattern .agents",
     "lint:eslint": "eslint . --fix --cache",
     "format": "prettier --write ."
   },

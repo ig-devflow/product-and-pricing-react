@@ -129,7 +129,7 @@ export function mapCentreDetailsFromDto(dto: CentreDetailsDto): CentreDetails {
     name: dto.name ?? '',
     code: dto.code ?? '',
     currencyId: dto.currencyId,
-    printFormat: dto.printFormat as CentreDetails['printFormat'],
+    printFormatId: dto.printFormatId,
     isActive: dto.isActive,
     isPhysicalCentre: dto.isPhysicalCentre,
     contactInfo: mapContactInfoFromDto(dto.contactInfo),

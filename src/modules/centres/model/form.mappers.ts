@@ -1,6 +1,6 @@
 import { ContentFormat } from '@/modules/divisions/model/content-format';
 import type { CentreAddress, CentreDetails, CentreImageFile } from './types';
-import { CentreContactType, PrintFormat } from './types';
+import { CentreContactType } from './types';
 import type {
   CentreAddressFormValue,
   CentreContactFormValue,
@@ -38,7 +38,7 @@ export function createEmptyCentreFormValues(): CentreFormValues {
       name: '',
       code: '',
       currencyId: '',
-      printFormat: '',
+      printFormatId: '',
       isActive: true,
       isPhysicalCentre: true,
     },
@@ -109,7 +109,7 @@ export function mapCentreDetailsToFormValues(details: CentreDetails): CentreForm
     name: details.name,
     code: details.code,
     currencyId: details.currencyId ? String(details.currencyId) : '',
-    printFormat: details.printFormat !== PrintFormat.None ? details.printFormat : '',
+    printFormatId: details.printFormatId !== 0 ? details.printFormatId : '',
     isActive: details.isActive,
     isPhysicalCentre: details.isPhysicalCentre,
   };

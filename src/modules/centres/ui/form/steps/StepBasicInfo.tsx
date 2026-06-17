@@ -2,8 +2,8 @@ import { AppField, AppSelect } from '@/shared/ui/controls';
 import { AppInput, AppSwitch } from '@/shared/ui/primitives';
 import { AppSectionCard } from '@/shared/ui/patterns';
 import { useCurrenciesQuery } from '@/shared/queries/useCurrenciesQuery';
+import { usePrintFormatsQuery } from '@/shared/queries/usePrintFormatsQuery';
 import type { CentreStep1Values } from '@/modules/centres/model/form.types';
-import { PRINT_FORMAT_OPTIONS, PrintFormat } from '@/modules/centres/model/types';
 import type { FormErrors } from '@/modules/centres/hooks/useCentreForm';
 
 export interface StepBasicInfoProps {
@@ -14,10 +14,12 @@ export interface StepBasicInfoProps {
 
 export const StepBasicInfo = ({ values, onChange, errors }: StepBasicInfoProps) => {
   const currenciesQuery = useCurrenciesQuery();
+  const printFormatsQuery = usePrintFormatsQuery();
   const currencyOptions = (currenciesQuery.data ?? []).map((c) => ({
     value: String(c.id),
     label: `${c.isoCode} — ${c.name}`,
   }));
+  const printFormats = printFormatsQuery.data ?? [];
 
   return (
     <div className="centre-form__step-body">
@@ -66,39 +68,39 @@ export const StepBasicInfo = ({ values, onChange, errors }: StepBasicInfoProps) 
             )}
           </AppField>
 
-          <AppField label="Print format" required error={errors.printFormat}>
+          <AppField label="Print format" required error={errors.printFormatId}>
             <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-              {PRINT_FORMAT_OPTIONS.map((f) => (
+              {printFormats.map((f) => (
                 <label
-                  key={f.value}
+                  key={f.id}
                   style={{
                     flex: 1, display: 'flex', alignItems: 'center', gap: 8,
                     padding: '12px 14px',
                     border: '1px solid',
-                    borderColor: values.printFormat === f.value
+                    borderColor: values.printFormatId === f.id
                       ? 'var(--color-border-interactive)'
                       : 'var(--color-border-strong)',
                     borderRadius: 'var(--radius-xs)',
-                    background: values.printFormat === f.value
+                    background: values.printFormatId === f.id
                       ? 'var(--color-bg-surface-muted)'
                       : 'var(--color-bg-surface)',
                     cursor: 'pointer',
                     fontSize: 'var(--font-size-sm)',
                     fontWeight: 600,
-                    color: values.printFormat === f.value
+                    color: values.printFormatId === f.id
                       ? 'var(--color-shell-nav-active-text)'
                       : 'var(--color-text-secondary)',
                   }}
                 >
                   <input
                     type="radio"
-                    name="printFormat"
-                    value={f.value}
-                    checked={values.printFormat === f.value}
-                    onChange={() => onChange({ printFormat: f.value as typeof PrintFormat.A4 | typeof PrintFormat.Letter })}
+                    name="printFormatId"
+                    value={f.id}
+                    checked={values.printFormatId === f.id}
+                    onChange={() => onChange({ printFormatId: f.id })}
                     style={{ accentColor: 'var(--color-brand-orange)' }}
                   />
-                  {f.label}
+                  {f.name}
                 </label>
               ))}
             </div>

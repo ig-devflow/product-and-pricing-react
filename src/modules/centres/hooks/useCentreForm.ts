@@ -19,7 +19,7 @@ type StepKey = 'step1' | 'step2' | 'step3' | 'step4' | 'step5'
 const STEP_KEYS: StepKey[] = ['step1', 'step2', 'step3', 'step4', 'step5']
 
 const STEP_FIELD_PREFIXES: readonly string[][] = [
-  ['name', 'code', 'currencyId', 'printFormat'],
+  ['name', 'code', 'currencyId', 'printFormatId'],
   ['generalEmail', 'accommodationEmail', 'telephone', 'emergencyTelephone', 'transferEmergencyTelephone', 'brandColor', 'contactAddress', 'logoImage'],
   ['schoolSponsorshipNumber', 'vatNumber', 'registrationNumber', 'vatExemptionNumber', 'chequePayableTo', 'guarantees', 'individualsRatio', 'staffingRatio', 'emptyBeds'],
   ['beneficiaryName', 'accountNumber', 'bankName', 'iban', 'swiftCode', 'branchCode', 'abaRoutingNo', 'achAba', 'intermediaryBankName', 'intermediarySwiftCode', 'bankAddress', 'beneficiaryBankAddress', 'intermediaryBankAddress'],
