@@ -6,13 +6,14 @@ export interface PagedResultDto<TItem> {
 }
 
 // Matches AddOnType enum: OneToOneCourse=1, Exam=2, Activity=3, Insurance=4, Generic=5
-export enum AddOnType {
-  OneToOneCourse = 1,
-  Exam = 2,
-  Activity = 3,
-  Insurance = 4,
-  Generic = 5,
-}
+export const AddOnType = {
+  OneToOneCourse: 1,
+  Exam: 2,
+  Activity: 3,
+  Insurance: 4,
+  Generic: 5,
+} as const;
+export type AddOnType = (typeof AddOnType)[keyof typeof AddOnType];
 
 export interface AddOnListItemDto {
   id: number;

@@ -23,6 +23,8 @@ export default defineConfig(
     '**/playwright-report/**',
     '**/blob-report/**',
     '**/test-results/**',
+    '.claude/**',
+    '.agents/**',
   ]),
 
   {

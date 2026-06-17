@@ -1,8 +1,9 @@
 import { z } from 'zod';
+import { AddOnType } from '@/modules/products/addons/api/dto';
 
 export const addonFormSchema = z.object({
   name: z.string().min(1, 'Name is required').max(120),
-  addOnType: z.number().nullable().refine((v) => v !== null, { message: 'Add-on type is required' }),
+  addOnType: z.nativeEnum(AddOnType).nullable().refine((v) => v !== null, { message: 'Add-on type is required' }),
   unitTypeId: z.number().nullable().refine((v) => v !== null, { message: 'Unit type is required' }),
   isActive: z.boolean(),
   accountCategoryId: z.number().nullable().refine((v) => v !== null, { message: 'Account category is required' }),

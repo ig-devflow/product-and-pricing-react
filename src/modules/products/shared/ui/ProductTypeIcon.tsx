@@ -69,6 +69,7 @@ export const ProductTypeIcon = ({ type, size = 20, className }: ProductTypeIconP
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const PRODUCT_TYPE_LABELS: Record<ProductType, string> = {
   course: 'Course',
   accommodation: 'Accommodation',

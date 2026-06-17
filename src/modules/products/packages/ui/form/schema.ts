@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { ProductKind } from '@/modules/products/packages/api/dto';
 
 const packageItemSchema = z.object({
-  productKind: z.number(),
+  productKind: z.nativeEnum(ProductKind),
   productId: z.number().int().min(1),
   priceBreakdown: z.number().min(0),
 });

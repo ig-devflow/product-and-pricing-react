@@ -151,7 +151,7 @@ let courseList: CourseListItemDto[] = Array.from(initialCourseDetails.values()).
   updatedByName: d.updatedByName,
 }));
 
-let courseDetails = new Map(initialCourseDetails);
+const courseDetails = new Map(initialCourseDetails);
 
 export const courseFixtures = {
   getList: (params: { search?: string; page?: number; pageSize?: number } = {}) => {
@@ -259,7 +259,7 @@ let accommodationList: AccommodationListItemDto[] = Array.from(
   updatedByName: d.updatedByName,
 }));
 
-let accommodationDetails = new Map(initialAccommodationDetails);
+const accommodationDetails = new Map(initialAccommodationDetails);
 
 export const accommodationFixtures = {
   getList: (params: { search?: string; page?: number; pageSize?: number } = {}) => {
@@ -391,7 +391,7 @@ let roomList: RoomListItemDto[] = Array.from(initialRoomDetails.values()).map((d
   updatedByName: d.updatedByName,
 }));
 
-let roomDetails = new Map(initialRoomDetails);
+const roomDetails = new Map(initialRoomDetails);
 
 export const roomFixtures = {
   getList: (params: { accommodationId?: number; search?: string; page?: number; pageSize?: number } = {}) => {
@@ -504,7 +504,7 @@ let addonList: AddOnListItemDto[] = Array.from(initialAddonDetails.values()).map
   updatedByName: d.updatedByName,
 }));
 
-let addonDetails = new Map(initialAddonDetails);
+const addonDetails = new Map(initialAddonDetails);
 
 export const addonFixtures = {
   getList: (params: { search?: string; page?: number; pageSize?: number } = {}) => {
@@ -596,7 +596,7 @@ let transferList: TransferListItemDto[] = Array.from(initialTransferDetails.valu
   updatedByName: d.updatedByName,
 }));
 
-let transferDetails = new Map(initialTransferDetails);
+const transferDetails = new Map(initialTransferDetails);
 
 export const transferFixtures = {
   getList: (params: { search?: string; page?: number; pageSize?: number } = {}) => {
@@ -669,7 +669,7 @@ let packageList: PackageListItemDto[] = Array.from(initialPackageDetails.values(
   updatedByName: d.updatedByName,
 }));
 
-let packageDetails = new Map(initialPackageDetails);
+const packageDetails = new Map(initialPackageDetails);
 
 export const packageFixtures = {
   getList: (params: { search?: string; page?: number; pageSize?: number } = {}) => {

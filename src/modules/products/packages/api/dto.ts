@@ -6,13 +6,14 @@ export interface PagedResultDto<TItem> {
 }
 
 // Matches ProductKind enum: Course=1, AccommodationRoom=2, AddOn=3, Transfer=4, Package=5
-export enum ProductKind {
-  Course = 1,
-  AccommodationRoom = 2,
-  AddOn = 3,
-  Transfer = 4,
-  Package = 5,
-}
+export const ProductKind = {
+  Course: 1,
+  AccommodationRoom: 2,
+  AddOn: 3,
+  Transfer: 4,
+  Package: 5,
+} as const;
+export type ProductKind = (typeof ProductKind)[keyof typeof ProductKind];
 
 export interface PackageItemDto {
   productKind: ProductKind;
