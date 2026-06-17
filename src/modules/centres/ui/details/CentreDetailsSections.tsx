@@ -2,8 +2,9 @@ import { AppPill } from '@/shared/ui/data-display';
 import { AppSectionCard } from '@/shared/ui/patterns';
 import { useCountriesQuery } from '@/shared/queries/useCountriesQuery';
 import { useCurrenciesQuery } from '@/shared/queries/useCurrenciesQuery';
+import { usePrintFormatsQuery } from '@/shared/queries/usePrintFormatsQuery';
 import type { CentreDetails } from '@/modules/centres/model/types';
-import { fmtRatio, fmtRatioSuffix, getCentreContactTypeName, getPrintFormatLabel } from '@/modules/centres/model/helpers';
+import { fmtRatio, fmtRatioSuffix, getCentreContactTypeName } from '@/modules/centres/model/helpers';
 import { CentreAddressBlock } from './CentreAddressBlock';
 import { CentreStatCard } from './CentreStatCard';
 import { CentreAccordionItem } from './CentreAccordionItem';
@@ -18,8 +19,10 @@ export interface CentreDetailsSectionsProps {
 export const CentreDetailsSections = ({ centre }: CentreDetailsSectionsProps) => {
   const countriesQuery = useCountriesQuery();
   const currenciesQuery = useCurrenciesQuery();
+  const printFormatsQuery = usePrintFormatsQuery();
   const countries = countriesQuery.data ?? [];
   const currencies = currenciesQuery.data ?? [];
+  const printFormats = printFormatsQuery.data ?? [];
 
   const findCountry = (id: number | null | undefined) =>
     id != null ? countries.find((c) => c.id === id) : null;
@@ -48,7 +51,7 @@ export const CentreDetailsSections = ({ centre }: CentreDetailsSectionsProps) =>
           </div>
           <div className="app-key-value-list__row">
             <dt className="app-key-value-list__label">Print format</dt>
-            <dd className="app-key-value-list__value">{getPrintFormatLabel(centre.printFormat)}</dd>
+            <dd className="app-key-value-list__value">{printFormats.find((f) => f.id === centre.printFormatId)?.name ?? 'Unknown'}</dd>
           </div>
           <div className="app-key-value-list__row">
             <dt className="app-key-value-list__label">Status</dt>

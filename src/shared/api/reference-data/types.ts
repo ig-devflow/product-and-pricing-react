@@ -96,3 +96,8 @@ export interface TransferPortReferenceDto {
   id: number;
   name: string;
 }
+
+export interface PrintFormatReferenceDto {
+  id: number;
+  name: string;
+}

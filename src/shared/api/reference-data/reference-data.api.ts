@@ -13,6 +13,7 @@ import type {
   CourseIntensityReferenceDto,
   CourseLanguageReferenceDto,
   CurrencyReferenceDto,
+  PrintFormatReferenceDto,
   ProductCategoryListItemDto,
   TransferPortReferenceDto,
   TransferTypeReferenceDto,
@@ -117,5 +118,11 @@ export async function getTransferTypes(): Promise<TransferTypeReferenceDto[]> {
 export async function getTransferPorts(): Promise<TransferPortReferenceDto[]> {
   return httpClient.get<TransferPortReferenceDto[]>(
     `${REFERENCE_DATA_BASE_PATH}/transfer-ports`,
+  );
+}
+
+export async function getPrintFormats(): Promise<PrintFormatReferenceDto[]> {
+  return httpClient.get<PrintFormatReferenceDto[]>(
+    `${REFERENCE_DATA_BASE_PATH}/print-formats`,
   );
 }

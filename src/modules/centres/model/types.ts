@@ -27,16 +27,6 @@ export const PrintFormat = {
 
 export type PrintFormat = (typeof PrintFormat)[keyof typeof PrintFormat];
 
-export const PrintFormatLabel: Record<PrintFormat, string> = {
-  [PrintFormat.None]: 'None',
-  [PrintFormat.A4]: 'A4',
-  [PrintFormat.Letter]: 'Letter',
-};
-
-export const PRINT_FORMAT_OPTIONS = [
-  { value: PrintFormat.A4, label: 'A4' },
-  { value: PrintFormat.Letter, label: 'Letter' },
-] as const;
 
 export interface CentreAddress {
   street: string;
@@ -116,7 +106,7 @@ export interface CentreDetails {
   name: string;
   code: string;
   currencyId: number;
-  printFormat: PrintFormat;
+  printFormatId: number;
   isActive: boolean;
   isPhysicalCentre: boolean;
   contactInfo: CentreContactInfo;

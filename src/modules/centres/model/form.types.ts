@@ -1,5 +1,5 @@
 import type { ContentFormat } from '@/modules/divisions/model/content-format';
-import type { CentreContactType, CentreImageFile, PrintFormat } from './types';
+import type { CentreContactType, CentreImageFile } from './types';
 
 export interface CentreAddressFormValue {
   street: string;
@@ -28,7 +28,7 @@ export interface CentreStep1Values {
   name: string;
   code: string;
   currencyId: string;
-  printFormat: PrintFormat | '';
+  printFormatId: number | '';
   isActive: boolean;
   isPhysicalCentre: boolean;
 }

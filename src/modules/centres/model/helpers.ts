@@ -1,5 +1,5 @@
 import type { CentreAddress } from './types';
-import { CentreContactTypeLabel, type CentreContactType, PrintFormatLabel, type PrintFormat } from './types';
+import { CentreContactTypeLabel, type CentreContactType } from './types';
 
 export function getCentreInitials(name: string): string {
   if (!name) return '?';
@@ -27,10 +27,6 @@ export function fmtRatioSuffix(v: number | null | undefined): string | null {
 
 export function getCentreContactTypeName(contactType: CentreContactType): string {
   return CentreContactTypeLabel[contactType] ?? 'Unknown';
-}
-
-export function getPrintFormatLabel(printFormat: PrintFormat): string {
-  return PrintFormatLabel[printFormat] ?? 'Unknown';
 }
 
 export function formatCentreDate(iso: string): string {

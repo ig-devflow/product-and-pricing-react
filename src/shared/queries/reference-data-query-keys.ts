@@ -21,6 +21,7 @@ export const referenceDataQueryKeys = {
   accommodationRoomGrades: () => [...referenceDataQueryKeys.all, 'accommodation-room-grades'] as const,
   transferTypes: () => [...referenceDataQueryKeys.all, 'transfer-types'] as const,
   transferPorts: () => [...referenceDataQueryKeys.all, 'transfer-ports'] as const,
+  printFormats: () => [...referenceDataQueryKeys.all, 'print-formats'] as const,
 };
 
 export const referenceDataStaleTime = 5 * 60 * 1000;
